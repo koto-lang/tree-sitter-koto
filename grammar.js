@@ -14,6 +14,7 @@ module.exports = grammar({
     _expression: $ => choice(
       $.boolean,
       $.null,
+      $.number,
     ),
 
     boolean: _ => choice('true', 'false'),
@@ -26,5 +27,19 @@ module.exports = grammar({
     )),
 
     null: _ => 'null',
+
+    number: _ => token(seq(
+      optional('-'),
+      choice(
+        // Ints / Floats
+        seq(/\d+/, optional('.'), optional(/\d+/), optional(/e[+-]?\d+/)),
+        // Binary
+        /0b[01]+/,
+        // Octal
+        /0o[0-7]+/,
+        // Hex
+        /0x[0-9a-fA-F]+/,
+      ),
+    )),
   }
 });

@@ -19,6 +19,10 @@
         {
           "type": "null",
           "named": true
+        },
+        {
+          "type": "number",
+          "named": true
         }
       ]
     }
@@ -33,6 +37,10 @@
   },
   {
     "type": "null",
+    "named": true
+  },
+  {
+    "type": "number",
     "named": true
   },
   {
