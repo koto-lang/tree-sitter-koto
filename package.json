@@ -1,0 +1,16 @@
+{
+  "name": "tree-sitter-koto",
+  "version": "0.1.0",
+  "description": "Koto grammar for tree-sitter",
+  "main": "bindings/node",
+  "scripts": {},
+  "keywords": [],
+  "author": "Ian Hobson",
+  "license": "MIT",
+  "dependencies": {
+    "nan": "^2.18.0"
+  },
+  "devDependencies": {
+    "tree-sitter-cli": "^0.20.8"
+  }
+}
