@@ -55,12 +55,24 @@ module.exports = grammar({
     
     parenthesized_expression: $ => seq('(', $._expressions, ')'),
 
-    string: _ => token(choice(
-      seq('\'', repeat(choice(/./, /\s/)), '\''),
-      seq('\"', repeat(choice(/./, /\s/)), '\"'),
-    )),
+    string: $ => choice(
+      string($, '\''),
+      string($, '\"'),
+    ),
   }
 });
+
+function string($, quote) {
+  return seq(
+    quote,
+    repeat(choice(
+      seq('$', $.identifier),
+      seq('${', $._expressions, '}'),
+      /./,
+      /\s/
+    )),
+    quote);
+}
 
 function any_amount_of() {
   return repeat(seq(...arguments));

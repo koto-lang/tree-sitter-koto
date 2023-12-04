@@ -107,3 +107,22 @@ string"
   (string)
   (string)
 )
+
+===========================================================================================
+strings_interpolated
+===========================================================================================
+
+'foo is $foo'
+'foo, bar is ${foo, bar}'
+
+---
+
+(source_file
+  (string
+    (identifier)
+  )
+  (string
+    (identifier)
+    (identifier)
+  )
+)
