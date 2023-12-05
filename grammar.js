@@ -1,5 +1,10 @@
 /// <reference types="tree-sitter-cli/dsl" />
 
+const PREC = {
+  not: 1,
+  negate: 10,
+};
+
 module.exports = grammar({
   name: 'koto',
 
@@ -11,20 +16,25 @@ module.exports = grammar({
   word: $ => $.identifier,
 
   rules: {
-    source_file: $ => repeat($._expressions),
+    module: $ => repeat($._expressions),
 
     _expressions: $ => list_of($._expression, ','),
 
-    _expression: $ => seq(
-      optional('-'),
+    _expression: $ => choice(
+      $.boolean,
+      $.null,
+      $.number,
+      $.string,
+      $.identifier,
+      $.parenthesized_expression,
+      $._unary_expression,
+    ),
+
+    _unary_expression: $ => seq(
       choice(
-        $.boolean,
-        $.null,
-        $.number,
-        $.string,
-        $.identifier,
-        $.parenthesized_expression,
-      ),
+        $.not,
+        $.negate,
+      )
     ),
 
     boolean: _ => choice('true', 'false'),
@@ -37,6 +47,10 @@ module.exports = grammar({
     )),
 
     identifier: _ => /[\p{XID_Start}_][\p{XID_Continue}]*/u,
+
+    negate: $ => prec(PREC.negate, seq('-', $._expression)),
+
+    not: $ => prec(PREC.not, seq('not', $._expression)),
 
     null: _ => 'null',
 
@@ -52,7 +66,7 @@ module.exports = grammar({
         /0x[0-9a-fA-F]+/,
       ),
     ),
-    
+
     parenthesized_expression: $ => seq('(', $._expressions, ')'),
 
     string: $ => choice(

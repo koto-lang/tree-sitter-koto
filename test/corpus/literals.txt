@@ -9,7 +9,7 @@ self
 
 ---
 
-(source_file
+(module
   (boolean)
   (boolean)
   (null)
@@ -26,10 +26,10 @@ integers
 
 ---
 
-(source_file
+(module
   (number)
   (number)
-  (number)
+  (negate (number))
 )
 
 ===========================================================================================
@@ -39,19 +39,21 @@ floats
 0.
 1.0
 1e99
--1.24
 123.0e-33
 44e+9
+-1.24
+-2e99
 
 ---
 
-(source_file
+(module
   (number)
   (number)
   (number)
   (number)
   (number)
-  (number)
+  (negate (number))
+  (negate (number))
 )
 
 ===========================================================================================
@@ -59,21 +61,21 @@ numbers_prefixed
 ===========================================================================================
 
 0b10101
--0b1111
 0o070605
--0o172
 0xfeedface
+-0b1111
+-0o172
 -0x7f
 
 ---
 
-(source_file
+(module
   (number)
   (number)
   (number)
-  (number)
-  (number)
-  (number)
+  (negate (number))
+  (negate (number))
+  (negate (number))
 )
 
 ===========================================================================================
@@ -85,7 +87,7 @@ strings_single_line
 
 ---
 
-(source_file
+(module
   (string)
   (string)
 )
@@ -103,7 +105,7 @@ string"
 
 ---
 
-(source_file
+(module
   (string)
   (string)
 )
@@ -117,7 +119,7 @@ strings_interpolated
 
 ---
 
-(source_file
+(module
   (string
     (identifier)
   )
