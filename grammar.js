@@ -5,15 +5,14 @@ const PREC = {
   pipe: 2,
   range: 3,
   assign: 4,
-  modifyAssign: 5,
-  or: 6,
-  and: 7,
-  equality: 8,
-  comparison: 9,
-  add: 10,
-  multiply: 11,
-  unary: 12,
-  negate: 13,
+  or: 5,
+  and: 6,
+  equality: 7,
+  comparison: 8,
+  add: 9,
+  multiply: 10,
+  unary: 11,
+  negate: 12,
 };
 
 module.exports = grammar({
@@ -31,7 +30,7 @@ module.exports = grammar({
   ],
 
   conflicts: $ => [
-    [$.binary_op, $.comparison_op, $.boolean_op],
+    [$.assign, $.modify_assign, $.binary_op, $.comparison_op, $.boolean_op],
   ],
 
   word: $ => $.identifier,
@@ -73,6 +72,8 @@ module.exports = grammar({
       $.tuple,
       $.list,
       $._unary_op,
+      $.assign,
+      $.modify_assign,
       $.binary_op,
       $.comparison_op,
       $.boolean_op,
@@ -81,6 +82,16 @@ module.exports = grammar({
     _unary_op: $ => choice(
       $.not,
       $.negate,
+    ),
+
+    assign: $ => binary_op($, '=', prec.right, PREC.assign),
+
+    modify_assign: $ => choice(
+      binary_op($, '-=', prec.right, PREC.assign),
+      binary_op($, '+=', prec.right, PREC.assign),
+      binary_op($, '*=', prec.right, PREC.assign),
+      binary_op($, '/=', prec.right, PREC.assign),
+      binary_op($, '%=', prec.right, PREC.assign),
     ),
 
     binary_op: $ => choice(

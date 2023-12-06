@@ -170,3 +170,26 @@ binary_op_multi_line_pre
     (number)
   )
 )
+
+===========================================================================================
+assignment
+===========================================================================================
+
+a = 3
+b += c = d
+
+---
+
+(module
+  (assign
+    (identifier)
+    (number)
+  )
+  (modify_assign
+    (identifier)
+    (assign
+      (identifier)
+      (identifier)
+    )
+  )
+)
