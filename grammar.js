@@ -49,13 +49,30 @@ module.exports = grammar({
 
     _expressions: $ => list_of($._expression, ','),
 
+    // comma-separated expressions with flexible newline rules
+    _contained_expressions: $ => seq(
+      repeat($._newline),
+      $._expression,
+      repeat(
+        seq(
+          repeat($._newline),
+          ',',
+          repeat($._newline),
+          $._expression,
+        )
+      ),
+      optional(','),
+      repeat($._newline),
+    ),
+
     _expression: $ => choice(
       $.boolean,
       $.null,
       $.number,
       $.string,
       $.identifier,
-      $.parenthesized_expression,
+      $.tuple,
+      $.list,
       $._unary_op,
       $.binary_op,
       $.comparison_op,
@@ -116,7 +133,15 @@ module.exports = grammar({
       ),
     ),
 
-    parenthesized_expression: $ => seq('(', $._expressions, ')'),
+    tuple: $ => choice(
+      seq('(', optional(','), ')'),
+      seq('(', $._contained_expressions, ')'),
+    ),
+
+    list: $ => choice(
+      seq('[', optional(','), ']'),
+      seq('[', $._contained_expressions, ']'),
+    ),
 
     string: $ => choice(
       string($, '\''),
