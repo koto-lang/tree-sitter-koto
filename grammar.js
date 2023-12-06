@@ -66,8 +66,7 @@ module.exports = grammar({
     ),
 
     _expression: $ => choice(
-      $.boolean,
-      $.null,
+      $._constant,
       $.number,
       $.string,
       $.identifier,
@@ -106,7 +105,15 @@ module.exports = grammar({
       binary_op($, 'or', prec.right, PREC.or),
     ),
 
-    boolean: _ => choice('true', 'false'),
+    _constant: $ => choice(
+      $.true,
+      $.false,
+      $.null,
+    ),
+
+    true: _ => 'true',
+    false: _ => 'false',
+    null: _ => 'null',
 
     comment: _ => token(choice(
       /#.*/, // Single-line comment
@@ -118,7 +125,6 @@ module.exports = grammar({
     negate: $ => prec(PREC.negate, (seq('-', $._expression))),
     not: $ => prec(PREC.not, seq('not', $._expression)),
 
-    null: _ => 'null',
 
     number: _ => token(
       choice(

@@ -10,8 +10,8 @@ self
 ---
 
 (module
-  (boolean)
-  (boolean)
+  (true)
+  (false)
   (null)
   (self)
 )
