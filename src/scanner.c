@@ -48,6 +48,7 @@ static inline void advance(TSLexer* lexer) {
 
 enum TokenType {
   NEWLINE,
+  CONTINUATION,
   ERROR_SENTINEL,
 };
 
@@ -73,17 +74,17 @@ static void initialize_scanner(Scanner* scanner) {
   VEC_PUSH(scanner->indents, 0);
 }
 
-// static void skip_whitespace(TSLexer* lexer) {
-//   printf("skipping whitespace\n");
-//   while (true) {
-//     uint32_t next = lexer->lookahead;
-//     printf("skipping %u\n", next);
-//     if (next != ' ' && next != '\t') {
-//       break;
-//     }
-//     advance(lexer);
-//   }
-// }
+static void skip_whitespace(TSLexer* lexer) {
+  printf("skipping whitespace\n");
+  while (true) {
+    uint32_t next = lexer->lookahead;
+    printf("skipping (%u)\n", next);
+    if (next != ' ' && next != '\t') {
+      break;
+    }
+    advance(lexer);
+  }
+}
 
 bool tree_sitter_koto_external_scanner_scan(
     void* payload,
@@ -105,19 +106,41 @@ bool tree_sitter_koto_external_scanner_scan(
   printf("error_recovery: %i\n", error_recovery);
 
   if (!error_recovery) {
-    if (valid_symbols[NEWLINE]) {
+    bool encountered_newline = false;
+    bool newline_indented = false;
+
+    // Consume newlines and starting indentation
+    while (true) {
+      skip_whitespace(lexer);
       if (lexer->lookahead == '\r') {
         advance(lexer);
       }
       if (lexer->lookahead == '\n') {
         advance(lexer);
-        lexer->mark_end(lexer);
-        lexer->result_symbol = NEWLINE;
-        return true;
+        encountered_newline = true;
+        skip_whitespace(lexer);
+        newline_indented = (lexer->get_column(lexer)) > 0;
+      } else {
+        break;
       }
+    }
+
+    if (valid_symbols[CONTINUATION] && newline_indented) {
+      lexer->mark_end(lexer);
+      lexer->result_symbol = CONTINUATION;
+      printf("continuation!\n");
+      return true;
+    }
+
+    if (valid_symbols[NEWLINE] && encountered_newline) {
+      lexer->mark_end(lexer);
+      lexer->result_symbol = NEWLINE;
+      printf("newline!\n");
+      return true;
     }
   }
 
+  printf("scanner.scan: rejected\n");
   return false;
 }
 

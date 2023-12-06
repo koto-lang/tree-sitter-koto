@@ -6,13 +6,14 @@ const PREC = {
   range: 3,
   assign: 4,
   modifyAssign: 5,
-  boolean: 6,
-  equality: 7,
-  comparison: 8,
-  add: 9,
-  multiply: 10,
-  unary: 11,
-  negate: 12,
+  or: 6,
+  and: 7,
+  equality: 8,
+  comparison: 9,
+  add: 10,
+  multiply: 11,
+  unary: 12,
+  negate: 13,
 };
 
 module.exports = grammar({
@@ -25,7 +26,12 @@ module.exports = grammar({
 
   externals: $ => [
     $._newline,
+    $._continuation,
     $.error_sentinel,
+  ],
+
+  conflicts: $ => [
+    [$.binary_op, $.comparison_op, $.boolean_op],
   ],
 
   word: $ => $.identifier,
@@ -36,7 +42,7 @@ module.exports = grammar({
       repeat(
         seq(
           $._expressions,
-          repeat1($._newline),
+          repeat($._newline),
         )
       ),
     ),
@@ -50,45 +56,37 @@ module.exports = grammar({
       $.string,
       $.identifier,
       $.parenthesized_expression,
-      $.unary_op,
+      $._unary_op,
       $.binary_op,
+      $.comparison_op,
+      $.boolean_op,
     ),
 
-    unary_op: $ => prec(PREC.unary, seq(
-      choice('not', '-'),
-      $._expression,
-    )),
+    _unary_op: $ => choice(
+      $.not,
+      $.negate,
+    ),
 
-    binary_op: $ => seq(
-      choice(
-        ...[
-          ['=', PREC.assign],
-          ['+=', PREC.modifyAssign],
-          ['-=', PREC.modifyAssign],
-          ['/=', PREC.modifyAssign],
-          ['*=', PREC.modifyAssign],
-          ['%=', PREC.modifyAssign],
-          ['==', PREC.equality],
-          ['!=', PREC.equality],
-          ['or', PREC.boolean],
-          ['and', PREC.boolean],
-          ['<', PREC.comparison],
-          ['<=', PREC.comparison],
-          ['>=', PREC.comparison],
-          ['>', PREC.comparison],
-          ['+', PREC.add],
-          ['-', PREC.add],
-          ['*', PREC.multiply],
-          ['/', PREC.multiply],
-          ['%', PREC.multiply],
-          ['..', PREC.range],
-          ['>>', PREC.pipe],
-        ].map(([operator, precedence]) =>
-          prec.left(precedence,
-            seq($._expression, operator, $._expression),
-          )
-        ),
-      ),
+    binary_op: $ => choice(
+      binary_op($, '-', prec.left, PREC.add),
+      binary_op($, '+', prec.left, PREC.add),
+      binary_op($, '*', prec.left, PREC.multiply),
+      binary_op($, '/', prec.left, PREC.multiply),
+      binary_op($, '%', prec.left, PREC.multiply),
+    ),
+
+    comparison_op: $ => choice(
+      binary_op($, '!=', prec.right, PREC.comparison),
+      binary_op($, '==', prec.right, PREC.comparison),
+      binary_op($, '>', prec.right, PREC.comparison),
+      binary_op($, '>=', prec.right, PREC.comparison),
+      binary_op($, '<', prec.right, PREC.comparison),
+      binary_op($, '<=', prec.right, PREC.comparison),
+    ),
+
+    boolean_op: $ => choice(
+      binary_op($, 'and', prec.right, PREC.and),
+      binary_op($, 'or', prec.right, PREC.or),
     ),
 
     boolean: _ => choice('true', 'false'),
@@ -100,8 +98,7 @@ module.exports = grammar({
 
     identifier: _ => /[\p{XID_Start}_][\p{XID_Continue}]*/u,
 
-    negate: $ => prec(PREC.negate, seq('-', $._expression)),
-
+    negate: $ => prec(PREC.negate, (seq('-', $._expression))),
     not: $ => prec(PREC.not, seq('not', $._expression)),
 
     null: _ => 'null',
@@ -152,4 +149,14 @@ function list_of(match, sep, trailing) {
   return trailing
     ? seq(match, any_amount_of(sep, match), optional(sep))
     : seq(match, any_amount_of(sep, match));
+}
+
+function binary_op($, operator, precedence_fn, precedence) {
+  return precedence_fn(precedence, seq(
+    $._expression,
+    repeat($._continuation),
+    operator,
+    repeat($._continuation),
+    $._expression
+  ));
 }
