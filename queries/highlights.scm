@@ -1,5 +1,3 @@
-; Literals
-
 [
   "="
   "+"
@@ -32,3 +30,5 @@
 (null) @constant.builtin
 
 (number) @number
+
+(debug) @debug

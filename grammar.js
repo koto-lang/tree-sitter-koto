@@ -13,6 +13,7 @@ const PREC = {
   multiply: 10,
   unary: 11,
   negate: 12,
+  debug: 13,
 };
 
 module.exports = grammar({
@@ -82,6 +83,7 @@ module.exports = grammar({
     _unary_op: $ => choice(
       $.not,
       $.negate,
+      $.debug,
     ),
 
     assign: $ => binary_op($, '=', prec.right, PREC.assign),
@@ -133,6 +135,7 @@ module.exports = grammar({
 
     identifier: _ => /[\p{XID_Start}_][\p{XID_Continue}]*/u,
 
+    debug: $ => prec(PREC.debug, seq('debug', $._expression)),
     negate: $ => prec(PREC.negate, (seq('-', $._expression))),
     not: $ => prec(PREC.not, seq('not', $._expression)),
 
