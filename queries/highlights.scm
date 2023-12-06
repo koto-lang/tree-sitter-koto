@@ -28,6 +28,7 @@
 
 [(true) (false)] @boolean
 (null) @constant.builtin
+(self) @variable.builtin
 
 (number) @number
 

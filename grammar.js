@@ -66,7 +66,10 @@ module.exports = grammar({
     ),
 
     _expression: $ => choice(
-      $._constant,
+      $.self,
+      $.true,
+      $.false,
+      $.null,
       $.number,
       $.string,
       $.identifier,
@@ -118,12 +121,7 @@ module.exports = grammar({
       binary_op($, 'or', prec.right, PREC.or),
     ),
 
-    _constant: $ => choice(
-      $.true,
-      $.false,
-      $.null,
-    ),
-
+    self: _ => 'self',
     true: _ => 'true',
     false: _ => 'false',
     null: _ => 'null',
