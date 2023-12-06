@@ -14,7 +14,10 @@ const PREC = {
   unary: 11,
   negate: 12,
   debug: 13,
+  call: 14,
 };
+
+const id = /[\p{XID_Start}_][\p{XID_Continue}]*/u;
 
 module.exports = grammar({
   name: 'koto',
@@ -72,9 +75,11 @@ module.exports = grammar({
       $.null,
       $.number,
       $.string,
+      $.meta,
       $.identifier,
       $.tuple,
       $.list,
+      $.call,
       $._unary_op,
       $.assign,
       $.modify_assign,
@@ -131,12 +136,12 @@ module.exports = grammar({
       seq('#-', repeat(choice(/./, /\s/)), '-#'), // Multi-line comment
     )),
 
-    identifier: _ => /[\p{XID_Start}_][\p{XID_Continue}]*/u,
+    identifier: _ => id,
+    meta: $ => token(seq('@', id)),
 
     debug: $ => prec(PREC.debug, seq('debug', $._expression)),
     negate: $ => prec(PREC.negate, (seq('-', $._expression))),
     not: $ => prec(PREC.not, seq('not', $._expression)),
-
 
     number: _ => token(
       choice(
@@ -165,6 +170,18 @@ module.exports = grammar({
       string($, '\''),
       string($, '\"'),
     ),
+
+    call: $ => prec.right(PREC.call, seq(
+      field('name', $.identifier),
+      repeat($._continuation),
+      field('arg', $._expression),
+      repeat(seq(
+        repeat($._continuation),
+        ',',
+        repeat($._continuation),
+        field('arg', $._expression),
+      ))
+    )),
   }
 });
 

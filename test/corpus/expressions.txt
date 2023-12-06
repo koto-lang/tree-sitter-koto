@@ -9,6 +9,7 @@ héllø
 _
 _bar9
 _héllø
+@main
 
 ---
 
@@ -19,7 +20,9 @@ _héllø
   (identifier)
   (identifier)
   (identifier)
-  (identifier))
+  (identifier)
+  (meta)
+)
 
 ===========================================================================================
 comma_separated
@@ -190,6 +193,30 @@ b += c = d
     (assign
       (identifier)
       (identifier)
+    )
+  )
+)
+
+===========================================================================================
+function_call
+===========================================================================================
+
+f x
+f g 1, 2
+
+---
+
+(module
+  (call
+    name: (identifier)
+    arg: (identifier)
+  )
+  (call
+    name: (identifier)
+    arg: (call
+      name: (identifier)
+      arg: (number)
+      arg: (number)
     )
   )
 )
