@@ -29,7 +29,7 @@ integers
 (module
   (number)
   (number)
-  (negate (number))
+  (unary_op (number))
 )
 
 ===========================================================================================
@@ -52,8 +52,8 @@ floats
   (number)
   (number)
   (number)
-  (negate (number))
-  (negate (number))
+  (unary_op (number))
+  (unary_op (number))
 )
 
 ===========================================================================================
@@ -73,9 +73,9 @@ numbers_prefixed
   (number)
   (number)
   (number)
-  (negate (number))
-  (negate (number))
-  (negate (number))
+  (unary_op (number))
+  (unary_op (number))
+  (unary_op (number))
 )
 
 ===========================================================================================

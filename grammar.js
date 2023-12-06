@@ -2,7 +2,17 @@
 
 const PREC = {
   not: 1,
-  negate: 10,
+  pipe: 2,
+  range: 3,
+  assign: 4,
+  modifyAssign: 5,
+  boolean: 6,
+  equality: 7,
+  comparison: 8,
+  add: 9,
+  multiply: 10,
+  unary: 11,
+  negate: 12,
 };
 
 module.exports = grammar({
@@ -10,13 +20,26 @@ module.exports = grammar({
 
   extras: $ => [
     $.comment,
-    /\s/,
+    /[ \t]/,
+  ],
+
+  externals: $ => [
+    $._newline,
+    $.error_sentinel,
   ],
 
   word: $ => $.identifier,
 
   rules: {
-    module: $ => repeat($._expressions),
+    module: $ => seq(
+      repeat($._newline),
+      repeat(
+        seq(
+          $._expressions,
+          repeat1($._newline),
+        )
+      ),
+    ),
 
     _expressions: $ => list_of($._expression, ','),
 
@@ -27,23 +50,52 @@ module.exports = grammar({
       $.string,
       $.identifier,
       $.parenthesized_expression,
-      $._unary_expression,
+      $.unary_op,
+      $.binary_op,
     ),
 
-    _unary_expression: $ => seq(
+    unary_op: $ => prec(PREC.unary, seq(
+      choice('not', '-'),
+      $._expression,
+    )),
+
+    binary_op: $ => seq(
       choice(
-        $.not,
-        $.negate,
-      )
+        ...[
+          ['=', PREC.assign],
+          ['+=', PREC.modifyAssign],
+          ['-=', PREC.modifyAssign],
+          ['/=', PREC.modifyAssign],
+          ['*=', PREC.modifyAssign],
+          ['%=', PREC.modifyAssign],
+          ['==', PREC.equality],
+          ['!=', PREC.equality],
+          ['or', PREC.boolean],
+          ['and', PREC.boolean],
+          ['<', PREC.comparison],
+          ['<=', PREC.comparison],
+          ['>=', PREC.comparison],
+          ['>', PREC.comparison],
+          ['+', PREC.add],
+          ['-', PREC.add],
+          ['*', PREC.multiply],
+          ['/', PREC.multiply],
+          ['%', PREC.multiply],
+          ['..', PREC.range],
+          ['>>', PREC.pipe],
+        ].map(([operator, precedence]) =>
+          prec.left(precedence,
+            seq($._expression, operator, $._expression),
+          )
+        ),
+      ),
     ),
 
     boolean: _ => choice('true', 'false'),
 
     comment: _ => token(choice(
-      // Single-line comment
-      /#.*/,
-      // Multi-line comment
-      seq('#-', repeat(choice(/./, /\s/)), '-#'),
+      /#.*/, // Single-line comment
+      seq('#-', repeat(choice(/./, /\s/)), '-#'), // Multi-line comment
     )),
 
     identifier: _ => /[\p{XID_Start}_][\p{XID_Continue}]*/u,
