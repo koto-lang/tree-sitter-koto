@@ -26,6 +26,8 @@
   "then"
   "else"
   "else if"
+  "return"
+  "yield"
 ] @keyword
 
 ["(" ")" "[" "]" "|"] @punctuation.bracket
