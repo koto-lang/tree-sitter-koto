@@ -1,0 +1,90 @@
+===========================================================================================
+if_inline
+===========================================================================================
+
+if foo then bar
+if a == b then 'hello' else 'bye'
+
+---
+
+(module
+  (if condition: (identifier) then: (identifier))
+  (if
+    condition: (comparison_op (identifier) (identifier))
+    then: (string)
+    else: (string)
+  )
+)
+
+===========================================================================================
+if_multi_line
+===========================================================================================
+
+if 1 + 1 == 2
+  foo
+  bar
+else if 3 + 4 == 5
+  baz
+else
+  'hello'
+
+---
+
+(module
+  (if
+    condition: (comparison_op
+      (binary_op (number) (number))
+      (number)
+    )
+    then: (block (identifier) (identifier))
+    else_if_condition: (comparison_op
+      (binary_op (number) (number))
+      (number)
+    )
+    else_if_then: (block (identifier))
+    else: (block (string))
+  )
+)
+
+===========================================================================================
+if_nested
+===========================================================================================
+
+if 1 + 1 == 2
+  if 2 + 3 == 4
+    foo
+  else if 5 + 6 == 7
+    bar
+else if true
+  'hello'
+else
+  baz
+
+---
+
+(module
+  (if
+    condition:
+      (comparison_op
+        (binary_op (number) (number))
+        (number)
+      )
+    then: (block
+      (if
+        condition: (comparison_op
+          (binary_op (number) (number))
+          (number)
+        )
+        then: (block (identifier))
+        else_if_condition: (comparison_op
+          (binary_op (number) (number))
+          (number)
+        )
+        else_if_then: (block (identifier))
+      )
+    )
+    else_if_condition: (true)
+    else_if_then: (block (string))
+    else: (block (identifier))
+  )
+)

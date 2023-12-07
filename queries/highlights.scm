@@ -21,6 +21,13 @@
   "or"
 ] @operator
 
+[
+  "if"
+  "then"
+  "else"
+  "else if"
+] @keyword
+
 ["(" ")" "[" "]"] @punctuation.bracket
 
 (comment) @comment

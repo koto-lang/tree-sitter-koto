@@ -1,20 +1,23 @@
 /// <reference types="tree-sitter-cli/dsl" />
 
 const PREC = {
-  not: 1,
-  pipe: 2,
-  range: 3,
-  assign: 4,
-  or: 5,
-  and: 6,
-  equality: 7,
-  comparison: 8,
-  add: 9,
-  multiply: 10,
-  unary: 11,
-  negate: 12,
-  debug: 13,
-  call: 14,
+  block: 1,
+  comma: 2,
+  if: 3,
+  not: 4,
+  pipe: 5,
+  range: 6,
+  assign: 7,
+  or: 8,
+  and: 9,
+  equality: 10,
+  comparison: 11,
+  add: 12,
+  multiply: 13,
+  unary: 14,
+  negate: 15,
+  debug: 16,
+  call: 17,
 };
 
 const id = /[\p{XID_Start}_][\p{XID_Continue}]*/u;
@@ -29,7 +32,10 @@ module.exports = grammar({
 
   externals: $ => [
     $._newline,
-    $._continuation,
+    $._block_start,
+    $._block_continue,
+    $._block_end,
+    $._indented_line,
     $.error_sentinel,
   ],
 
@@ -50,7 +56,25 @@ module.exports = grammar({
       ),
     ),
 
-    _expressions: $ => list_of($._expression, ','),
+    _expression: $ => choice(
+      $._constants,
+      $.number,
+      $.string,
+      $.identifier,
+      $.meta,
+      $.tuple,
+      $.list,
+      $.if,
+      $.call,
+      $._unary_op,
+      $.assign,
+      $.modify_assign,
+      $.binary_op,
+      $.comparison_op,
+      $.boolean_op,
+    ),
+
+    _expressions: $ => prec.left(PREC.comma, list_of($._expression, ',')),
 
     // comma-separated expressions with flexible newline rules
     _contained_expressions: $ => seq(
@@ -68,24 +92,23 @@ module.exports = grammar({
       repeat($._newline),
     ),
 
-    _expression: $ => choice(
+    block: $ => prec.left(PREC.block, seq(
+      $._block_start,
+      $._expressions,
+      repeat(
+        seq(
+          repeat1($._block_continue),
+          $._expressions,
+        )
+      ),
+      $._block_end,
+    )),
+
+    _constants: $ => choice(
       $.self,
       $.true,
       $.false,
       $.null,
-      $.number,
-      $.string,
-      $.meta,
-      $.identifier,
-      $.tuple,
-      $.list,
-      $.call,
-      $._unary_op,
-      $.assign,
-      $.modify_assign,
-      $.binary_op,
-      $.comparison_op,
-      $.boolean_op,
     ),
 
     _unary_op: $ => choice(
@@ -173,15 +196,60 @@ module.exports = grammar({
 
     call: $ => prec.right(PREC.call, seq(
       field('name', $.identifier),
-      repeat($._continuation),
+      repeat($._indented_line),
       field('arg', $._expression),
       repeat(seq(
-        repeat($._continuation),
+        repeat($._indented_line),
         ',',
-        repeat($._continuation),
+        repeat($._indented_line),
         field('arg', $._expression),
       ))
     )),
+
+    if: $ => choice(
+      // Inline if
+      prec.right(PREC.if, seq(
+        'if',
+        field('condition', $._expression),
+        'then',
+        field('then', $._expression),
+        optional(
+          seq(
+            'else',
+            field('else', $._expression),
+          )
+        )
+      )),
+      // Multiline if
+      prec.right(PREC.if, seq(
+        'if',
+        field('condition', $._expression),
+        field('then', $.block),
+        repeat(
+          field('else_if', seq(
+            $._block_continue,
+            'else if',
+            field('else_if_condition', $._expression),
+            field('else_if_then', $.block),
+          )),
+        ),
+        optional(
+          seq(
+            $._block_continue,
+            'else',
+            field('else', $.block))
+        ),
+      )),
+    ),
+
+    // else_if: $ => repeat1(
+    //   prec.left(PREC.if, seq(
+    //     $._block_continue,
+    //     'else if',
+    //     field('condition', $._expression),
+    //     field('then', $.block),
+    //   )),
+    // ),
   }
 });
 
@@ -214,9 +282,9 @@ function list_of(match, sep, trailing) {
 function binary_op($, operator, precedence_fn, precedence) {
   return precedence_fn(precedence, seq(
     $._expression,
-    repeat($._continuation),
+    repeat($._indented_line),
     operator,
-    repeat($._continuation),
+    repeat($._indented_line),
     $._expression
   ));
 }
