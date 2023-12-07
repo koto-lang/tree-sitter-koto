@@ -1,0 +1,89 @@
+===========================================================================================
+function_inline
+===========================================================================================
+
+|| null
+|a, b, c| 1 + 2
+
+---
+
+(module
+  (function
+    body: (null)
+  )
+  (function
+    (args
+      (arg (identifier))
+      (arg (identifier))
+      (arg (identifier))
+    )
+    body: (binary_op (number) (number))
+  )
+)
+
+===========================================================================================
+function_block
+===========================================================================================
+
+||
+  true
+|a, b|
+  a + b
+
+---
+
+(module
+  (function
+    body: (block (true))
+  )
+  (function
+    (args
+      (arg (identifier))
+      (arg (identifier))
+    )
+    body: (block (binary_op (identifier) (identifier)))
+  )
+)
+
+===========================================================================================
+function_unpacking
+===========================================================================================
+
+|a, b, ...| true
+|a, (b, c...)| true
+|[...x, (...y)]| true
+
+---
+
+(module
+  (function
+    (args
+      (arg (identifier))
+      (arg (identifier))
+      (arg (ellipsis))
+    )
+    body: (true)
+  )
+  (function
+    (args
+      (arg (identifier))
+      (arg (tuple
+        (arg (identifier))
+        (arg (identifier) (ellipsis))
+      ))
+    )
+    body: (true)
+  )
+  (function
+    (args
+      (arg (list
+        (arg (ellipsis) (identifier))
+        (arg (tuple
+          (arg (ellipsis) (identifier))
+        ))
+      ))
+    )
+    body: (true)
+  )
+)
+

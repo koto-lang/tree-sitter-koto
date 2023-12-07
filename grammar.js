@@ -65,6 +65,7 @@ module.exports = grammar({
       $.tuple,
       $.list,
       $.if,
+      $.function,
       $.call,
       $._unary_op,
       $.assign,
@@ -237,19 +238,47 @@ module.exports = grammar({
           seq(
             $._block_continue,
             'else',
-            field('else', $.block))
+            field('else', $.block),
+          )
         ),
       )),
     ),
 
-    // else_if: $ => repeat1(
-    //   prec.left(PREC.if, seq(
-    //     $._block_continue,
-    //     'else if',
-    //     field('condition', $._expression),
-    //     field('then', $.block),
-    //   )),
-    // ),
+    function: $ => seq(
+      '|',
+      optional($.args),
+      '|',
+      field('body', choice($._expressions, $.block)),
+    ),
+
+    args: $ => seq(
+      repeat($._newline),
+      $.arg,
+      repeat(
+        seq(
+          repeat($._newline),
+          ',',
+          repeat($._newline),
+          $.arg,
+        ),
+      ),
+      optional(','),
+      repeat($._newline),
+    ),
+
+    arg: $ => choice(
+      $.identifier,
+      $.ellipsis,
+      seq($.ellipsis, $.identifier),
+      seq($.identifier, $.ellipsis),
+      alias($._tuple_args, $.tuple),
+      alias($._list_args, $.list),
+    ),
+
+    _tuple_args: $ => seq('(', list_of($.arg, ','), ')'),
+    _list_args: $ => seq('[', list_of($.arg, ','), ']'),
+
+    ellipsis: _ => '...',
   }
 });
 

@@ -16,26 +16,29 @@
   ">"
   "<="
   ">="
-  "and"
-  "not"
-  "or"
 ] @operator
 
 [
+  "and"
+  "not"
+  "or"
   "if"
   "then"
   "else"
   "else if"
 ] @keyword
 
-["(" ")" "[" "]"] @punctuation.bracket
+["(" ")" "[" "]" "|"] @punctuation.bracket
 
 (comment) @comment
 (string) @string
 (identifier) @variable
+(meta) @tag
 
 (call name: (identifier) @function)
-(meta) @tag
+(arg (identifier) @parameter)
+(ellipsis) @parameter
+
 
 [(true) (false)] @boolean
 (null) @constant.builtin
