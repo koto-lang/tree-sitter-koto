@@ -1,0 +1,135 @@
+===========================================================================================
+map_inline
+===========================================================================================
+
+{}
+{foo, bar}
+{foo: 42, 'bar': 1 + 1}
+
+---
+
+(module
+  (map)
+  (map
+    (entry_inline key: (identifier))
+    (entry_inline key: (identifier))
+  )
+  (map
+    (entry_inline
+      key: (identifier)
+      value: (number)
+    )
+    (entry_inline
+      key: (string)
+      value: (binary_op (number) (number))
+    )
+  )
+)
+
+===========================================================================================
+map_inline_assigned
+===========================================================================================
+
+foo =
+  {bar: 42}
+
+---
+
+(module
+  (assign
+    (identifier)
+    (map
+      (entry_inline
+        key: (identifier)
+        value: (number)
+      )
+    )
+  )
+)
+
+===========================================================================================
+map_block
+===========================================================================================
+
+return
+  foo: 42
+  'bar': 99
+
+---
+
+(module
+  (return
+    (map_block
+      (entry_block
+        key: (identifier)
+        value: (number)
+      )
+      (entry_block
+        key: (string)
+        value: (number)
+      )
+    )
+  )
+)
+
+===========================================================================================
+map_block_nested
+===========================================================================================
+
+return
+  'foo': 42
+  bar:
+    baz: 99
+  qux: 'hi'
+
+---
+
+(module
+  (return
+    (map_block
+      (entry_block
+        key: (string)
+        value: (number)
+      )
+      (entry_block
+        key: (identifier)
+        value: (map_block
+          (entry_block
+            key: (identifier)
+            value: (number)
+          )
+        )
+      )
+      (entry_block
+        key: (identifier)
+        value: (string)
+      )
+    )
+  )
+)
+
+===========================================================================================
+map_block_meta
+===========================================================================================
+
+return
+  @+: null
+  @test foo: true
+
+---
+
+(module
+  (return
+    (map_block
+      (entry_block
+        key: (meta)
+        value: (null)
+      )
+      (entry_block
+        key: (meta name: (identifier))
+        value: (true)
+      )
+    )
+  )
+)
+

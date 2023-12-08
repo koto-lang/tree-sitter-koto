@@ -51,6 +51,7 @@ enum TokenType {
   BLOCK_START,
   BLOCK_CONTINUE,
   BLOCK_END,
+  MAP_BLOCK_START,
   INDENTED_LINE,
   ERROR_SENTINEL,
 };
@@ -94,6 +95,59 @@ static void skip_whitespace(TSLexer* lexer) {
     printf("...skipping (%u)\n", next);
     advance(lexer);
   }
+}
+
+static void skip_string(TSLexer* lexer, bool multiline) {
+  const char end = lexer->lookahead;
+  advance(lexer);
+  while (true) {
+    const char next = lexer->lookahead;
+
+    switch (next) {
+    case '\'':
+    case '"':
+      if (next == end) {
+        advance(lexer);
+        return;
+      }
+      skip_string(lexer, multiline);
+      break;
+
+    case '\n':
+      if (!multiline) {
+        return;
+      }
+    }
+
+    advance(lexer);
+  }
+}
+
+static bool line_starts_with_map_key(TSLexer* lexer) {
+  // This is called at the first non-whitespace character,
+  // skip forward to see if the line starts with a map key,
+  const uint16_t line_start = lexer->get_column(lexer);
+  while (true) {
+    switch (lexer->lookahead) {
+    case ':':
+      return lexer->get_column(lexer) > line_start;
+
+    case '\'':
+    case '"':
+      skip_string(lexer, false);
+      break;
+
+    case '{': // prevent keys in inline maps from being detected
+    case '\n':
+    case '\0':
+      return false;
+
+    default:
+      advance(lexer);
+    }
+  }
+
+  return false;
 }
 
 bool tree_sitter_koto_external_scanner_scan(
@@ -148,14 +202,24 @@ bool tree_sitter_koto_external_scanner_scan(
         scanner->indents.len,
         newline);
 
-    bool found_token = false;
+    // The scanner doesn't currently consume any non-whitespace tokens,
+    // so mark the end here.
+    lexer->mark_end(lexer);
 
+    // Map block start?
+    if (valid_symbols[MAP_BLOCK_START] && newline && column > block_indent
+        && line_starts_with_map_key(lexer)) {
+      printf(">>>> map block start: %u\n", column);
+      VEC_PUSH(scanner->indents, column);
+      lexer->result_symbol = MAP_BLOCK_START;
+      return true;
+    }
     // Block start?
-    if (valid_symbols[BLOCK_START] && newline && column > block_indent) {
+    else if (valid_symbols[BLOCK_START] && newline && column > block_indent) {
       printf(">>>> block start: %u\n", column);
       VEC_PUSH(scanner->indents, column);
       lexer->result_symbol = BLOCK_START;
-      found_token = true;
+      return true;
     }
     // Block continue?
     else if (
@@ -163,7 +227,7 @@ bool tree_sitter_koto_external_scanner_scan(
         && column == block_indent) {
       printf(">>>> block continue: %u\n", column);
       lexer->result_symbol = BLOCK_CONTINUE;
-      found_token = true;
+      return true;
     }
     // Block end?
     else if (
@@ -173,23 +237,18 @@ bool tree_sitter_koto_external_scanner_scan(
       VEC_POP(scanner->indents);
       scanner->block_just_ended = true;
       lexer->result_symbol = BLOCK_END;
-      found_token = true;
+      return true;
     }
     // Indented line?
     else if (valid_symbols[INDENTED_LINE] && newline && column > block_indent) {
       printf(">>>> indented line\n");
       lexer->result_symbol = INDENTED_LINE;
-      found_token = true;
+      return true;
     }
     // Newline?
     else if (valid_symbols[NEWLINE] && newline) {
       printf(">>>> newline!\n");
       lexer->result_symbol = NEWLINE;
-      found_token = true;
-    }
-
-    if (found_token) {
-      lexer->mark_end(lexer);
       return true;
     }
   }

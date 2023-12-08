@@ -1,27 +1,30 @@
 /// <reference types="tree-sitter-cli/dsl" />
 
 const PREC = {
-  block: 1,
-  comma: 2,
-  if: 3,
-  not: 4,
-  pipe: 5,
-  range: 6,
-  assign: 7,
-  or: 8,
-  and: 9,
-  equality: 10,
-  comparison: 11,
-  add: 12,
-  multiply: 13,
-  unary: 14,
-  negate: 15,
-  debug: 16,
-  call: 17,
-  return: 18,
+  map_block: 1,
+  block: 2,
+  comma: 3,
+  if: 4,
+  not: 5,
+  pipe: 6,
+  range: 7,
+  assign: 8,
+  or: 9,
+  and: 10,
+  equality: 11,
+  comparison: 12,
+  add: 13,
+  multiply: 14,
+  unary: 15,
+  negate: 16,
+  debug: 17,
+  call: 18,
+  keyword: 19,
+  meta: 21,
 };
 
 const id = /[\p{XID_Start}_][\p{XID_Continue}]*/u;
+const meta_id = /@[\p{XID_Start}][\p{XID_Continue}]*/u;
 
 module.exports = grammar({
   name: 'koto',
@@ -36,6 +39,7 @@ module.exports = grammar({
     $._block_start,
     $._block_continue,
     $._block_end,
+    $._map_block_start,
     $._indented_line,
     $.error_sentinel,
   ],
@@ -65,6 +69,8 @@ module.exports = grammar({
       $.meta,
       $.tuple,
       $.list,
+      $.map,
+      $.map_block,
       $.if,
       $.for,
       $.while,
@@ -172,21 +178,40 @@ module.exports = grammar({
     )),
 
     identifier: _ => id,
-    meta: $ => token(seq('@', id)),
 
-    debug: $ => prec(PREC.debug, seq('debug', $._expression)),
-    negate: $ => prec(PREC.negate, (seq('-', $._expression))),
-    not: $ => prec(PREC.not, seq('not', $._expression)),
-
-    return: $ => prec.right(PREC.return, seq(
-      'return',
-      optional($._expression),
-    )),
-
-    yield: $ => seq(
-      'yield',
-      $._expression,
+    meta: $ => choice(
+      prec.right(PREC.meta,
+        seq(
+          meta_id,
+          optional(field('name', $.identifier)),
+        ),
+      ),
+      '@[]',
+      '@||',
+      '@+',
+      '@-',
+      '@*',
+      '@/',
+      '@%',
+      '@+=',
+      '@-=',
+      '@*=',
+      '@/=',
+      '@%=',
+      '@==',
+      '@!=',
+      '@>',
+      '@>=',
+      '@<',
+      '@<=',
     ),
+
+    negate: $ => prec(PREC.negate, (seq('-', $._expression))),
+
+    debug: $ => keyword_expression($, 'debug'),
+    not: $ => keyword_expression($, 'not'),
+    return: $ => keyword_expression($, 'return'),
+    yield: $ => keyword_expression($, 'yield'),
 
     number: _ => token(
       choice(
@@ -209,6 +234,50 @@ module.exports = grammar({
     list: $ => choice(
       seq('[', optional(','), ']'),
       seq('[', $._contained_expressions, ']'),
+    ),
+
+    map: $ => seq(
+      '{',
+      optional(seq(
+        $.entry_inline,
+        repeat(seq(
+          ',',
+          $.entry_inline,
+        ))
+      )),
+      '}'
+    ),
+
+    entry_inline: $ => seq(
+      field('key', $._map_key),
+      optional(seq(
+        ':',
+        field('value', $._expression),
+      )),
+    ),
+
+    map_block: $ => prec.right(PREC.map_block, seq(
+      $._map_block_start,
+      $.entry_block,
+      repeat(
+        seq(
+          repeat1($._block_continue),
+          $.entry_block,
+        )
+      ),
+      $._block_end,
+    )),
+
+    entry_block: $ => seq(
+      field('key', $._map_key),
+      ':',
+      field('value', $._expression),
+    ),
+
+    _map_key: $ => choice(
+      $.identifier,
+      $.meta,
+      $.string,
     ),
 
     string: $ => choice(
@@ -373,3 +442,10 @@ function binary_op($, operator, precedence_fn, precedence) {
     $._expression
   ));
 }
+
+function keyword_expression($, keyword) {
+  return prec.right(PREC.keyword, seq(
+    keyword,
+    optional(seq(repeat($._indented_line), $._expression)),
+  ));
+}       
