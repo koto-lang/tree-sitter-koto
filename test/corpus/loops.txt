@@ -1,0 +1,106 @@
+===========================================================================================
+for_single_arg
+===========================================================================================
+
+for i in foo
+  i
+
+---
+
+(module
+  (for
+    args: (for_args (identifier))
+    range: (identifier)
+    body: (block (identifier))
+  )
+)
+
+===========================================================================================
+for_multi_arg
+===========================================================================================
+
+for a, _, c in foo
+  a
+  c
+
+---
+
+(module
+  (for
+    args: (for_args (identifier) (identifier) (identifier))
+    range: (identifier)
+    body: (block (identifier) (identifier))
+  )
+)
+
+===========================================================================================
+until
+===========================================================================================
+
+until foo()
+  x += 1
+
+---
+
+(module
+  (until
+    condition: (call name: (identifier) arg: (tuple))
+    body: (block
+      (modify_assign (identifier) (number))
+    )
+  )
+)
+
+===========================================================================================
+while
+===========================================================================================
+
+while i > 0
+  print i
+  i -= 1
+
+---
+
+(module
+  (while
+    condition: (comparison_op (identifier) (number))
+    body: (block
+      (call
+        name: (identifier)
+        arg: (identifier)
+      )
+      (modify_assign (identifier) (number))
+    )
+  )
+)
+
+===========================================================================================
+loop
+===========================================================================================
+
+loop
+  if i > 10
+    break
+  else
+    i += 1
+    continue
+
+---
+
+(module
+  (loop
+    (block
+      (if
+        condition: (comparison_op
+          (identifier)
+          (number)
+        )
+        then: (block (break))
+        else: (block
+          (modify_assign (identifier) (number))
+          (continue)
+        )
+      )
+    )
+  )
+)

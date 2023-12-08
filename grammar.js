@@ -66,10 +66,16 @@ module.exports = grammar({
       $.tuple,
       $.list,
       $.if,
+      $.for,
+      $.while,
+      $.until,
+      $.loop,
       $.function,
       $.call,
       $.return,
       $.yield,
+      $.break,
+      $.continue,
       $.debug,
       $._unary_op,
       $.assign,
@@ -153,10 +159,12 @@ module.exports = grammar({
       binary_op($, 'or', prec.right, PREC.or),
     ),
 
-    self: _ => 'self',
-    true: _ => 'true',
+    break: _ => 'break',
+    continue: _ => 'continue',
     false: _ => 'false',
     null: _ => 'null',
+    self: _ => 'self',
+    true: _ => 'true',
 
     comment: _ => token(choice(
       /#.*/, // Single-line comment
@@ -255,6 +263,41 @@ module.exports = grammar({
           )
         ),
       )),
+    ),
+
+    for: $ => seq(
+      'for',
+      field('args', $.for_args),
+      'in',
+      field('range', $._expression),
+      field('body', $.block),
+    ),
+
+    for_args: $ => seq(
+      $.identifier,
+      repeat(
+        seq(
+          ',',
+          $.identifier,
+        )
+      ),
+    ),
+
+    until: $ => seq(
+      'until',
+      field('condition', $._expression),
+      field('body', $.block),
+    ),
+
+    while: $ => seq(
+      'while',
+      field('condition', $._expression),
+      field('body', $.block),
+    ),
+
+    loop: $ => seq(
+      'loop',
+      $.block,
     ),
 
     function: $ => seq(

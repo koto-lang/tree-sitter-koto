@@ -20,15 +20,28 @@
 
 [
   "and"
+  (break)
+  (continue)
   "not"
   "or"
+  "return"
+  "yield"
+] @keyword
+
+[
   "if"
   "then"
   "else"
   "else if"
-  "return"
-  "yield"
-] @keyword
+] @conditional
+
+[
+  "for"
+  "in"
+  "loop"
+  "until"
+  "while"
+] @repeat
 
 ["(" ")" "[" "]" "|"] @punctuation.bracket
 
