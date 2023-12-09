@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#if 1
+#if 0
 #define printf(...)
 #endif
 

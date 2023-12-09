@@ -16,12 +16,12 @@ const PREC = {
   add: 14,
   multiply: 15,
   unary: 16,
-  negate: 17,
+  chain: 17,
   debug: 18,
   call: 19,
-  keyword: 20,
+  negate: 20,
+  keyword: 21,
   meta: 22,
-  chain: 31,
 };
 
 const id = /[\p{XID_Start}_][\p{XID_Continue}]*/u;
@@ -47,8 +47,7 @@ module.exports = grammar({
 
   conflicts: $ => [
     [$.assign, $.modify_assign, $.binary_op, $.comparison_op, $.boolean_op],
-    [$._expression, $._chain_start],
-    [$.call, $.chain],
+    [$._expression, $._term],
   ],
 
   word: $ => $.identifier,
@@ -66,8 +65,8 @@ module.exports = grammar({
 
     _expression: $ => choice(
       $._term,
-      $.meta,
       $.chain,
+      $.meta,
       $.map_block,
       $.if,
       $.for,
@@ -97,6 +96,22 @@ module.exports = grammar({
       $.list,
       $.map,
     ),
+
+    chain: $ => prec.left(PREC.chain, seq(
+      field('start', $._term),
+      repeat1(
+        seq(
+          repeat($._indented_line),
+          field('node', choice(
+            $._dot_term,
+            // $._term,
+          ))
+        )
+      ),
+      optional($.call)
+    )),
+
+    _dot_term: $ => seq($.dot, $._term),
 
     _expressions: $ => prec.left(PREC.comma, list_of($._expression, ',')),
 
@@ -233,30 +248,8 @@ module.exports = grammar({
       ),
     ),
 
-    chain: $ => prec.right(PREC.chain,
-      seq(
-        field('start', $._chain_start),
-        repeat(
-          seq(
-            repeat($._indented_line),
-            field('node', $._chain_continue),
-          )
-        ),
-        optional($.call)
-      )
-    ),
-
-    _chain_start: $ => choice(
-      $._term,
-    ),
-
-    _chain_continue: $ => choice(
-      $._chain_start,
-      seq($.dot, $._chain_start),
-    ),
-
     // Used to capture parentheses-free function calls
-    call: $ => prec.right(PREC.call, seq(
+    call: $ => prec.left(PREC.call, seq(
       repeat($._indented_line),
       $._expression,
       repeat(seq(
