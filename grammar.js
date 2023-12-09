@@ -1,26 +1,27 @@
 /// <reference types="tree-sitter-cli/dsl" />
 
 const PREC = {
-  map_block: 1,
-  block: 2,
-  comma: 3,
-  if: 4,
-  not: 5,
-  pipe: 6,
-  range: 7,
-  assign: 8,
-  or: 9,
-  and: 10,
-  equality: 11,
-  comparison: 12,
-  add: 13,
-  multiply: 14,
-  unary: 15,
-  negate: 16,
-  debug: 17,
-  call: 18,
-  keyword: 19,
-  meta: 21,
+  map_block: 2,
+  block: 3,
+  comma: 4,
+  if: 5,
+  not: 6,
+  pipe: 7,
+  range: 8,
+  assign: 9,
+  or: 10,
+  and: 11,
+  equality: 12,
+  comparison: 13,
+  add: 14,
+  multiply: 15,
+  unary: 16,
+  negate: 17,
+  debug: 18,
+  call: 19,
+  keyword: 20,
+  meta: 22,
+  chain: 31,
 };
 
 const id = /[\p{XID_Start}_][\p{XID_Continue}]*/u;
@@ -46,6 +47,8 @@ module.exports = grammar({
 
   conflicts: $ => [
     [$.assign, $.modify_assign, $.binary_op, $.comparison_op, $.boolean_op],
+    [$._expression, $._chain_start],
+    [$.call, $.chain],
   ],
 
   word: $ => $.identifier,
@@ -62,14 +65,9 @@ module.exports = grammar({
     ),
 
     _expression: $ => choice(
-      $._constants,
-      $.number,
-      $.string,
-      $.identifier,
+      $._term,
       $.meta,
-      $.tuple,
-      $.list,
-      $.map,
+      $.chain,
       $.map_block,
       $.if,
       $.for,
@@ -77,7 +75,6 @@ module.exports = grammar({
       $.until,
       $.loop,
       $.function,
-      $.call,
       $.return,
       $.yield,
       $.break,
@@ -89,6 +86,16 @@ module.exports = grammar({
       $.binary_op,
       $.comparison_op,
       $.boolean_op,
+    ),
+
+    _term: $ => choice(
+      $._constants,
+      $.number,
+      $.string,
+      $.identifier,
+      $.tuple,
+      $.list,
+      $.map,
     ),
 
     _expressions: $ => prec.left(PREC.comma, list_of($._expression, ',')),
@@ -226,6 +233,42 @@ module.exports = grammar({
       ),
     ),
 
+    chain: $ => prec.right(PREC.chain,
+      seq(
+        field('start', $._chain_start),
+        repeat(
+          seq(
+            repeat($._indented_line),
+            field('node', $._chain_continue),
+          )
+        ),
+        optional($.call)
+      )
+    ),
+
+    _chain_start: $ => choice(
+      $._term,
+    ),
+
+    _chain_continue: $ => choice(
+      $._chain_start,
+      seq($.dot, $._chain_start),
+    ),
+
+    // Used to capture parentheses-free function calls
+    call: $ => prec.right(PREC.call, seq(
+      repeat($._indented_line),
+      $._expression,
+      repeat(seq(
+        repeat($._indented_line),
+        ',',
+        repeat($._indented_line),
+        $._expression,
+      ))
+    )),
+
+    dot: _ => '.',
+
     tuple: $ => choice(
       seq('(', optional(','), ')'),
       seq('(', $._contained_expressions, ')'),
@@ -284,18 +327,6 @@ module.exports = grammar({
       string($, '\''),
       string($, '\"'),
     ),
-
-    call: $ => prec.right(PREC.call, seq(
-      field('name', $.identifier),
-      repeat($._indented_line),
-      field('arg', $._expression),
-      repeat(seq(
-        repeat($._indented_line),
-        ',',
-        repeat($._indented_line),
-        field('arg', $._expression),
-      ))
-    )),
 
     if: $ => choice(
       // Inline if
