@@ -16,12 +16,13 @@ const PREC = {
   add: 14,
   multiply: 15,
   unary: 16,
-  chain: 17,
-  debug: 18,
-  call: 19,
-  negate: 20,
-  keyword: 21,
-  meta: 22,
+  chain: 117,
+  chain_continued: 118,
+  debug: 19,
+  call: 20,
+  negate: 21,
+  keyword: 22,
+  meta: 23,
 };
 
 const id = /[\p{XID_Start}_][\p{XID_Continue}]*/u;
@@ -47,7 +48,6 @@ module.exports = grammar({
 
   conflicts: $ => [
     [$.assign, $.modify_assign, $.binary_op, $.comparison_op, $.boolean_op],
-    [$._expression, $._term],
   ],
 
   word: $ => $.identifier,
@@ -88,7 +88,10 @@ module.exports = grammar({
     ),
 
     _term: $ => choice(
-      $._constants,
+      $.self,
+      $.true,
+      $.false,
+      $.null,
       $.number,
       $.string,
       $.identifier,
@@ -97,21 +100,27 @@ module.exports = grammar({
       $.map,
     ),
 
-    chain: $ => prec.left(PREC.chain, seq(
+    chain: $ => prec.right(PREC.chain, seq(
       field('start', $._term),
-      repeat1(
-        seq(
-          repeat($._indented_line),
-          field('node', choice(
-            $._dot_term,
-            // $._term,
-          ))
-        )
-      ),
-      optional($.call)
+      $._chain_continued,
+      optional(repeat1($._chain_continued)),
+      // optional($.call),
     )),
 
-    _dot_term: $ => seq($.dot, $._term),
+    _chain_continued: $ => prec.right(PREC.chain_continued, field('node', choice(
+      $._chain_node,
+      seq($.dot, $._chain_node_ext),
+    ))),
+
+    _chain_node: $ => prec.right(PREC.chain_continued, choice(
+      $.tuple,
+      $.list,
+    )),
+
+    _chain_node_ext: $ => prec.right(PREC.chain_continued, choice(
+      $._chain_node,
+      $.identifier,
+    )),
 
     _expressions: $ => prec.left(PREC.comma, list_of($._expression, ',')),
 
@@ -142,13 +151,6 @@ module.exports = grammar({
       ),
       $._block_end,
     )),
-
-    _constants: $ => choice(
-      $.self,
-      $.true,
-      $.false,
-      $.null,
-    ),
 
     _unary_op: $ => choice(
       $.not,
