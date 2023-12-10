@@ -72,6 +72,7 @@ module.exports = grammar({
       $.map,
       $.map_block,
       $.if,
+      $.switch,
       $.for,
       $.while,
       $.until,
@@ -332,6 +333,44 @@ module.exports = grammar({
           )
         ),
       )),
+    ),
+
+    switch: $ => seq(
+      'switch',
+      $._block_start,
+      choice(
+        seq(
+          repeat1($.switch_arm),
+          optional(
+            $._else_arm,
+          ),
+        ),
+        $._else_arm,
+      ),
+      $._block_end,
+    ),
+
+    switch_arm: $ => seq(
+      $._block_continue,
+      field('condition', $._expression),
+      'then',
+      field('then',
+        choice(
+          $._expressions,
+          $.block,
+        ),
+      )
+    ),
+
+    _else_arm: $ => seq(
+      $._block_continue,
+      'else',
+      field('else',
+        choice(
+          $._expressions,
+          $.block,
+        )
+      )
     ),
 
     for: $ => seq(

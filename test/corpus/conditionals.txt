@@ -88,3 +88,84 @@ else
     else: (block (identifier))
   )
 )
+
+===========================================================================================
+switch_single_arm
+===========================================================================================
+
+switch
+  n == 1 then 'foo'
+
+---
+
+(module
+  (switch
+    (switch_arm
+      condition: (comparison_op (identifier) (number))
+      then: (string)
+    )
+  )
+)
+
+===========================================================================================
+switch_simple_arms
+===========================================================================================
+
+switch
+  n <= 0 then 0
+  n == 1 then 1
+  else 2
+
+---
+
+(module
+  (switch
+    (switch_arm
+      condition: (comparison_op (identifier) (number))
+      then: (number)
+    )
+    (switch_arm
+      condition: (comparison_op (identifier) (number))
+      then: (number)
+    )
+    else: (number)
+  )
+)
+
+
+===========================================================================================
+switch_arms_with_bodies
+===========================================================================================
+
+switch
+  n <= 0 then 
+    foo
+    bar
+  n == 1 then 
+    'hello'
+    42
+  else 
+    99
+
+---
+
+(module
+  (switch
+    (switch_arm
+      condition: (comparison_op (identifier) (number))
+      then: (block
+        (identifier)
+        (identifier)
+      )
+    )
+    (switch_arm
+      condition: (comparison_op (identifier) (number))
+      then: (block
+        (string)
+        (number)
+      )
+    )
+    else: (block (number))
+  )
+)
+

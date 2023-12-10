@@ -72,16 +72,16 @@ static IndentVec new_indent_vec() {
 typedef struct {
   // Keeping track of the block indent levels
   IndentVec indents;
-  // If the previous token was a block end, then subsequent block ends and continues can
-  // be generated without newlines.
-  bool block_just_ended;
+  // If the previous token was a block start or end, 
+  // then subsequent block ends and continues can be generated without newlines.
+  bool block_level_just_changed;
 } Scanner;
 
 static void initialize_scanner(Scanner* scanner) {
   // Ensure that the scanner is initialized with an indent at 0
   VEC_CLEAR(scanner->indents);
   VEC_PUSH(scanner->indents, 0);
-  scanner->block_just_ended = false;
+  scanner->block_level_just_changed = false;
 }
 
 static void skip_whitespace(TSLexer* lexer) {
@@ -192,8 +192,8 @@ bool tree_sitter_koto_external_scanner_scan(
 
     const uint16_t block_indent = VEC_BACK(scanner->indents);
     const uint16_t column = lexer->get_column(lexer);
-    const bool block_just_ended = scanner->block_just_ended;
-    scanner->block_just_ended = false;
+    const bool block_just_ended = scanner->block_level_just_changed;
+    scanner->block_level_just_changed = false;
 
     printf(
         "scanner.scan: column: %u, block_indent: %u num_indents: %u newline: %i\n",
@@ -211,6 +211,7 @@ bool tree_sitter_koto_external_scanner_scan(
         && line_starts_with_map_key(lexer)) {
       printf(">>>> map block start: %u\n", column);
       VEC_PUSH(scanner->indents, column);
+      scanner->block_level_just_changed = true;
       lexer->result_symbol = MAP_BLOCK_START;
       return true;
     }
@@ -218,6 +219,7 @@ bool tree_sitter_koto_external_scanner_scan(
     else if (valid_symbols[BLOCK_START] && newline && column > block_indent) {
       printf(">>>> block start: %u\n", column);
       VEC_PUSH(scanner->indents, column);
+      scanner->block_level_just_changed = true;
       lexer->result_symbol = BLOCK_START;
       return true;
     }
@@ -235,7 +237,7 @@ bool tree_sitter_koto_external_scanner_scan(
         && column < block_indent) {
       printf(">>>> block end: %u\n", column);
       VEC_POP(scanner->indents);
-      scanner->block_just_ended = true;
+      scanner->block_level_just_changed = true;
       lexer->result_symbol = BLOCK_END;
       return true;
     }
@@ -272,7 +274,7 @@ unsigned tree_sitter_koto_external_scanner_serialize(void* payload, char* buffer
   memcpy(write_ptr, scanner->indents.data, indents_size);
   write_ptr += indents_size;
 
-  *write_ptr++ = scanner->block_just_ended;
+  *write_ptr++ = scanner->block_level_just_changed;
 
   return write_ptr - buffer;
 }
@@ -300,7 +302,7 @@ void tree_sitter_koto_external_scanner_deserialize(
       VEC_PUSH(scanner->indents, indent);
     }
 
-    scanner->block_just_ended = *read_ptr++;
+    scanner->block_level_just_changed = *read_ptr++;
   }
 }
 
