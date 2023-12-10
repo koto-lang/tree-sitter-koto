@@ -65,7 +65,6 @@ module.exports = grammar({
 
     _expression: $ => choice(
       $._term,
-      $.chain,
       $.meta,
       $.map_block,
       $.if,
@@ -85,6 +84,7 @@ module.exports = grammar({
       $.binary_op,
       $.comparison_op,
       $.boolean_op,
+      $.chain,
     ),
 
     _term: $ => choice(
@@ -102,13 +102,8 @@ module.exports = grammar({
 
     chain: $ => prec.right(PREC.chain, seq(
       field('start', $._term),
-      choice(
-        seq(
-          repeat1($._chain_continued),
-          optional($.call),
-        ),
-        $.call,
-      )
+      repeat1($._chain_continued),
+      optional($.call),
     )),
 
     _chain_continued: $ => prec.right(PREC.chain_continued, field('node',
