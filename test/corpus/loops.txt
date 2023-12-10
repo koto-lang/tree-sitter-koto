@@ -46,7 +46,7 @@ until foo()
   (until
     condition: (chain
       start: (identifier)
-      (call (tuple))
+      node: (tuple)
     )
     body: (block
       (modify_assign (identifier) (number))

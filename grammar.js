@@ -15,9 +15,9 @@ const PREC = {
   comparison: 13,
   add: 14,
   multiply: 15,
-  unary: 16,
-  chain: 117,
-  chain_continued: 118,
+  chain: 1,
+  chain_continued: 1,
+  unary: 18,
   debug: 19,
   call: 20,
   negate: 21,
@@ -102,15 +102,24 @@ module.exports = grammar({
 
     chain: $ => prec.right(PREC.chain, seq(
       field('start', $._term),
-      $._chain_continued,
-      optional(repeat1($._chain_continued)),
-      // optional($.call),
+      choice(
+        seq(
+          repeat1($._chain_continued),
+          optional($.call),
+        ),
+        $.call,
+      )
     )),
 
-    _chain_continued: $ => prec.right(PREC.chain_continued, field('node', choice(
-      $._chain_node,
-      seq($.dot, $._chain_node_ext),
-    ))),
+    _chain_continued: $ => prec.right(PREC.chain_continued, field('node',
+      seq(
+        repeat($._indented_line),
+        choice(
+          $._chain_node,
+          seq($.dot, $._chain_node_ext),
+        ),
+      )
+    )),
 
     _chain_node: $ => prec.right(PREC.chain_continued, choice(
       $.tuple,

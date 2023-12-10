@@ -105,3 +105,31 @@ x[0][1]
   )
 )
 
+===========================================================================================
+calls_without_parentheses
+===========================================================================================
+
+f x
+f g 1, 2
+
+---
+
+(module
+  (chain
+    start: (identifier)
+    (call (identifier))
+  )
+  (chain
+    start: (identifier)
+    (call
+      (chain
+        start: (identifier)
+        (call
+         (number)
+         (number)
+        )
+      )
+    )
+  )
+)
+
