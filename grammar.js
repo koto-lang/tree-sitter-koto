@@ -85,6 +85,7 @@ module.exports = grammar({
       $.comparison_op,
       $.boolean_op,
       $.chain,
+      $.chained_call,
     ),
 
     _term: $ => choice(
@@ -103,12 +104,18 @@ module.exports = grammar({
     chain: $ => prec.right(PREC.chain, seq(
       field('start', $._term),
       repeat1($._chain_continued),
-      optional($.call),
+    )),
+
+    chained_call: $ => prec.right(PREC.chain, seq(
+      field('start', $._term),
+      // repeat($._chain_continued),
+      $.call,
     )),
 
     _chain_continued: $ => prec.right(PREC.chain_continued, field('node',
       seq(
-        repeat($._indented_line),
+        // This breaks multi line binary op parsing?
+        // repeat($._indented_line),
         choice(
           $._chain_node,
           seq($.dot, $._chain_node_ext),
