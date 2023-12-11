@@ -33,6 +33,7 @@
   "then"
   "else"
   "else if"
+  "match"
   "switch"
 ] @conditional
 

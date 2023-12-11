@@ -61,7 +61,7 @@ module.exports = grammar({
       ),
     ),
 
-    _expression: $ => choice(
+    _term: $ => choice(
       $._constants,
       $.number,
       $.string,
@@ -70,9 +70,16 @@ module.exports = grammar({
       $.tuple,
       $.list,
       $.map,
+      $.negate,
+      $.not,
+    ),
+
+    _expression: $ => choice(
+      $._term,
       $.map_block,
       $.if,
       $.switch,
+      $.match,
       $.for,
       $.while,
       $.until,
@@ -84,7 +91,6 @@ module.exports = grammar({
       $.break,
       $.continue,
       $.debug,
-      $._unary_op,
       $.assign,
       $.modify_assign,
       $.binary_op,
@@ -92,7 +98,20 @@ module.exports = grammar({
       $.boolean_op,
     ),
 
-    _expressions: $ => prec.left(PREC.comma, list_of($._expression, ',')),
+    terms: $ => seq(
+      $._term,
+      repeat1(seq(',', $._term))
+    ),
+
+    expressions: $ => prec.left(PREC.comma, seq(
+      $._expression,
+      repeat1(seq(',', $._expression))
+    )),
+
+    _expressions: $ => choice(
+      $._expression,
+      $.expressions,
+    ),
 
     // comma-separated expressions with flexible newline rules
     _contained_expressions: $ => seq(
@@ -127,11 +146,6 @@ module.exports = grammar({
       $.true,
       $.false,
       $.null,
-    ),
-
-    _unary_op: $ => choice(
-      $.not,
-      $.negate,
     ),
 
     assign: $ => binary_op($, '=', prec.right, PREC.assign),
@@ -360,6 +374,43 @@ module.exports = grammar({
           $.block,
         ),
       )
+    ),
+
+    match: $ => seq(
+      'match',
+      $._expressions,
+      $._block_start,
+      seq(
+        repeat1($.match_arm),
+        optional(
+          $._else_arm,
+        ),
+      ),
+      $._block_end,
+    ),
+
+    match_arm: $ => seq(
+      $._block_continue,
+      $.match_patterns,
+      optional(field('condition', seq(
+        'if',
+        $._expression,
+      ))),
+      'then',
+      field('then',
+        choice(
+          $._expressions,
+          $.block,
+        ),
+      )
+    ),
+
+    match_patterns: $ => seq(
+      choice($._term, $.terms),
+      repeat(seq(
+        'or',
+        choice($._term, $.terms),
+      ))
     ),
 
     _else_arm: $ => seq(

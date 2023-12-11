@@ -33,9 +33,11 @@ foo, 'bar', 123
 ---
 
 (module
-  (identifier)
-  (string)
-  (number)
+  (expressions
+    (identifier)
+    (string)
+    (number)
+  )
 )
 
 ===========================================================================================
