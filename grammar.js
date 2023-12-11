@@ -4,25 +4,25 @@ const PREC = {
   map_block: 1,
   block: 2,
   comma: 3,
-  if: 4,
-  not: 5,
-  pipe: 6,
-  range: 7,
-  assign: 8,
-  or: 9,
-  and: 10,
-  equality: 11,
-  comparison: 12,
-  add: 13,
-  multiply: 14,
-  unary: 15,
-  negate: 16,
-  debug: 17,
-  call: 18,
-  keyword: 19,
-  meta: 21,
-  import: 22,
-  chain: 23,
+  range: 4,
+  if: 5,
+  not: 6,
+  pipe: 7,
+  assign: 9,
+  or: 10,
+  and: 11,
+  equality: 12,
+  comparison: 13,
+  add: 14,
+  multiply: 15,
+  unary: 16,
+  negate: 17,
+  debug: 18,
+  call: 19,
+  keyword: 20,
+  meta: 22,
+  import: 23,
+  chain: 24,
 };
 
 const id = /[\p{XID_Start}_][\p{XID_Continue}]*/u;
@@ -101,6 +101,8 @@ module.exports = grammar({
       $.binary_op,
       $.comparison_op,
       $.boolean_op,
+      $.range,
+      $.range_inclusive,
     ),
 
     terms: $ => seq(
@@ -166,6 +168,7 @@ module.exports = grammar({
 
     assign: $ => binary_op($, '=', prec.right, PREC.assign),
 
+
     modify_assign: $ => choice(
       binary_op($, '-=', prec.right, PREC.assign),
       binary_op($, '+=', prec.right, PREC.assign),
@@ -195,6 +198,28 @@ module.exports = grammar({
       binary_op($, 'and', prec.right, PREC.and),
       binary_op($, 'or', prec.right, PREC.or),
     ),
+
+    range: $ => prec.right(PREC.range, seq(
+      $._expression, '..', $._expression
+    )),
+
+    range_inclusive: $ => prec.right(PREC.range, seq(
+      $._expression, '..=', $._expression
+    )),
+
+    range_from: $ => prec.right(PREC.range, seq(
+      $._expression, '..'
+    )),
+
+    range_to: $ => prec.right(PREC.range, seq(
+      '..', $._expression
+    )),
+
+    range_to_inclusive: $ => prec.right(PREC.range, seq(
+      '..=', $._expression
+    )),
+
+    range_full: _ => '..',
 
     break: _ => 'break',
     continue: _ => 'continue',
@@ -247,8 +272,10 @@ module.exports = grammar({
 
     number: _ => token(
       choice(
-        // Ints / Floats
-        seq(/\d+/, optional('.'), optional(/\d+/), optional(/e[+-]?\d+/)),
+        // Ints 
+        seq(/\d+/, optional(/e[+-]?\d+/)),
+        // Floats 
+        seq(/\d+/, '.', /\d+/, optional(/e[+-]?\d+/)),
         // Binary
         /0b[01]+/,
         // Octal

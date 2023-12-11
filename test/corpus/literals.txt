@@ -84,6 +84,7 @@ ranges
 
 1..2
 1 + 1..2 + 3
+1..=10
 
 ---
 
@@ -93,6 +94,7 @@ ranges
     (binary_op (number) (number))
     (binary_op (number) (number))
   )
+  (range_inclusive (number) (number))
 )
 
 ===========================================================================================
