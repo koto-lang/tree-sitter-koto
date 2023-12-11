@@ -62,6 +62,7 @@
 (export (identifier) @namespace)
 
 (chain lookup: (identifier) @field)
+(chain start: (identifier) @function)
 
 [(true) (false)] @boolean
 (comment) @comment
@@ -73,7 +74,6 @@
 (meta name: (identifier) @field) 
 (self) @variable.builtin
 
-(call name: (identifier) @function)
 (arg (identifier) @parameter)
 (ellipsis) @parameter
 

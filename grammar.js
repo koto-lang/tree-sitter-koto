@@ -48,6 +48,8 @@ module.exports = grammar({
 
   conflicts: $ => [
     [$.assign, $.modify_assign, $.binary_op, $.comparison_op, $.boolean_op],
+    [$._term, $.chain],
+    [$._contained_expressions, $._index],
   ],
 
   word: $ => $.identifier,
@@ -88,7 +90,6 @@ module.exports = grammar({
       $.until,
       $.loop,
       $.function,
-      $.call,
       $.return,
       $.yield,
       $.break,
@@ -157,13 +158,41 @@ module.exports = grammar({
 
     chain: $ => prec.left(PREC.chain, seq(
       field('start', $._term),
-      repeat1(choice(
-        field('lookup', seq(
-          '.', choice($.identifier, $.string),
-        )),
-        field('call', $.tuple),
-        field('index', $.list),
-      )),
+      choice(
+        seq(
+          repeat1(choice(
+            field('lookup', seq(
+              '.', choice($.identifier, $.string),
+            )),
+            field('call', $.tuple),
+            field('index', $._index),
+          )),
+          optional($.call),
+        ),
+        $.call
+      )
+    )),
+
+    _index: $ => seq(
+      '[',
+      choice(
+        $._expression,
+        $.range_from,
+        $.range_to,
+        $.range_to_inclusive,
+        $.range_full,
+      ),
+      ']'
+    ),
+
+    call: $ => prec.right(PREC.call, seq(
+      $._expression,
+      repeat(seq(
+        repeat($._indented_line),
+        ',',
+        repeat($._indented_line),
+        $._expression,
+      ))
     )),
 
     assign: $ => binary_op($, '=', prec.right, PREC.assign),
@@ -343,18 +372,6 @@ module.exports = grammar({
       string($, '\''),
       string($, '\"'),
     ),
-
-    call: $ => prec.right(PREC.call, seq(
-      field('name', $.identifier),
-      repeat($._indented_line),
-      field('arg', $._expression),
-      repeat(seq(
-        repeat($._indented_line),
-        ',',
-        repeat($._indented_line),
-        field('arg', $._expression),
-      ))
-    )),
 
     if: $ => choice(
       // Inline if

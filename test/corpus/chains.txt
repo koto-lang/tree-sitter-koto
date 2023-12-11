@@ -21,3 +21,49 @@ a.b.c.d.e.f
     lookup: (identifier)
   )
 )
+
+===========================================================================================
+index_chain
+===========================================================================================
+
+a[1]
+a[1..]
+
+---
+
+(module
+  (chain
+    start: (identifier)
+    index: (number)
+  )
+  (chain
+    start: (identifier)
+    index: (range_from (number))
+  )
+)
+
+===========================================================================================
+function_call
+===========================================================================================
+
+f x
+f g 1, 2
+
+---
+
+(module
+  (chain
+    start: (identifier)
+    (call (identifier))
+  )
+  (chain
+    start: (identifier)
+    (call
+      (chain
+        start: (identifier)
+        (call (number) (number))
+      )
+    )
+  )
+)
+

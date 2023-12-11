@@ -44,7 +44,7 @@ until foo()
 
 (module
   (until
-    condition: (call name: (identifier) arg: (tuple))
+    condition: (chain start: (identifier) call: (tuple))
     body: (block
       (modify_assign (identifier) (number))
     )
@@ -65,9 +65,9 @@ while i > 0
   (while
     condition: (comparison_op (identifier) (number))
     body: (block
-      (call
-        name: (identifier)
-        arg: (identifier)
+      (chain
+        start: (identifier)
+        (call (identifier))
       )
       (modify_assign (identifier) (number))
     )
