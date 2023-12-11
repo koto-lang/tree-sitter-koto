@@ -21,7 +21,8 @@ const PREC = {
   call: 18,
   keyword: 19,
   meta: 21,
-  import: 22
+  import: 22,
+  chain: 23,
 };
 
 const id = /[\p{XID_Start}_][\p{XID_Continue}]*/u;
@@ -77,6 +78,7 @@ module.exports = grammar({
 
     _expression: $ => choice(
       $._term,
+      $.chain,
       $.map_block,
       $.if,
       $.switch,
@@ -150,6 +152,17 @@ module.exports = grammar({
       $.false,
       $.null,
     ),
+
+    chain: $ => prec.left(PREC.chain, seq(
+      field('start', $._term),
+      repeat1(choice(
+        field('lookup', seq(
+          '.', choice($.identifier, $.string),
+        )),
+        field('call', $.tuple),
+        field('index', $.list),
+      )),
+    )),
 
     assign: $ => binary_op($, '=', prec.right, PREC.assign),
 

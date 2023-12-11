@@ -1,0 +1,23 @@
+===========================================================================================
+simple_dot_chain
+===========================================================================================
+
+a.b
+a.b.c.d.e.f
+
+---
+
+(module
+  (chain
+    start: (identifier)
+    lookup: (identifier)
+  )
+  (chain
+    start: (identifier)
+    lookup: (identifier)
+    lookup: (identifier)
+    lookup: (identifier)
+    lookup: (identifier)
+    lookup: (identifier)
+  )
+)

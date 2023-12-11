@@ -1,0 +1,23 @@
+===========================================================================================
+dots_and_calls
+===========================================================================================
+
+a.b()
+a.b().c
+
+---
+
+(module
+  (chain
+    start: (identifier)
+    lookup: (identifier)
+    call: (tuple)
+  )
+  (chain
+    start: (identifier)
+    lookup: (identifier)
+    call: (tuple)
+    lookup: (identifier)
+  )
+)
+

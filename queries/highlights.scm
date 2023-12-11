@@ -59,6 +59,8 @@
 (import_items (identifier) @namespace)
 (export (identifier) @namespace)
 
+(chain lookup: (identifier) @field)
+
 [(true) (false)] @boolean
 (comment) @comment
 (debug) @debug
