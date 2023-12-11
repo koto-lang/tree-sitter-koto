@@ -43,6 +43,11 @@ module.exports = grammar({
     $._block_end,
     $._map_block_start,
     $._indented_line,
+    $.comment,
+    $._string_start,
+    $._string_end,
+    $._interpolation_start,
+    $._interpolation_end,
     $.error_sentinel,
   ],
 
@@ -256,11 +261,6 @@ module.exports = grammar({
     null: _ => 'null',
     self: _ => 'self',
     true: _ => 'true',
-
-    comment: _ => token(choice(
-      /#.*/, // Single-line comment
-      seq('#-', repeat(choice(/./, /\s/)), '-#'), // Multi-line comment
-    )),
 
     identifier: _ => id,
 
@@ -579,14 +579,23 @@ module.exports = grammar({
 
 function string($, quote) {
   return seq(
+    $._string_start,
     quote,
     repeat(choice(
       seq('$', $.identifier),
-      seq('${', $._expressions, '}'),
+      seq(
+        '${',
+        $._interpolation_start,
+        $._expressions,
+        $._interpolation_end,
+        '}',
+      ),
       /./,
       /\s/
     )),
-    quote);
+    $._string_end,
+    quote,
+  );
 }
 
 function any_amount_of() {

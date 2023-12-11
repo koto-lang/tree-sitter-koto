@@ -53,6 +53,11 @@ enum TokenType {
   BLOCK_END,
   MAP_BLOCK_START,
   INDENTED_LINE,
+  COMMENT,
+  STRING_START,
+  STRING_END,
+  INTERPOLATION_START,
+  INTERPOLATION_END,
   ERROR_SENTINEL,
 };
 
@@ -72,9 +77,13 @@ static IndentVec new_indent_vec() {
 typedef struct {
   // Keeping track of the block indent levels
   IndentVec indents;
-  // If the previous token was a block start or end, 
+  // If the previous token was a block start or end,
   // then subsequent block ends and continues can be generated without newlines.
   bool block_level_just_changed;
+  // We need to block comments from being accepted while a string is being parsed.
+  // interpolated strings are parsed from grammar.js, and without disabling comments,
+  // "#" would be parsed as a string containing a comment rather than simply a string.
+  bool in_string;
 } Scanner;
 
 static void initialize_scanner(Scanner* scanner) {
@@ -82,6 +91,7 @@ static void initialize_scanner(Scanner* scanner) {
   VEC_CLEAR(scanner->indents);
   VEC_PUSH(scanner->indents, 0);
   scanner->block_level_just_changed = false;
+  scanner->in_string = false;
 }
 
 static void skip_whitespace(TSLexer* lexer) {
@@ -150,6 +160,45 @@ static bool line_starts_with_map_key(TSLexer* lexer) {
   return false;
 }
 
+static void consume_multiline_comment(TSLexer* lexer) {
+  while (true) {
+    switch (lexer->lookahead) {
+    case '-':
+      advance(lexer);
+      if (lexer->lookahead == '#') {
+        advance(lexer);
+        return;
+      }
+      break;
+    case '\0':
+      return;
+    default:
+      advance(lexer);
+    }
+  }
+}
+
+static bool consume_comment(TSLexer* lexer) {
+  assert(lexer->lookahead == '#');
+  advance(lexer);
+
+  if (lexer->lookahead == '-') {
+    advance(lexer);
+    consume_multiline_comment(lexer);
+  } else {
+    while (true) {
+      switch (lexer->lookahead) {
+      case '\n':
+      case '\0':
+        return true;
+      }
+      advance(lexer);
+    }
+  }
+
+  return false;
+}
+
 bool tree_sitter_koto_external_scanner_scan(
     void* payload,
     TSLexer* lexer,
@@ -172,11 +221,40 @@ bool tree_sitter_koto_external_scanner_scan(
   if (error_recovery) {
     printf("scanner.scan: in error recovery\n");
   } else {
+    skip_whitespace(lexer);
+
+    // String start/end detection
+    char next = lexer->lookahead;
+    if (valid_symbols[STRING_START] && (next == '"' || next == '\'')) {
+      printf(">>>> string start\n");
+      scanner->in_string = true;
+      lexer->result_symbol = STRING_START;
+      return true;
+    } else if (
+        valid_symbols[STRING_END] && scanner->in_string
+        && (next == '"' || next == '\'')) {
+      printf(">>>> string end\n");
+      scanner->in_string = false;
+      lexer->result_symbol = STRING_END;
+      return true;
+    } else if (valid_symbols[INTERPOLATION_START]) {
+      printf(">>>> interpolation start\n");
+      assert(scanner->in_string);
+      scanner->in_string = false;
+      lexer->result_symbol = INTERPOLATION_START;
+      return true;
+    } else if (valid_symbols[INTERPOLATION_END] && next == '}') {
+      printf(">>>> interpolation end\n");
+      assert(!scanner->in_string);
+      scanner->in_string = true;
+      lexer->result_symbol = INTERPOLATION_END;
+      return true;
+    }
+
     bool newline = false;
 
     // Consume newlines and starting indentation
     while (true) {
-      skip_whitespace(lexer);
       // new_indent = lexer->get_column(lexer);
       if (lexer->lookahead == '\r') {
         advance(lexer);
@@ -184,10 +262,10 @@ bool tree_sitter_koto_external_scanner_scan(
       if (lexer->lookahead == '\n') {
         advance(lexer);
         newline = true;
-        skip_whitespace(lexer);
       } else {
         break;
       }
+      skip_whitespace(lexer);
     }
 
     const uint16_t block_indent = VEC_BACK(scanner->indents);
@@ -202,12 +280,19 @@ bool tree_sitter_koto_external_scanner_scan(
         scanner->indents.len,
         newline);
 
-    // The scanner doesn't currently consume any non-whitespace tokens,
-    // so mark the end here.
     lexer->mark_end(lexer);
 
+    next = lexer->lookahead;
+    // Comment?
+    if (valid_symbols[COMMENT] && !scanner->in_string && next == '#') {
+      consume_comment(lexer);
+      lexer->mark_end(lexer);
+      lexer->result_symbol = COMMENT;
+      return true;
+    }
     // Map block start?
-    if (valid_symbols[MAP_BLOCK_START] && newline && column > block_indent
+    else if (
+        valid_symbols[MAP_BLOCK_START] && newline && column > block_indent
         && line_starts_with_map_key(lexer)) {
       printf(">>>> map block start: %u\n", column);
       VEC_PUSH(scanner->indents, column);
@@ -275,6 +360,7 @@ unsigned tree_sitter_koto_external_scanner_serialize(void* payload, char* buffer
   write_ptr += indents_size;
 
   *write_ptr++ = scanner->block_level_just_changed;
+  *write_ptr++ = scanner->in_string;
 
   return write_ptr - buffer;
 }
@@ -303,6 +389,9 @@ void tree_sitter_koto_external_scanner_deserialize(
     }
 
     scanner->block_level_just_changed = *read_ptr++;
+    scanner->in_string = *read_ptr++;
+
+    printf("scanner.deserialize: in_string %i\n", scanner->in_string);
   }
 }
 
