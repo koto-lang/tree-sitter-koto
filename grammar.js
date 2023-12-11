@@ -21,6 +21,7 @@ const PREC = {
   call: 18,
   keyword: 19,
   meta: 21,
+  import: 22
 };
 
 const id = /[\p{XID_Start}_][\p{XID_Continue}]*/u;
@@ -91,6 +92,7 @@ module.exports = grammar({
       $.break,
       $.continue,
       $.debug,
+      $.import,
       $.assign,
       $.modify_assign,
       $.binary_op,
@@ -494,6 +496,25 @@ module.exports = grammar({
     _list_args: $ => seq('[', list_of($.arg, ','), ']'),
 
     ellipsis: _ => '...',
+
+    import: $ => seq(
+      optional(seq('from', $.import_module)),
+      'import',
+      $.import_items,
+    ),
+
+    import_module: $ => choice(
+      seq(
+        $.identifier,
+        repeat(seq('.', $.identifier)),
+      ),
+      $.string,
+    ),
+
+    import_items: $ => prec.right(PREC.import, seq(
+      choice($.string, $.identifier),
+      repeat(seq(',', choice($.string, $.identifier))),
+    )),
   }
 });
 

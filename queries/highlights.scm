@@ -47,11 +47,25 @@
 
 ["(" ")" "[" "]" "|"] @punctuation.bracket
 
-(comment) @comment
-(string) @string
+[
+ "from"
+ "import"
+] @include
+
 (identifier) @variable
+
+(import_module (identifier) @namespace)
+(import_items (identifier) @namespace)
+
+[(true) (false)] @boolean
+(comment) @comment
+(debug) @debug
+(string) @string
+(null) @constant.builtin
+(number) @number
 (meta) @tag
 (meta name: (identifier) @field) 
+(self) @variable.builtin
 
 (call name: (identifier) @function)
 (arg (identifier) @parameter)
@@ -60,10 +74,5 @@
 (entry_inline key: (identifier) @field)
 (entry_block key: (identifier) @field)
 
-[(true) (false)] @boolean
-(null) @constant.builtin
-(self) @variable.builtin
 
-(number) @number
 
-(debug) @debug

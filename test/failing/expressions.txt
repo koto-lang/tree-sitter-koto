@@ -1,0 +1,18 @@
+===========================================================================================
+import_with_three_items
+===========================================================================================
+
+from foo import a, b, c
+
+---
+
+(module
+  (import
+    (import_module (identifier))
+    (import_items
+      (identifier)
+      (identifier)
+      (identifier)
+    )
+  )
+)
