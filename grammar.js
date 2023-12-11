@@ -93,6 +93,7 @@ module.exports = grammar({
       $.continue,
       $.debug,
       $.import,
+      $.export,
       $.assign,
       $.modify_assign,
       $.binary_op,
@@ -226,6 +227,7 @@ module.exports = grammar({
     negate: $ => prec(PREC.negate, (seq('-', $._expression))),
 
     debug: $ => keyword_expression($, 'debug'),
+    export: $ => keyword_expression($, 'export'),
     not: $ => keyword_expression($, 'not'),
     return: $ => keyword_expression($, 'return'),
     yield: $ => keyword_expression($, 'yield'),

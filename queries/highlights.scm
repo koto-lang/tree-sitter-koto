@@ -48,6 +48,7 @@
 ["(" ")" "[" "]" "|"] @punctuation.bracket
 
 [
+ "export"
  "from"
  "import"
 ] @include
@@ -56,6 +57,7 @@
 
 (import_module (identifier) @namespace)
 (import_items (identifier) @namespace)
+(export (identifier) @namespace)
 
 [(true) (false)] @boolean
 (comment) @comment
