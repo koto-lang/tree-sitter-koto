@@ -47,6 +47,13 @@
   "while"
 ] @repeat
 
+[
+  "throw"
+  "try"
+  "catch"
+  "finally"
+] @exception
+
 ["(" ")" "[" "]" "|"] @punctuation.bracket
 
 [

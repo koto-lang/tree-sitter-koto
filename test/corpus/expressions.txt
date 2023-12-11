@@ -270,3 +270,61 @@ from 'hello' import foo
     (import_items (identifier))
   )
 )
+
+===========================================================================================
+try_catch_with_finally
+===========================================================================================
+
+try
+  throw foo()
+catch error
+  throw error
+finally
+  x = 42
+
+---
+
+(module
+  (try
+    try: (block
+      (throw (chain start: (identifier) call: (tuple)))
+    )
+    catch_arg: (identifier)
+    catch: (block
+      (throw (identifier))
+    )
+    finally: (block 
+      (assign (identifier) (number))
+    )
+  )
+)
+
+===========================================================================================
+try_catch_finally_in_function
+===========================================================================================
+
+x = ||
+  try
+    42
+  catch _
+    99
+  finally
+    123
+
+---
+
+(module
+  (assign 
+    (identifier)
+    (function
+      body: (block
+        (try
+          try: (block (number))
+          catch_arg: (identifier)
+          catch: (block (number))
+          finally: (block (number))
+        )
+      )
+    )
+  )
+)

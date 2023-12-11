@@ -23,6 +23,7 @@ const PREC = {
   meta: 22,
   import: 23,
   chain: 24,
+  try: 24,
 };
 
 const id = /[\p{XID_Start}_][\p{XID_Continue}]*/u;
@@ -96,12 +97,14 @@ module.exports = grammar({
       $.loop,
       $.function,
       $.return,
+      $.throw,
       $.yield,
       $.break,
       $.continue,
       $.debug,
       $.import,
       $.export,
+      $.try,
       $.assign,
       $.modify_assign,
       $.binary_op,
@@ -298,6 +301,7 @@ module.exports = grammar({
     not: $ => keyword_expression($, 'not'),
     return: $ => keyword_expression($, 'return'),
     yield: $ => keyword_expression($, 'yield'),
+    throw: $ => keyword_expression($, 'throw'),
 
     number: _ => token(
       choice(
@@ -573,6 +577,22 @@ module.exports = grammar({
     import_items: $ => prec.right(PREC.import, seq(
       choice($.string, $.identifier),
       repeat(seq(',', choice($.string, $.identifier))),
+    )),
+
+    try: $ => prec.right(PREC.try, seq(
+      'try',
+      field('try', $.block),
+      $._block_continue,
+      'catch',
+      field('catch_arg', $.identifier),
+      field('catch', $.block),
+      optional(
+        seq(
+          $._block_continue,
+          'finally',
+          field('finally', $.block),
+        )
+      )
     )),
   }
 });
