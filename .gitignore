@@ -1,3 +1,7 @@
 .ccls-cache
 node_modules
 target
+
+src/grammar.json
+src/node-types.json
+src/parser.c
