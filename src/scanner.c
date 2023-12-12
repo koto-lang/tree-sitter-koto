@@ -44,9 +44,6 @@ enum TokenType {
 
 #define VEC_POP(vec) (vec).len--;
 
-#define VEC_NEW                                                                          \
-  { .len = 0, .cap = 0, .data = NULL }
-
 #define VEC_BACK(vec) ((vec).data[(vec).len - 1])
 
 #define VEC_FREE(vec)                                                                    \
@@ -76,13 +73,6 @@ typedef struct {
   uint32_t cap;
   char* data;
 } QuoteVec;
-
-static IndentVec new_indent_vec() {
-  IndentVec vec = VEC_NEW;
-  vec.data = calloc(1, sizeof(uint16_t));
-  vec.cap = 1;
-  return vec;
-}
 
 typedef struct {
   // Keeping track of the block indent levels
