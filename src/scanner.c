@@ -8,6 +8,21 @@
 #define printf(...)
 #endif
 
+enum TokenType {
+  NEWLINE,
+  BLOCK_START,
+  BLOCK_CONTINUE,
+  BLOCK_END,
+  MAP_BLOCK_START,
+  INDENTED_LINE,
+  COMMENT,
+  STRING_START,
+  STRING_END,
+  INTERPOLATION_START,
+  INTERPOLATION_END,
+  ERROR_SENTINEL,
+};
+
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 
 #define VEC_RESIZE(vec, _cap)                                                            \
@@ -35,9 +50,9 @@
 #define VEC_BACK(vec) ((vec).data[(vec).len - 1])
 
 #define VEC_FREE(vec)                                                                    \
-  {                                                                                      \
-    if ((vec).data != NULL)                                                              \
-      free((vec).data);                                                                  \
+  if ((vec).data != NULL) {                                                              \
+    free((vec).data);                                                                    \
+    (vec).data = NULL;                                                                   \
   }
 
 #define VEC_CLEAR(vec) (vec).len = 0;
@@ -46,26 +61,17 @@ static inline void advance(TSLexer* lexer) {
   lexer->advance(lexer, false);
 }
 
-enum TokenType {
-  NEWLINE,
-  BLOCK_START,
-  BLOCK_CONTINUE,
-  BLOCK_END,
-  MAP_BLOCK_START,
-  INDENTED_LINE,
-  COMMENT,
-  STRING_START,
-  STRING_END,
-  INTERPOLATION_START,
-  INTERPOLATION_END,
-  ERROR_SENTINEL,
-};
-
 typedef struct {
   uint32_t len;
   uint32_t cap;
   uint16_t* data;
 } IndentVec;
+
+typedef struct {
+  uint32_t len;
+  uint32_t cap;
+  char* data;
+} QuoteVec;
 
 static IndentVec new_indent_vec() {
   IndentVec vec = VEC_NEW;
@@ -77,12 +83,17 @@ static IndentVec new_indent_vec() {
 typedef struct {
   // Keeping track of the block indent levels
   IndentVec indents;
+  // Keeping track of the quote type used for the current string
+  QuoteVec quotes;
   // If the previous token was a block start or end,
   // then subsequent block ends and continues can be generated without newlines.
   bool block_level_just_changed;
   // We need to block comments from being accepted while a string is being parsed.
   // interpolated strings are parsed from grammar.js, and without disabling comments,
   // "#" would be parsed as a string containing a comment rather than simply a string.
+  // Additionally, we need a separate flag rather than checking whether or not the quotes
+  // is empty; during an interpolated expression we're within quotes, while parsing
+  // non-string expressions.
   bool in_string;
 } Scanner;
 
@@ -90,6 +101,7 @@ static void initialize_scanner(Scanner* scanner) {
   // Ensure that the scanner is initialized with an indent at 0
   VEC_CLEAR(scanner->indents);
   VEC_PUSH(scanner->indents, 0);
+  VEC_CLEAR(scanner->quotes);
   scanner->block_level_just_changed = false;
   scanner->in_string = false;
 }
@@ -228,12 +240,14 @@ bool tree_sitter_koto_external_scanner_scan(
     if (valid_symbols[STRING_START] && (next == '"' || next == '\'')) {
       printf(">>>> string start\n");
       scanner->in_string = true;
+      VEC_PUSH(scanner->quotes, next);
       lexer->result_symbol = STRING_START;
       return true;
     } else if (
         valid_symbols[STRING_END] && scanner->in_string
-        && (next == '"' || next == '\'')) {
+        && next == VEC_BACK(scanner->quotes)) {
       printf(">>>> string end\n");
+      VEC_POP(scanner->quotes);
       scanner->in_string = false;
       lexer->result_symbol = STRING_END;
       return true;
@@ -359,6 +373,13 @@ unsigned tree_sitter_koto_external_scanner_serialize(void* payload, char* buffer
   memcpy(write_ptr, scanner->indents.data, indents_size);
   write_ptr += indents_size;
 
+  const uint32_t num_quotes = scanner->quotes.len;
+  *((uint32_t*)write_ptr) = num_quotes;
+  write_ptr += sizeof(uint32_t);
+
+  memcpy(write_ptr, scanner->quotes.data, num_quotes);
+  write_ptr += num_quotes;
+
   *write_ptr++ = scanner->block_level_just_changed;
   *write_ptr++ = scanner->in_string;
 
@@ -388,6 +409,14 @@ void tree_sitter_koto_external_scanner_deserialize(
       VEC_PUSH(scanner->indents, indent);
     }
 
+    const uint32_t num_quotes = *(uint32_t*)read_ptr;
+    read_ptr += sizeof(uint32_t);
+
+    VEC_CLEAR(scanner->quotes);
+    for (int i = 0; i < num_quotes; i++) {
+      VEC_PUSH(scanner->quotes, *read_ptr++);
+    }
+
     scanner->block_level_just_changed = *read_ptr++;
     scanner->in_string = *read_ptr++;
 
@@ -411,5 +440,6 @@ void tree_sitter_koto_external_scanner_destroy(void* payload) {
   Scanner* scanner = (Scanner*)payload;
 
   VEC_FREE(scanner->indents);
+  VEC_FREE(scanner->quotes);
   free(scanner);
 }

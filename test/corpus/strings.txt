@@ -5,10 +5,14 @@ string_single_line
 'hello'
 "goodbye"
 '#'
+'"'
+"'"
 
 ---
 
 (module
+  (string)
+  (string)
   (string)
   (string)
   (string)
