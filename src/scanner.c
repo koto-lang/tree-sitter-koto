@@ -61,6 +61,10 @@ static inline void advance(TSLexer* lexer) {
   lexer->advance(lexer, false);
 }
 
+static inline void skip(TSLexer* lexer) {
+  lexer->advance(lexer, true);
+}
+
 typedef struct {
   uint32_t len;
   uint32_t cap;
@@ -115,7 +119,7 @@ static void skip_whitespace(TSLexer* lexer) {
       break;
     }
     printf("...skipping (%u)\n", next);
-    advance(lexer);
+    skip(lexer);
   }
 }
 
@@ -190,7 +194,7 @@ static void consume_multiline_comment(TSLexer* lexer) {
   }
 }
 
-static bool consume_comment(TSLexer* lexer) {
+static void consume_comment(TSLexer* lexer) {
   assert(lexer->lookahead == '#');
   advance(lexer);
 
@@ -198,17 +202,14 @@ static bool consume_comment(TSLexer* lexer) {
     advance(lexer);
     consume_multiline_comment(lexer);
   } else {
-    while (true) {
+    while (!lexer->eof(lexer)) {
       switch (lexer->lookahead) {
       case '\n':
-      case '\0':
-        return true;
+        return;
       }
       advance(lexer);
     }
   }
-
-  return false;
 }
 
 bool tree_sitter_koto_external_scanner_scan(
@@ -271,10 +272,10 @@ bool tree_sitter_koto_external_scanner_scan(
     while (true) {
       // new_indent = lexer->get_column(lexer);
       if (lexer->lookahead == '\r') {
-        advance(lexer);
+        skip(lexer);
       }
       if (lexer->lookahead == '\n') {
-        advance(lexer);
+        skip(lexer);
         newline = true;
       } else {
         break;
