@@ -221,140 +221,140 @@ bool tree_sitter_koto_external_scanner_scan(
 
   const bool error_recovery = valid_symbols[ERROR_SENTINEL];
 
+  skip_whitespace(lexer);
+  char next = lexer->lookahead;
+
   if (error_recovery) {
     printf("scanner.scan: in error recovery\n");
-  } else {
+  }
+
+  // String start/end detection
+  if (valid_symbols[STRING_START] && (next == '"' || next == '\'')) {
+    printf(">>>> string start\n");
+    scanner->in_string = true;
+    VEC_PUSH(scanner->quotes, next);
+    lexer->result_symbol = STRING_START;
+    return true;
+  } else if (
+      valid_symbols[STRING_END] && scanner->in_string
+      && next == VEC_BACK(scanner->quotes)) {
+    printf(">>>> string end\n");
+    VEC_POP(scanner->quotes);
+    scanner->in_string = false;
+    lexer->result_symbol = STRING_END;
+    return true;
+  } else if (valid_symbols[INTERPOLATION_START]) {
+    printf(">>>> interpolation start\n");
+    assert(scanner->in_string || error_recovery);
+    scanner->in_string = false;
+    lexer->result_symbol = INTERPOLATION_START;
+    return true;
+  } else if (valid_symbols[INTERPOLATION_END] && next == '}') {
+    printf(">>>> interpolation end\n");
+    assert(!scanner->in_string || error_recovery);
+    scanner->in_string = true;
+    lexer->result_symbol = INTERPOLATION_END;
+    return true;
+  }
+
+  bool newline = false;
+
+  // Consume newlines and starting indentation
+  while (true) {
+    // new_indent = lexer->get_column(lexer);
+    if (lexer->lookahead == '\r') {
+      skip(lexer);
+    }
+    if (lexer->lookahead == '\n') {
+      skip(lexer);
+      newline = true;
+    } else {
+      break;
+    }
     skip_whitespace(lexer);
+  }
 
-    // String start/end detection
-    char next = lexer->lookahead;
-    if (valid_symbols[STRING_START] && (next == '"' || next == '\'')) {
-      printf(">>>> string start\n");
-      scanner->in_string = true;
-      VEC_PUSH(scanner->quotes, next);
-      lexer->result_symbol = STRING_START;
-      return true;
-    } else if (
-        valid_symbols[STRING_END] && scanner->in_string
-        && next == VEC_BACK(scanner->quotes)) {
-      printf(">>>> string end\n");
-      VEC_POP(scanner->quotes);
-      scanner->in_string = false;
-      lexer->result_symbol = STRING_END;
-      return true;
-    } else if (valid_symbols[INTERPOLATION_START]) {
-      printf(">>>> interpolation start\n");
-      assert(scanner->in_string);
-      scanner->in_string = false;
-      lexer->result_symbol = INTERPOLATION_START;
-      return true;
-    } else if (valid_symbols[INTERPOLATION_END] && next == '}') {
-      printf(">>>> interpolation end\n");
-      assert(!scanner->in_string);
-      scanner->in_string = true;
-      lexer->result_symbol = INTERPOLATION_END;
-      return true;
-    }
+  const uint16_t column = lexer->get_column(lexer);
 
-    bool newline = false;
+  // Initial block detection
+  if (valid_symbols[BLOCK_START] && VEC_SIZE(scanner->indents) == 0) {
+    printf(">>>> initial block start: %u\n", column);
+    VEC_PUSH(scanner->indents, column);
+    scanner->block_level_just_changed = true;
+    lexer->result_symbol = BLOCK_START;
+    return true;
+  }
 
-    // Consume newlines and starting indentation
-    while (true) {
-      // new_indent = lexer->get_column(lexer);
-      if (lexer->lookahead == '\r') {
-        skip(lexer);
-      }
-      if (lexer->lookahead == '\n') {
-        skip(lexer);
-        newline = true;
-      } else {
-        break;
-      }
-      skip_whitespace(lexer);
-    }
+  const uint16_t block_indent
+      = VEC_SIZE(scanner->indents) > 0 ? VEC_BACK(scanner->indents) : 0;
+  const bool block_just_changed = scanner->block_level_just_changed;
+  scanner->block_level_just_changed = false;
+  const bool eof = lexer->eof(lexer);
 
-    const uint16_t column = lexer->get_column(lexer);
+  printf(
+      "scanner.scan: column: %u, block_indent: %u num_indents: %u newline: %i\n",
+      column,
+      block_indent,
+      scanner->indents.len,
+      newline);
 
-    // Initial block detection
-    if (valid_symbols[BLOCK_START] && VEC_SIZE(scanner->indents) == 0) {
-      printf(">>>> initial block start: %u\n", column);
-      VEC_PUSH(scanner->indents, column);
-      scanner->block_level_just_changed = true;
-      lexer->result_symbol = BLOCK_START;
-      return true;
-    }
+  lexer->mark_end(lexer);
 
-    const uint16_t block_indent
-        = VEC_SIZE(scanner->indents) > 0 ? VEC_BACK(scanner->indents) : 0;
-    const bool block_just_changed = scanner->block_level_just_changed;
-    scanner->block_level_just_changed = false;
-    const bool eof = lexer->eof(lexer);
-
-    printf(
-        "scanner.scan: column: %u, block_indent: %u num_indents: %u newline: %i\n",
-        column,
-        block_indent,
-        scanner->indents.len,
-        newline);
-
+  next = lexer->lookahead;
+  // Comment?
+  if (valid_symbols[COMMENT] && !scanner->in_string && next == '#') {
+    consume_comment(lexer);
     lexer->mark_end(lexer);
-
-    next = lexer->lookahead;
-    // Comment?
-    if (valid_symbols[COMMENT] && !scanner->in_string && next == '#') {
-      consume_comment(lexer);
-      lexer->mark_end(lexer);
-      lexer->result_symbol = COMMENT;
-      return true;
-    }
-    // Map block start?
-    else if (
-        valid_symbols[MAP_BLOCK_START] && newline && column > block_indent
-        && line_starts_with_map_key(lexer)) {
-      printf(">>>> map block start: %u\n", column);
-      VEC_PUSH(scanner->indents, column);
-      scanner->block_level_just_changed = true;
-      lexer->result_symbol = MAP_BLOCK_START;
-      return true;
-    }
-    // Block start?
-    else if (valid_symbols[BLOCK_START] && newline && column > block_indent) {
-      printf(">>>> block start: %u\n", column);
-      VEC_PUSH(scanner->indents, column);
-      scanner->block_level_just_changed = true;
-      lexer->result_symbol = BLOCK_START;
-      return true;
-    }
-    // Block continue?
-    else if (
-        valid_symbols[BLOCK_CONTINUE] && !eof && (newline || block_just_changed)
-        && column == block_indent) {
-      printf(">>>> block continue: %u\n", column);
-      lexer->result_symbol = BLOCK_CONTINUE;
-      return true;
-    }
-    // Block end?
-    else if (
-        valid_symbols[BLOCK_END]
-        && (eof || (newline || block_just_changed) && column < block_indent)) {
-      printf(">>>> block end: %u\n", column);
-      VEC_POP(scanner->indents);
-      scanner->block_level_just_changed = true;
-      lexer->result_symbol = BLOCK_END;
-      return true;
-    }
-    // Indented line?
-    else if (valid_symbols[INDENTED_LINE] && newline && column > block_indent) {
-      printf(">>>> indented line\n");
-      lexer->result_symbol = INDENTED_LINE;
-      return true;
-    }
-    // Newline?
-    else if (valid_symbols[NEWLINE] && newline) {
-      printf(">>>> newline!\n");
-      lexer->result_symbol = NEWLINE;
-      return true;
-    }
+    lexer->result_symbol = COMMENT;
+    return true;
+  }
+  // Map block start?
+  else if (
+      valid_symbols[MAP_BLOCK_START] && newline && column > block_indent
+      && line_starts_with_map_key(lexer)) {
+    printf(">>>> map block start: %u\n", column);
+    VEC_PUSH(scanner->indents, column);
+    scanner->block_level_just_changed = true;
+    lexer->result_symbol = MAP_BLOCK_START;
+    return true;
+  }
+  // Block start?
+  else if (valid_symbols[BLOCK_START] && newline && column > block_indent) {
+    printf(">>>> block start: %u\n", column);
+    VEC_PUSH(scanner->indents, column);
+    scanner->block_level_just_changed = true;
+    lexer->result_symbol = BLOCK_START;
+    return true;
+  }
+  // Block continue?
+  else if (
+      valid_symbols[BLOCK_CONTINUE] && !eof && (newline || block_just_changed)
+      && column == block_indent) {
+    printf(">>>> block continue: %u\n", column);
+    lexer->result_symbol = BLOCK_CONTINUE;
+    return true;
+  }
+  // Block end?
+  else if (
+      valid_symbols[BLOCK_END]
+      && (eof || (newline || block_just_changed) && column < block_indent)) {
+    printf(">>>> block end: %u\n", column);
+    VEC_POP(scanner->indents);
+    scanner->block_level_just_changed = true;
+    lexer->result_symbol = BLOCK_END;
+    return true;
+  }
+  // Indented line?
+  else if (valid_symbols[INDENTED_LINE] && newline && column > block_indent) {
+    printf(">>>> indented line\n");
+    lexer->result_symbol = INDENTED_LINE;
+    return true;
+  }
+  // Newline?
+  else if (valid_symbols[NEWLINE] && newline) {
+    printf(">>>> newline!\n");
+    lexer->result_symbol = NEWLINE;
+    return true;
   }
 
   printf("scanner.scan: rejected\n");
