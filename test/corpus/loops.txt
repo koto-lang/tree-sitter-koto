@@ -96,11 +96,11 @@ loop
           (number)
         )
         then: (block (break))
-        else: (block
-          (modify_assign (identifier) (number))
-          (continue)
-        )
       )
+      (else (block
+        (modify_assign (identifier) (number))
+        (continue)
+      ))
     )
   )
 )

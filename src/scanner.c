@@ -44,6 +44,8 @@ enum TokenType {
 
 #define VEC_POP(vec) (vec).len--;
 
+#define VEC_SIZE(vec) (vec).len
+
 #define VEC_BACK(vec) ((vec).data[(vec).len - 1])
 
 #define VEC_FREE(vec)                                                                    \
@@ -92,9 +94,7 @@ typedef struct {
 } Scanner;
 
 static void initialize_scanner(Scanner* scanner) {
-  // Ensure that the scanner is initialized with an indent at 0
   VEC_CLEAR(scanner->indents);
-  VEC_PUSH(scanner->indents, 0);
   VEC_CLEAR(scanner->quotes);
   scanner->block_level_just_changed = false;
   scanner->in_string = false;
@@ -273,10 +273,22 @@ bool tree_sitter_koto_external_scanner_scan(
       skip_whitespace(lexer);
     }
 
-    const uint16_t block_indent = VEC_BACK(scanner->indents);
     const uint16_t column = lexer->get_column(lexer);
-    const bool block_just_ended = scanner->block_level_just_changed;
+
+    // Initial block detection
+    if (valid_symbols[BLOCK_START] && VEC_SIZE(scanner->indents) == 0) {
+      printf(">>>> initial block start: %u\n", column);
+      VEC_PUSH(scanner->indents, column);
+      scanner->block_level_just_changed = true;
+      lexer->result_symbol = BLOCK_START;
+      return true;
+    }
+
+    const uint16_t block_indent
+        = VEC_SIZE(scanner->indents) > 0 ? VEC_BACK(scanner->indents) : 0;
+    const bool block_just_changed = scanner->block_level_just_changed;
     scanner->block_level_just_changed = false;
+    const bool eof = lexer->eof(lexer);
 
     printf(
         "scanner.scan: column: %u, block_indent: %u num_indents: %u newline: %i\n",
@@ -315,7 +327,7 @@ bool tree_sitter_koto_external_scanner_scan(
     }
     // Block continue?
     else if (
-        valid_symbols[BLOCK_CONTINUE] && (newline || block_just_ended)
+        valid_symbols[BLOCK_CONTINUE] && !eof && (newline || block_just_changed)
         && column == block_indent) {
       printf(">>>> block continue: %u\n", column);
       lexer->result_symbol = BLOCK_CONTINUE;
@@ -323,8 +335,8 @@ bool tree_sitter_koto_external_scanner_scan(
     }
     // Block end?
     else if (
-        valid_symbols[BLOCK_END] && (newline || block_just_ended)
-        && column < block_indent) {
+        valid_symbols[BLOCK_END]
+        && (eof || (newline || block_just_changed) && column < block_indent)) {
       printf(">>>> block end: %u\n", column);
       VEC_POP(scanner->indents);
       scanner->block_level_just_changed = true;

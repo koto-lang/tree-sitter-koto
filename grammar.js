@@ -62,13 +62,14 @@ module.exports = grammar({
 
   rules: {
     module: $ => seq(
-      repeat($._newline),
+      $._block_start,
       repeat(
         seq(
-          $._expressions,
-          repeat($._newline),
+          $._block_continue,
+          $._block_expressions,
         )
       ),
+      $._block_end,
     ),
 
     _term: $ => choice(
@@ -129,6 +130,21 @@ module.exports = grammar({
       $.expressions,
     ),
 
+    _block_expressions: $ => choice(
+      $._expressions,
+      $._cascade_arm,
+    ),
+
+    // Arms of if/else if/else or try/catch/finally cascades
+    // Ideally these would be included in $.if and $.try, but they intefere with block
+    // continuation. Parsing them separately will do for now.
+    _cascade_arm: $ => choice(
+      $.else_if,
+      $.else,
+      $.catch,
+      $.finally,
+    ),
+
     // comma-separated expressions with flexible newline rules
     _contained_expressions: $ => seq(
       repeat($._newline),
@@ -151,7 +167,7 @@ module.exports = grammar({
       repeat(
         seq(
           repeat1($._block_continue),
-          $._expressions,
+          $._block_expressions,
         )
       ),
       $._block_end,
@@ -204,7 +220,6 @@ module.exports = grammar({
     )),
 
     assign: $ => binary_op($, '=', prec.right, PREC.assign),
-
 
     modify_assign: $ => choice(
       binary_op($, '-=', prec.right, PREC.assign),
@@ -396,22 +411,18 @@ module.exports = grammar({
         'if',
         field('condition', $._expression),
         field('then', $.block),
-        repeat(
-          field('else_if', seq(
-            $._block_continue,
-            'else if',
-            field('else_if_condition', $._expression),
-            field('else_if_then', $.block),
-          )),
-        ),
-        optional(
-          seq(
-            $._block_continue,
-            'else',
-            field('else', $.block),
-          )
-        ),
       )),
+    ),
+
+    else_if: $ => seq(
+      'else if',
+      field('condition', $._expression),
+      field('then', $.block),
+    ),
+
+    else: $ => seq(
+      'else',
+      $.block,
     ),
 
     switch: $ => seq(
@@ -581,19 +592,19 @@ module.exports = grammar({
 
     try: $ => prec.right(PREC.try, seq(
       'try',
-      field('try', $.block),
-      $._block_continue,
-      'catch',
-      field('catch_arg', $.identifier),
-      field('catch', $.block),
-      optional(
-        seq(
-          $._block_continue,
-          'finally',
-          field('finally', $.block),
-        )
-      )
+      $.block,
     )),
+
+    catch: $ => seq(
+      'catch',
+      $.identifier,
+      $.block,
+    ),
+
+    finally: $ => seq(
+      'finally',
+      $.block,
+    )
   }
 });
 

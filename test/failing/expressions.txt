@@ -17,26 +17,3 @@ from foo import a, b, c
   )
 )
 
-===========================================================================================
-try_catch_no_finally
-===========================================================================================
-
-try
-  foo()
-catch e
-  bar()
-
----
-
-(module
-  (try
-    try: (block
-      (chain start: (identifier) call: (tuple))
-    )
-    catch_arg: (identifier)
-    catch: (block
-      (chain start: (identifier) call: (tuple))
-    )
-  )
-)
-

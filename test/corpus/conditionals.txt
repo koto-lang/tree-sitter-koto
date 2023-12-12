@@ -37,13 +37,15 @@ else
       (number)
     )
     then: (block (identifier) (identifier))
-    else_if_condition: (comparison_op
+  )
+  (else_if
+    condition: (comparison_op
       (binary_op (number) (number))
       (number)
     )
-    else_if_then: (block (identifier))
-    else: (block (string))
+    then: (block (identifier))
   )
+  (else (block (string)))
 )
 
 ===========================================================================================
@@ -64,11 +66,10 @@ else
 
 (module
   (if
-    condition:
-      (comparison_op
-        (binary_op (number) (number))
-        (number)
-      )
+    condition: (comparison_op
+      (binary_op (number) (number))
+      (number)
+    )
     then: (block
       (if
         condition: (comparison_op
@@ -76,17 +77,39 @@ else
           (number)
         )
         then: (block (identifier))
-        else_if_condition: (comparison_op
+      )
+      (else_if
+        condition: (comparison_op
           (binary_op (number) (number))
           (number)
         )
-        else_if_then: (block (identifier))
+        then: (block (identifier))
       )
     )
-    else_if_condition: (true)
-    else_if_then: (block (string))
-    else: (block (identifier))
   )
+  (else_if
+    condition: (true)
+    then: (block (string))
+  )
+  (else (block (identifier)))
+)
+
+===========================================================================================
+if_block_followed_by_expression
+===========================================================================================
+
+if foo
+  bar
+99
+
+---
+
+(module
+  (if
+    condition: (identifier)
+    then: (block (identifier))
+  )
+  (number)
 )
 
 ===========================================================================================
@@ -168,6 +191,33 @@ switch
     else: (block (number))
   )
 )
+
+===========================================================================================
+switch_followed_by_expression
+===========================================================================================
+
+switch
+  foo then
+    bar
+  else
+    99
+123
+
+---
+
+(module
+  (switch
+    (switch_arm
+      condition: (identifier)
+      then: (block
+        (identifier)
+      )
+    )
+    else: (block (number))
+  )
+  (number)
+)
+
 
 ===========================================================================================
 match_single_line_arms

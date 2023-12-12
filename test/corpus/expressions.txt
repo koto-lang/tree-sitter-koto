@@ -286,17 +286,19 @@ finally
 
 (module
   (try
-    try: (block
+    (block
       (throw (chain start: (identifier) call: (tuple)))
     )
-    catch_arg: (identifier)
-    catch: (block
+  )
+  (catch
+    (identifier)
+    (block
       (throw (identifier))
     )
-    finally: (block 
-      (assign (identifier) (number))
-    )
   )
+  (finally (block
+    (assign (identifier) (number))
+  ))
 )
 
 ===========================================================================================
@@ -318,13 +320,53 @@ x = ||
     (identifier)
     (function
       body: (block
-        (try
-          try: (block (number))
-          catch_arg: (identifier)
-          catch: (block (number))
-          finally: (block (number))
+        (try (block (number)))
+        (catch
+          (identifier)
+          (block (number))
         )
+        (finally (block (number)))
       )
     )
   )
 )
+
+===========================================================================================
+try_catch_no_finally
+===========================================================================================
+
+try
+  foo()
+catch e
+  bar()
+
+---
+
+(module
+  (try (block (chain start: (identifier) call: (tuple))))
+  (catch 
+    (identifier)
+    (block
+      (chain start: (identifier) call: (tuple))
+    )
+  )
+)
+
+===========================================================================================
+try_catch_followed_by_expression
+===========================================================================================
+
+try
+  123
+catch error
+  456
+'hello'
+
+---
+
+(module
+  (try (block (number)))
+  (catch (identifier) (block (number)))
+  (string)
+)
+
