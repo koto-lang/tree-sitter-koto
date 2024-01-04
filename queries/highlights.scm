@@ -75,6 +75,7 @@
 (comment) @comment
 (debug) @debug
 (string) @string
+(escape) @string.escape
 (null) @constant.builtin
 (number) @number
 (meta) @tag
@@ -86,6 +87,3 @@
 
 (entry_inline key: (identifier) @field)
 (entry_block key: (identifier) @field)
-
-
-

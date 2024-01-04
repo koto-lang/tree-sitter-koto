@@ -64,3 +64,48 @@ string_interpolated
     )
   )
 )
+
+===========================================================================================
+escapes
+===========================================================================================
+
+'foo\n\t\r\\\$bar'
+'\'\'\''
+"\"''\""
+'\x4e foo \xF9'
+'foo \u{100abc} \u{f} bar'
+'foo \
+ bar
+'
+
+---
+
+(module
+  (string
+    (escape)
+    (escape)
+    (escape)
+    (escape)
+    (escape)
+  )
+  (string
+    (escape)
+    (escape)
+    (escape)
+  )
+  (string
+    (escape)
+    (escape)
+  )
+  (string
+    (escape)
+    (escape)
+  )
+  (string
+    (escape)
+    (escape)
+  )
+  (string
+    (escape)
+  )
+)

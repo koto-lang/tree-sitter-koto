@@ -604,7 +604,23 @@ module.exports = grammar({
     finally: $ => seq(
       'finally',
       $.block,
-    )
+    ),
+
+    escape: $ => seq(
+      '\\',
+      choice(
+        'n',
+        'r',
+        't',
+        '$',
+        '\'',
+        '"',
+        '\\',
+        /\r?\n/,
+        /x[0-9a-fA-F]{2}/,
+        /u\{[0-9a-fA-F]{1,6}\}/
+      )
+    ),
   }
 });
 
@@ -613,6 +629,7 @@ function string($, quote) {
     $._string_start,
     quote,
     repeat(choice(
+      $.escape,
       seq('$', $.identifier),
       seq(
         '${',
