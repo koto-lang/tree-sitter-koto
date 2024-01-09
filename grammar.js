@@ -609,16 +609,15 @@ module.exports = grammar({
     escape: $ => seq(
       '\\',
       choice(
-        'n',
-        'r',
-        't',
-        '$',
-        '\'',
-        '"',
-        '\\',
+        // Any single non-whitespace character
+        // (we don't need to list all valid escape characters)
+        /\S/,
+        // Newline
         /\r?\n/,
+        // \x42
         /x[0-9a-fA-F]{2}/,
-        /u\{[0-9a-fA-F]{1,6}\}/
+        // \u{123456}
+        /u\{[0-9a-fA-F]{1,6}\}/,
       )
     ),
   }

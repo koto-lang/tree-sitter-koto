@@ -229,7 +229,8 @@ bool tree_sitter_koto_external_scanner_scan(
   }
 
   // String start/end detection
-  if (valid_symbols[STRING_START] && (next == '"' || next == '\'')) {
+  if (valid_symbols[STRING_START] && !scanner->in_string
+      && (next == '"' || next == '\'')) {
     printf(">>>> string start\n");
     scanner->in_string = true;
     VEC_PUSH(scanner->quotes, next);
