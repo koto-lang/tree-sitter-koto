@@ -18,6 +18,8 @@ enum TokenType {
   COMMENT,
   STRING_START,
   STRING_END,
+  RAW_STRING_START,
+  RAW_STRING_END,
   INTERPOLATION_START,
   INTERPOLATION_END,
   ERROR_SENTINEL,
@@ -91,6 +93,7 @@ typedef struct {
   // is empty; during an interpolated expression we're within quotes, while parsing
   // non-string expressions.
   bool in_string;
+  uint8_t raw_string_hash_count;
 } Scanner;
 
 static void initialize_scanner(Scanner* scanner) {
@@ -98,6 +101,7 @@ static void initialize_scanner(Scanner* scanner) {
   VEC_CLEAR(scanner->quotes);
   scanner->block_level_just_changed = false;
   scanner->in_string = false;
+  scanner->raw_string_hash_count = 0;
 }
 
 static void skip_whitespace(TSLexer* lexer) {
@@ -229,9 +233,60 @@ bool tree_sitter_koto_external_scanner_scan(
   }
 
   // String start/end detection
-  if (valid_symbols[STRING_START] && !scanner->in_string
+  if (valid_symbols[RAW_STRING_START] && !scanner->in_string && next == 'r') {
+    advance(lexer);
+    uint8_t hash_count = 0;
+    while (lexer->lookahead == '#') {
+      if (hash_count == 255) {
+        printf("scanner.scan: reached raw string hash limit\n");
+        return false;
+      }
+      hash_count++;
+      advance(lexer);
+    }
+    next = lexer->lookahead;
+    if (next == '"' || next == '\'') {
+      printf(">>>> raw string start\n");
+      advance(lexer);
+      VEC_PUSH(scanner->quotes, next);
+      scanner->in_string = true;
+      scanner->raw_string_hash_count = hash_count;
+      lexer->mark_end(lexer);
+      lexer->result_symbol = RAW_STRING_START;
+      return true;
+    } else {
+      printf("scanner.scan: rejected raw string start\n");
+      return false;
+    }
+  } else if (
+      valid_symbols[RAW_STRING_END] && scanner->in_string
+      && next == VEC_BACK(scanner->quotes)) {
+    printf(">>>> raw string end\n");
+    advance(lexer);
+    uint8_t hash_count = 0;
+    while (lexer->lookahead == '#') {
+      if (hash_count == 255) {
+        break;
+      }
+      hash_count++;
+      advance(lexer);
+    }
+    if (hash_count != scanner->raw_string_hash_count) {
+      printf("scanner.scan: rejected raw string end\n");
+      return false;
+    }
+    VEC_POP(scanner->quotes);
+    scanner->in_string = false;
+    scanner->raw_string_hash_count = 0;
+    lexer->mark_end(lexer);
+    lexer->result_symbol = RAW_STRING_END;
+    return true;
+  } else if (
+      valid_symbols[STRING_START] && !scanner->in_string
       && (next == '"' || next == '\'')) {
     printf(">>>> string start\n");
+    advance(lexer);
+    lexer->mark_end(lexer);
     scanner->in_string = true;
     VEC_PUSH(scanner->quotes, next);
     lexer->result_symbol = STRING_START;
@@ -240,6 +295,8 @@ bool tree_sitter_koto_external_scanner_scan(
       valid_symbols[STRING_END] && scanner->in_string
       && next == VEC_BACK(scanner->quotes)) {
     printf(">>>> string end\n");
+    advance(lexer);
+    lexer->mark_end(lexer);
     VEC_POP(scanner->quotes);
     scanner->in_string = false;
     lexer->result_symbol = STRING_END;
@@ -386,6 +443,7 @@ unsigned tree_sitter_koto_external_scanner_serialize(void* payload, char* buffer
 
   *write_ptr++ = scanner->block_level_just_changed;
   *write_ptr++ = scanner->in_string;
+  *write_ptr++ = scanner->raw_string_hash_count;
 
   return write_ptr - buffer;
 }
@@ -423,6 +481,7 @@ void tree_sitter_koto_external_scanner_deserialize(
 
     scanner->block_level_just_changed = *read_ptr++;
     scanner->in_string = *read_ptr++;
+    scanner->raw_string_hash_count = *read_ptr++;
 
     printf("scanner.deserialize: in_string %i\n", scanner->in_string);
   }

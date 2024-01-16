@@ -47,6 +47,8 @@ module.exports = grammar({
     $.comment,
     $._string_start,
     $._string_end,
+    $._raw_string_start,
+    $._raw_string_end,
     $._interpolation_start,
     $._interpolation_end,
     $.error_sentinel,
@@ -388,8 +390,28 @@ module.exports = grammar({
     ),
 
     string: $ => choice(
-      string($, '\''),
-      string($, '\"'),
+      seq(
+        $._string_start,
+        repeat(choice(
+          $.escape,
+          seq('$', $.identifier),
+          seq(
+            '${',
+            $._interpolation_start,
+            $._expressions,
+            $._interpolation_end,
+            '}',
+          ),
+          /./,
+          /\s/
+        )),
+        $._string_end,
+      ),
+      seq(
+        $._raw_string_start,
+        repeat(/./),
+        $._raw_string_end,
+      ),
     ),
 
     if: $ => choice(
@@ -622,28 +644,6 @@ module.exports = grammar({
     ),
   }
 });
-
-function string($, quote) {
-  return seq(
-    $._string_start,
-    quote,
-    repeat(choice(
-      $.escape,
-      seq('$', $.identifier),
-      seq(
-        '${',
-        $._interpolation_start,
-        $._expressions,
-        $._interpolation_end,
-        '}',
-      ),
-      /./,
-      /\s/
-    )),
-    $._string_end,
-    quote,
-  );
-}
 
 function any_amount_of() {
   return repeat(seq(...arguments));
