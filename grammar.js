@@ -593,11 +593,12 @@ module.exports = grammar({
 
     ellipsis: _ => '...',
 
-    import: $ => seq(
+    import: $ => prec.right(PREC.import, seq(
       optional(seq('from', $.import_module)),
       'import',
-      $.import_items,
-    ),
+      $.import_item,
+      repeat(seq(',', $.import_item)),
+    )),
 
     import_module: $ => choice(
       seq(
@@ -607,10 +608,10 @@ module.exports = grammar({
       $.string,
     ),
 
-    import_items: $ => prec.right(PREC.import, seq(
+    import_item: $ => seq(
       choice($.string, $.identifier),
-      repeat(seq(',', choice($.string, $.identifier))),
-    )),
+      optional(seq('as', $.identifier)),
+    ),
 
     try: $ => prec.right(PREC.try, seq(
       'try',

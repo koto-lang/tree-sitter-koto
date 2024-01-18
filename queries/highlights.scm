@@ -60,12 +60,13 @@
  "export"
  "from"
  "import"
+ "as"
 ] @include
 
 (identifier) @variable
 
 (import_module (identifier) @namespace)
-(import_items (identifier) @namespace)
+(import_item (identifier) @namespace)
 (export (identifier) @namespace)
 
 (chain lookup: (identifier) @field)
