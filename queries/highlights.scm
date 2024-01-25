@@ -22,13 +22,14 @@
 
 [
   "and"
-  (break)
-  (continue)
   "not"
   "or"
+] @keyword.operator
+
+[
   "return"
   "yield"
-] @keyword
+] @keyword.return
 
 [
   "if"
@@ -37,31 +38,33 @@
   "else if"
   "match"
   "switch"
-] @conditional
+] @keyword.conditional
 
 [
+  (break)
+  (continue)
   "for"
   "in"
   "loop"
   "until"
   "while"
-] @repeat
+] @keyword.repeat
 
 [
   "throw"
   "try"
   "catch"
   "finally"
-] @exception
-
-["(" ")" "[" "]" "|"] @punctuation.bracket
+] @keyword.exception
 
 [
- "export"
- "from"
- "import"
- "as"
-] @include
+  "export"
+  "from"
+  "import"
+  "as"
+] @keyword.import
+
+["(" ")" "[" "]" "{" "}" "|"] @punctuation.bracket
 
 (identifier) @variable
 
@@ -74,7 +77,7 @@
 
 [(true) (false)] @boolean
 (comment) @comment
-(debug) @debug
+(debug) @keyword.debug
 (string) @string
 (escape) @string.escape
 (null) @constant.builtin
