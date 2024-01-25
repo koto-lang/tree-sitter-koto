@@ -398,7 +398,7 @@ module.exports = grammar({
           seq(
             '${',
             $._interpolation_start,
-            $._expressions,
+            optional($._expressions),
             $._interpolation_end,
             '}',
           ),
