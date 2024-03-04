@@ -67,3 +67,34 @@ f g 1, 2
   )
 )
 
+===========================================================================================
+dots_and_calls
+===========================================================================================
+
+a.b()
+a.b().c
+a.b().c()
+
+---
+
+(module
+  (chain
+    start: (identifier)
+    lookup: (identifier)
+    call: (tuple)
+  )
+  (chain
+    start: (identifier)
+    lookup: (identifier)
+    call: (tuple)
+    lookup: (identifier)
+  )
+  (chain
+    start: (identifier)
+    lookup: (identifier)
+    call: (tuple)
+    lookup: (identifier)
+    call: (tuple)
+  )
+)
+
