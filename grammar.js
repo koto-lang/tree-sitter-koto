@@ -46,6 +46,7 @@ module.exports = grammar({
     [$.assign, $.modify_assign, $.binary_op, $.comparison_op, $.boolean_op],
     [$._term, $.chain],
     [$._contained_expressions, $._index],
+    [$._contained_expressions, $._contained_expressions],
   ],
 
   word: $ => $.identifier,
@@ -133,22 +134,6 @@ module.exports = grammar({
       $.else,
       $.catch,
       $.finally,
-    ),
-
-    // comma-separated expressions with flexible newline rules
-    _contained_expressions: $ => seq(
-      repeat($._newline),
-      $._expression,
-      repeat(
-        seq(
-          repeat($._newline),
-          ',',
-          repeat($._newline),
-          $._expression,
-        )
-      ),
-      optional(','),
-      repeat($._newline),
     ),
 
     block: $ => prec.left(seq(
@@ -351,14 +336,31 @@ module.exports = grammar({
       ),
     ),
 
-    tuple: $ => choice(
-      seq('(', optional(','), ')'),
-      seq('(', $._contained_expressions, ')'),
-    ),
-
-    list: $ => choice(
-      seq('[', optional(','), ']'),
-      seq('[', $._contained_expressions, ']'),
+    tuple: $ => seq('(', optional($._contained_expressions), ')'),
+    list: $ => seq('[', optional($._contained_expressions), ']'),
+    _contained_expressions: $ => choice(
+      seq(
+        repeat($._newline),
+        ',',
+        repeat($._newline),
+      ),
+      seq(
+        repeat($._newline),
+        $._expression,
+        repeat(
+          seq(
+            repeat($._newline),
+            ',',
+            repeat($._newline),
+            $._expression,
+          )
+        ),
+        repeat($._newline),
+        optional(
+          ','
+        ),
+        repeat($._newline),
+      ),
     ),
 
     map: $ => seq(
@@ -604,8 +606,9 @@ module.exports = grammar({
       alias($._list_args, $.list),
     ),
 
-    _tuple_args: $ => seq('(', list_of($.arg, ','), ')'),
-    _list_args: $ => seq('[', list_of($.arg, ','), ']'),
+    _tuple_args: $ => seq('(', $._contained_args, ')'),
+    _list_args: $ => seq('[', $._contained_args, ']'),
+    _contained_args: $ => seq($.arg, repeat(seq(',', $.arg)), optional(',')),
 
     ellipsis: _ => '...',
 
@@ -661,16 +664,6 @@ module.exports = grammar({
     ),
   }
 });
-
-function any_amount_of() {
-  return repeat(seq(...arguments));
-}
-
-function list_of(match, sep, trailing) {
-  return trailing
-    ? seq(match, any_amount_of(sep, match), optional(sep))
-    : seq(match, any_amount_of(sep, match));
-}
 
 function binary_op($, operator, precedence_fn, precedence) {
   return precedence_fn(precedence, seq(
