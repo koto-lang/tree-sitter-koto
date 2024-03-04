@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 
+// Enable debug logging by setting the following line to `#if 0`
 #if 1
 #define printf(...)
 #endif
