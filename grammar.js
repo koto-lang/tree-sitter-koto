@@ -26,8 +26,8 @@ const PREC = {
   try: 24,
 };
 
-const id = /[\p{XID_Start}_][\p{XID_Continue}]*/u;
-const meta_id = /@[\p{XID_Start}][\p{XID_Continue}]*/u;
+const id = /[\p{XID_Start}_][\p{XID_Continue}]*/;
+const meta_id = /@[\p{XID_Start}][\p{XID_Continue}]*/;
 
 module.exports = grammar({
   name: 'koto',
