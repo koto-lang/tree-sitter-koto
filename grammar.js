@@ -4,26 +4,27 @@ const PREC = {
   map_block: 1,
   block: 2,
   comma: 3,
-  range: 4,
-  if: 5,
-  not: 6,
-  pipe: 7,
-  assign: 9,
-  or: 10,
-  and: 11,
-  equality: 12,
-  comparison: 13,
-  add: 14,
-  multiply: 15,
-  unary: 16,
-  negate: 17,
-  debug: 18,
-  call: 19,
-  keyword: 20,
-  meta: 22,
-  import: 23,
-  chain: 24,
-  try: 24,
+  debug: 4,
+  call: 5,
+  keyword: 6,
+  range: 7,
+  if: 8,
+  not: 9,
+  pipe: 10,
+  assign: 12,
+  or: 14,
+  and: 15,
+  equality: 16,
+  comparison: 17,
+  add: 18,
+  multiply: 19,
+  unary: 20,
+  negate: 21,
+  meta: 26,
+  import: 27,
+  chain: 28,
+  try: 29,
+  export: 30,
 };
 
 const id = /[\p{XID_Start}_][\p{XID_Continue}]*/;
@@ -314,11 +315,35 @@ module.exports = grammar({
     negate: $ => prec(PREC.negate, (seq('-', $._expression))),
 
     debug: $ => keyword_expression($, 'debug'),
-    export: $ => keyword_expression($, 'export'),
     not: $ => keyword_expression($, 'not'),
     return: $ => keyword_expression($, 'return'),
     yield: $ => keyword_expression($, 'yield'),
     throw: $ => keyword_expression($, 'throw'),
+
+    export: $ => prec.right(PREC.export, seq(
+      'export',
+      choice(
+        seq(
+          choice(
+            $.identifier,
+            $.meta,
+          ),
+          optional(
+            seq(
+              repeat($._indented_line),
+              '=',
+              repeat($._indented_line),
+              $._expression,
+            ),
+          ),
+        ),
+        seq(
+          repeat($._indented_line),
+          $.map,
+        ),
+        $.map_block,
+      ),
+    )),
 
     number: _ => token(
       choice(

@@ -226,7 +226,7 @@ yield
 )
 
 ===========================================================================================
-export
+export_identifier
 ===========================================================================================
 
 export foo
@@ -236,9 +236,51 @@ export foo = 99
 
 (module
   (export (identifier))
-  (assign
-    (export (identifier))
+  (export
+    (identifier)
     (number)
+  )
+)
+
+===========================================================================================
+export_map_inline
+===========================================================================================
+
+export { foo, bar }
+
+---
+
+(module
+  (export
+    (map
+      (entry_inline key: (identifier))
+      (entry_inline key: (identifier))
+    )
+  )
+)
+
+===========================================================================================
+export_map_block
+===========================================================================================
+
+export
+  foo: 42
+  'bar': 99
+
+---
+
+(module
+  (export
+    (map_block
+      (entry_block
+        key: (identifier)
+        value: (number)
+      )
+      (entry_block
+        key: (string)
+        value: (number)
+      )
+    )
   )
 )
 
