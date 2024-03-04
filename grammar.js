@@ -170,14 +170,17 @@ module.exports = grammar({
       $.null,
     ),
 
-    chain: $ => prec.left(PREC.chain, seq(
+    chain: $ => prec.right(PREC.chain, seq(
       field('start', $._term),
       choice(
         seq(
           repeat1(choice(
-            field('lookup', seq(
-              '.', choice($.identifier, $.string),
-            )),
+            seq(
+              repeat($._indented_line),
+              field('lookup', seq(
+                '.', choice($.identifier, $.string),
+              )),
+            ),
             field('call', $.tuple),
             field('index', $._index),
           )),
@@ -199,7 +202,8 @@ module.exports = grammar({
       ']'
     ),
 
-    call: $ => prec.right(seq(
+    call: $ => prec.right(PREC.chain, seq(
+      repeat($._indented_line),
       $._expression,
       repeat(seq(
         repeat($._indented_line),
