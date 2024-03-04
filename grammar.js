@@ -650,10 +650,6 @@ function any_amount_of() {
   return repeat(seq(...arguments));
 }
 
-function one_or_more() {
-  return repeat1(seq(...arguments));
-}
-
 function list_of(match, sep, trailing) {
   return trailing
     ? seq(match, any_amount_of(sep, match), optional(sep))
