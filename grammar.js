@@ -1,16 +1,9 @@
 /// <reference types="tree-sitter-cli/dsl" />
 
 const PREC = {
-  map_block: 1,
-  block: 2,
-  comma: 3,
-  debug: 4,
-  call: 5,
-  keyword: 6,
+  comma: -1,
+  chain: 2,
   range: 7,
-  if: 8,
-  not: 9,
-  pipe: 10,
   assign: 12,
   or: 14,
   and: 15,
@@ -18,13 +11,7 @@ const PREC = {
   comparison: 17,
   add: 18,
   multiply: 19,
-  unary: 20,
   negate: 21,
-  meta: 26,
-  import: 27,
-  chain: 28,
-  try: 29,
-  export: 30,
 };
 
 const id = /[\p{XID_Start}_][\p{XID_Continue}]*/;
@@ -164,7 +151,7 @@ module.exports = grammar({
       repeat($._newline),
     ),
 
-    block: $ => prec.left(PREC.block, seq(
+    block: $ => prec.left(seq(
       $._block_start,
       $._expressions,
       repeat(
@@ -212,7 +199,7 @@ module.exports = grammar({
       ']'
     ),
 
-    call: $ => prec.right(PREC.call, seq(
+    call: $ => prec.right(seq(
       $._expression,
       repeat(seq(
         repeat($._indented_line),
@@ -241,36 +228,36 @@ module.exports = grammar({
     ),
 
     comparison_op: $ => choice(
-      binary_op($, '!=', prec.right, PREC.comparison),
-      binary_op($, '==', prec.right, PREC.comparison),
-      binary_op($, '>', prec.right, PREC.comparison),
-      binary_op($, '>=', prec.right, PREC.comparison),
-      binary_op($, '<', prec.right, PREC.comparison),
-      binary_op($, '<=', prec.right, PREC.comparison),
+      binary_op($, '!=', prec.left, PREC.comparison),
+      binary_op($, '==', prec.left, PREC.comparison),
+      binary_op($, '>', prec.left, PREC.comparison),
+      binary_op($, '>=', prec.left, PREC.comparison),
+      binary_op($, '<', prec.left, PREC.comparison),
+      binary_op($, '<=', prec.left, PREC.comparison),
     ),
 
     boolean_op: $ => choice(
-      binary_op($, 'and', prec.right, PREC.and),
-      binary_op($, 'or', prec.right, PREC.or),
+      binary_op($, 'and', prec.left, PREC.and),
+      binary_op($, 'or', prec.left, PREC.or),
     ),
 
-    range: $ => prec.right(PREC.range, seq(
+    range: $ => prec.left(PREC.range, seq(
       $._expression, '..', $._expression
     )),
 
-    range_inclusive: $ => prec.right(PREC.range, seq(
+    range_inclusive: $ => prec.left(PREC.range, seq(
       $._expression, '..=', $._expression
     )),
 
-    range_from: $ => prec.right(PREC.range, seq(
+    range_from: $ => prec.left(PREC.range, seq(
       $._expression, '..'
     )),
 
-    range_to: $ => prec.right(PREC.range, seq(
+    range_to: $ => prec.left(PREC.range, seq(
       '..', $._expression
     )),
 
-    range_to_inclusive: $ => prec.right(PREC.range, seq(
+    range_to_inclusive: $ => prec.left(PREC.range, seq(
       '..=', $._expression
     )),
 
@@ -286,7 +273,7 @@ module.exports = grammar({
     identifier: _ => id,
 
     meta: $ => choice(
-      prec.right(PREC.meta,
+      prec.right(
         seq(
           meta_id,
           optional(field('name', $.identifier)),
@@ -320,7 +307,7 @@ module.exports = grammar({
     yield: $ => keyword_expression($, 'yield'),
     throw: $ => keyword_expression($, 'throw'),
 
-    export: $ => prec.right(PREC.export, seq(
+    export: $ => prec.right(seq(
       'export',
       choice(
         seq(
@@ -390,7 +377,7 @@ module.exports = grammar({
       )),
     ),
 
-    map_block: $ => prec.right(PREC.map_block, seq(
+    map_block: $ => prec.right(seq(
       $._map_block_start,
       $.entry_block,
       repeat(
@@ -441,7 +428,7 @@ module.exports = grammar({
 
     if: $ => choice(
       // Inline if
-      prec.right(PREC.if, seq(
+      prec.right(seq(
         'if',
         field('condition', $._expression),
         'then',
@@ -454,7 +441,7 @@ module.exports = grammar({
         )
       )),
       // Multiline if
-      prec.right(PREC.if, seq(
+      prec.right(seq(
         'if',
         field('condition', $._expression),
         field('then', $.block),
@@ -618,7 +605,7 @@ module.exports = grammar({
 
     ellipsis: _ => '...',
 
-    import: $ => prec.right(PREC.import, seq(
+    import: $ => prec.right(seq(
       optional(seq('from', $.import_module)),
       'import',
       $.import_item,
@@ -638,7 +625,7 @@ module.exports = grammar({
       optional(seq('as', $.identifier)),
     ),
 
-    try: $ => prec.right(PREC.try, seq(
+    try: $ => prec.right(seq(
       'try',
       $.block,
     )),
@@ -692,7 +679,7 @@ function binary_op($, operator, precedence_fn, precedence) {
 }
 
 function keyword_expression($, keyword) {
-  return prec.right(PREC.keyword, seq(
+  return prec.right(seq(
     keyword,
     optional(seq(repeat($._indented_line), $._expression)),
   ));
