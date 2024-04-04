@@ -40,9 +40,9 @@ string"
 string_interpolated
 ===========================================================================================
 
-'foo is $foo'
-'foo, bar is ${foo, bar}'
-'inline comment in expression ${foo, #- bar -# bar}'
+'foo is {foo}'
+'foo, bar is {foo, bar}'
+'inline comment in expression {foo, #- bar -# bar}'
 
 ---
 
@@ -69,7 +69,7 @@ string_interpolated
 escapes
 ===========================================================================================
 
-'foo\n\t\r\\\$bar'
+'foo\n\t\r\\\{bar'
 '\'\'\''
 "\"''\""
 '\x4e foo \xF9'
@@ -114,7 +114,7 @@ escapes
 raw_strings
 ===========================================================================================
 
-r'$foo\r\n'
+r'{foo}\r\n'
 r"'\#"
 r#""bar""#
 r##"#"hi"#"##
@@ -132,8 +132,8 @@ r##"#"hi"#"##
 incomplete_string_interpolation
 ===========================================================================================
 
-'${} x'
-'y ${'
+'{} x'
+'y {'
 
 ---
 

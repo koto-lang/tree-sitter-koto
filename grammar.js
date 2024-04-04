@@ -412,9 +412,8 @@ module.exports = grammar({
         $._string_start,
         repeat(choice(
           $.escape,
-          seq('$', $.identifier),
           seq(
-            '${',
+            '{',
             $._interpolation_start,
             optional($._expressions),
             $._interpolation_end,
