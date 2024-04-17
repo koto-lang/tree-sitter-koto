@@ -2,6 +2,14 @@
 
 [Tree-sitter][tree-sitter] parser for [Koto][koto].
 
+## Current State
+
+The parser is mostly usable, but there are some bugs that result in valid Koto
+expressions not being correctly processed.
+
+Contributions would be very welcome! See the [failing tests](./tests/failing)
+for a couple of examples of expressions that could be worked on.
+
 ## Development
 
 The [justfile][just] contains some commands that are
