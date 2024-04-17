@@ -1,3 +1,5 @@
-src/parser.c filter=lfs diff=lfs merge=lfs -text
-src/grammar.json filter=lfs diff=lfs merge=lfs -text
-src/node-types.json filter=lfs diff=lfs merge=lfs -text
+src/parser.c linguist-generated
+src/grammar.json linguist-generated
+src/node-types.json linguist-generated
+
+bindings/** linguist-generated
