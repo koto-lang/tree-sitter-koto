@@ -79,6 +79,8 @@
 (comment) @comment
 (debug) @keyword.debug
 (string) @string
+(fill_char) @string
+(alignment) @operator
 (escape) @string.escape
 (null) @constant.builtin
 (number) @number

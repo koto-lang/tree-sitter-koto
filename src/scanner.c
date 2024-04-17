@@ -4,9 +4,10 @@
 #include <stdio.h>
 #include <string.h>
 
-// Enable debug logging by setting the following line to `#if 0`
+// Enable debug logging and assertions by setting the following line to `#if 0`
 #if 1
 #define printf(...)
+#define assert(...)
 #endif
 
 enum TokenType {

@@ -326,7 +326,7 @@ module.exports = grammar({
         // Ints 
         seq(/\d+/, optional(/e[+-]?\d+/)),
         // Floats 
-        seq(/\d+/, '.', /\d+/, optional(/e[+-]?\d+/)),
+        seq(/\d*/, '.', /\d+/, optional(/e[+-]?\d+/)),
         // Binary
         /0b[01]+/,
         // Octal
@@ -416,6 +416,7 @@ module.exports = grammar({
             '{',
             $._interpolation_start,
             optional($._expressions),
+            optional($.format),
             $._interpolation_end,
             '}',
           ),
@@ -430,6 +431,22 @@ module.exports = grammar({
         $._raw_string_end,
       ),
     ),
+
+    format: $ => seq(
+      ':',
+      choice(
+        $.number,
+        seq(
+          optional($.fill_char),
+          $.alignment,
+          $.number,
+        ),
+        repeat(/./),
+      )
+    ),
+
+    fill_char: $ => /./,
+    alignment: $ => choice('<', '^', '>'),
 
     if: $ => choice(
       // Inline if

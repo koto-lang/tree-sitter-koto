@@ -1,5 +1,10 @@
 [
   {
+    "type": "alignment",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "arg",
     "named": true,
     "fields": {},
@@ -2442,6 +2447,11 @@
     }
   },
   {
+    "type": "fill_char",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "finally",
     "named": true,
     "fields": {},
@@ -2654,6 +2664,29 @@
       "types": [
         {
           "type": "identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "format",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "alignment",
+          "named": true
+        },
+        {
+          "type": "fill_char",
+          "named": true
+        },
+        {
+          "type": "number",
           "named": true
         }
       ]
@@ -6151,6 +6184,10 @@
           "named": true
         },
         {
+          "type": "format",
+          "named": true
+        },
+        {
           "type": "function",
           "named": true
         },
@@ -7906,6 +7943,10 @@
   },
   {
     "type": "]",
+    "named": false
+  },
+  {
+    "type": "^",
     "named": false
   },
   {

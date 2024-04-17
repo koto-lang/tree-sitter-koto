@@ -1784,7 +1784,7 @@
             "members": [
               {
                 "type": "PATTERN",
-                "value": "\\d+"
+                "value": "\\d*"
               },
               {
                 "type": "STRING",
@@ -2182,6 +2182,18 @@
                         ]
                       },
                       {
+                        "type": "CHOICE",
+                        "members": [
+                          {
+                            "type": "SYMBOL",
+                            "name": "format"
+                          },
+                          {
+                            "type": "BLANK"
+                          }
+                        ]
+                      },
+                      {
                         "type": "SYMBOL",
                         "name": "_interpolation_end"
                       },
@@ -2227,6 +2239,77 @@
               "name": "_raw_string_end"
             }
           ]
+        }
+      ]
+    },
+    "format": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": ":"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "number"
+            },
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "fill_char"
+                    },
+                    {
+                      "type": "BLANK"
+                    }
+                  ]
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "alignment"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "number"
+                }
+              ]
+            },
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "PATTERN",
+                "value": "."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "fill_char": {
+      "type": "PATTERN",
+      "value": "."
+    },
+    "alignment": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "<"
+        },
+        {
+          "type": "STRING",
+          "value": "^"
+        },
+        {
+          "type": "STRING",
+          "value": ">"
         }
       ]
     },
