@@ -28,6 +28,10 @@
         {
           "type": "SYMBOL",
           "name": "_block_end"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_eof"
         }
       ]
     },
@@ -3361,6 +3365,10 @@
     {
       "type": "SYMBOL",
       "name": "_interpolation_end"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_eof"
     },
     {
       "type": "SYMBOL",

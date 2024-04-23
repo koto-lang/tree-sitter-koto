@@ -24,6 +24,7 @@ enum TokenType {
   RAW_STRING_END,
   INTERPOLATION_START,
   INTERPOLATION_END,
+  END_OF_FILE,
   ERROR_SENTINEL,
 };
 
@@ -165,7 +166,7 @@ static bool line_starts_with_map_key(TSLexer* lexer) {
       return false;
 
     default:
-      advance(lexer);
+      skip(lexer);
     }
   }
 
@@ -227,7 +228,12 @@ bool tree_sitter_koto_external_scanner_scan(
 
   const bool error_recovery = valid_symbols[ERROR_SENTINEL];
 
+  // Mark the end before doing anything else to allow lookahead to work correctly
+  lexer->mark_end(lexer);
+
+  // Skip any initial whitespace
   skip_whitespace(lexer);
+
   char next = lexer->lookahead;
 
   if (error_recovery) {
@@ -335,16 +341,6 @@ bool tree_sitter_koto_external_scanner_scan(
   }
 
   const uint16_t column = lexer->get_column(lexer);
-
-  // Initial block detection
-  if (valid_symbols[BLOCK_START] && VEC_SIZE(scanner->indents) == 0) {
-    printf(">>>> initial block start: %u\n", column);
-    VEC_PUSH(scanner->indents, column);
-    scanner->block_level_just_changed = true;
-    lexer->result_symbol = BLOCK_START;
-    return true;
-  }
-
   const uint16_t block_indent
       = VEC_SIZE(scanner->indents) > 0 ? VEC_BACK(scanner->indents) : 0;
   const bool block_just_changed = scanner->block_level_just_changed;
@@ -352,15 +348,39 @@ bool tree_sitter_koto_external_scanner_scan(
   const bool eof = lexer->eof(lexer);
 
   printf(
-      "scanner.scan: column: %u, block_indent: %u num_indents: %u newline: %i\n",
+      "scanner.scan: column: %u, block_indent: %u num_indents: %u newline: %i eof: %i\n",
       column,
       block_indent,
       scanner->indents.len,
-      newline);
+      newline,
+      eof);
 
+  // Initial block?
+  if (valid_symbols[BLOCK_START] && VEC_SIZE(scanner->indents) == 0) {
+    printf(">>>> initial block start: %u\n", column);
+    VEC_PUSH(scanner->indents, column);
+    scanner->block_level_just_changed = true;
+    lexer->result_symbol = BLOCK_START;
+    return true;
+  }
+  // Block end?
+  // This should be detected before the following call to mark_end so that the
+  // end of the block is placed at the last token in the block rather than at the start of
+  // the following line.
+  else if (
+      valid_symbols[BLOCK_END]
+      && (eof || (newline || block_just_changed) && column < block_indent)) {
+    printf(">>>> block end: %u\n", column);
+    VEC_POP(scanner->indents);
+    scanner->block_level_just_changed = true;
+    lexer->result_symbol = BLOCK_END;
+    return true;
+  }
+
+  // Mark the current end, telling the lexer that the consumed tokens are significant.
   lexer->mark_end(lexer);
-
   next = lexer->lookahead;
+
   // Comment?
   if (valid_symbols[COMMENT] && !scanner->in_string && next == '#') {
     consume_comment(lexer);
@@ -394,16 +414,6 @@ bool tree_sitter_koto_external_scanner_scan(
     lexer->result_symbol = BLOCK_CONTINUE;
     return true;
   }
-  // Block end?
-  else if (
-      valid_symbols[BLOCK_END]
-      && (eof || (newline || block_just_changed) && column < block_indent)) {
-    printf(">>>> block end: %u\n", column);
-    VEC_POP(scanner->indents);
-    scanner->block_level_just_changed = true;
-    lexer->result_symbol = BLOCK_END;
-    return true;
-  }
   // Indented line?
   else if (valid_symbols[INDENTED_LINE] && newline && column > block_indent) {
     printf(">>>> indented line\n");
@@ -412,8 +422,14 @@ bool tree_sitter_koto_external_scanner_scan(
   }
   // Newline?
   else if (valid_symbols[NEWLINE] && newline) {
-    printf(">>>> newline!\n");
+    printf(">>>> newline\n");
     lexer->result_symbol = NEWLINE;
+    return true;
+  }
+  // EOF?
+  else if (valid_symbols[END_OF_FILE] && eof) {
+    printf(">>>> eof\n");
+    lexer->result_symbol = END_OF_FILE;
     return true;
   }
 

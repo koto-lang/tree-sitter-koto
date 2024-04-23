@@ -39,6 +39,7 @@ module.exports = grammar({
     $._raw_string_end,
     $._interpolation_start,
     $._interpolation_end,
+    $._eof,
     $.error_sentinel,
   ],
 
@@ -61,6 +62,7 @@ module.exports = grammar({
         )
       ),
       $._block_end,
+      $._eof,
     ),
 
     _term: $ => choice(
@@ -323,9 +325,9 @@ module.exports = grammar({
 
     number: _ => token(
       choice(
-        // Ints 
+        // Ints
         seq(/\d+/, optional(/e[+-]?\d+/)),
-        // Floats 
+        // Floats
         seq(/\d*/, '.', /\d+/, optional(/e[+-]?\d+/)),
         // Binary
         /0b[01]+/,
@@ -696,4 +698,4 @@ function keyword_expression($, keyword) {
     keyword,
     optional(seq(repeat($._indented_line), $._expression)),
   ));
-}       
+}
