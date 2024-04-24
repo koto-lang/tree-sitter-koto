@@ -64,32 +64,68 @@
   "as"
 ] @keyword.import
 
-["(" ")" "[" "]" "{" "}" "|"] @punctuation.bracket
+[
+  "("
+  ")"
+  "["
+  "]"
+  "{"
+  "}"
+  "|"
+] @punctuation.bracket
 
 (identifier) @variable
 
-(import_module (identifier) @namespace)
-(import_item (identifier) @namespace)
-(export (identifier) @namespace)
+(import_module
+  (identifier) @namespace)
 
-(chain lookup: (identifier) @field)
-(chain start: (identifier) @function)
+(import_item
+  (identifier) @namespace)
 
-[(true) (false)] @boolean
+(export
+  (identifier) @namespace)
+
+(chain
+  lookup: (identifier) @field)
+
+(chain
+  start: (identifier) @function)
+
+[
+  (true)
+  (false)
+] @boolean
+
 (comment) @comment
+
 (debug) @keyword.debug
+
 (string) @string
+
 (fill_char) @string
+
 (alignment) @operator
+
 (escape) @string.escape
+
 (null) @constant.builtin
+
 (number) @number
+
 (meta) @tag
-(meta name: (identifier) @field) 
+
+(meta
+  name: (identifier) @field)
+
 (self) @variable.builtin
 
-(arg (identifier) @parameter)
+(arg
+  (identifier) @parameter)
+
 (ellipsis) @parameter
 
-(entry_inline key: (identifier) @field)
-(entry_block key: (identifier) @field)
+(entry_inline
+  key: (identifier) @field)
+
+(entry_block
+  key: (identifier) @field)
