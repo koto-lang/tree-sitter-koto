@@ -91,6 +91,10 @@
           "named": true
         },
         {
+          "type": "expressions",
+          "named": true
+        },
+        {
           "type": "false",
           "named": true
         },

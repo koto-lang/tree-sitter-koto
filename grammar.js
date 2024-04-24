@@ -1,7 +1,7 @@
 /// <reference types="tree-sitter-cli/dsl" />
 
 const PREC = {
-  comma: -1,
+  comma: 1,
   chain: 2,
   range: 7,
   assign: 12,
@@ -115,7 +115,15 @@ module.exports = grammar({
 
     expressions: $ => prec.left(PREC.comma, seq(
       $._expression,
-      repeat1(seq(',', $._expression))
+      repeat1(seq(
+        ',',
+        repeat($._indented_line),
+        $._expression,
+      )),
+      // Optional trailing comma
+      optional(seq(
+        ',',
+      )),
     )),
 
     _expressions: $ => choice(
@@ -200,7 +208,13 @@ module.exports = grammar({
       ))
     )),
 
-    assign: $ => binary_op($, '=', prec.right, PREC.assign),
+    assign: $ => prec.right(PREC.assign, seq(
+      $._expression,
+      repeat($._indented_line),
+      '=',
+      repeat($._indented_line),
+      $._expressions,
+    )),
 
     modify_assign: $ => choice(
       binary_op($, '-=', prec.right, PREC.assign),

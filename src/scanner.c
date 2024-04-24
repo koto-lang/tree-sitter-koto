@@ -1,13 +1,14 @@
 #include "tree_sitter/parser.h"
 
-#include <assert.h>
-#include <stdio.h>
 #include <string.h>
 
 // Enable debug logging and assertions by setting the following line to `#if 0`
 #if 1
 #define printf(...)
 #define assert(...)
+#else
+#include <assert.h>
+#include <stdio.h>
 #endif
 
 enum TokenType {
