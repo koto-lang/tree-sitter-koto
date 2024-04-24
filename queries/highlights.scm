@@ -96,7 +96,7 @@
   (false)
 ] @boolean
 
-(comment) @comment
+(comment) @comment @spell
 
 (debug) @keyword.debug
 
