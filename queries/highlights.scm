@@ -18,7 +18,12 @@
   ">="
   ".."
   "..="
+  "->"
 ] @operator
+
+[
+  "let"
+] @keyword
 
 [
   "and"
@@ -129,3 +134,9 @@
   (identifier) @variable.parameter)
 
 (ellipsis) @variable.parameter
+
+(variable
+  type: (identifier) @type)
+
+(function
+  output_type: (identifier) @type)

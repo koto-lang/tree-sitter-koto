@@ -3,17 +3,17 @@
   body: (_) @local.scope)
 
 ; Definitions
-(arg
-  (identifier) @local.definition.parameter)
-
 (assign
   (identifier) @local.definition.var)
 
-(for_args
+(variable
   (identifier) @local.definition.var)
 
-(match_patterns
-  (identifier) @local.definition.var)
+(arg
+  (identifier) @local.definition.parameter)
+
+(arg
+  (variable (identifier)) @local.definition.parameter)
 
 (import_item
   (identifier) @local.definition.import)

@@ -100,6 +100,7 @@ module.exports = grammar({
       $.export,
       $.try,
       $.assign,
+      $.let_assign,
       $.modify_assign,
       $.binary_op,
       $.comparison_op,
@@ -111,6 +112,11 @@ module.exports = grammar({
     terms: $ => seq(
       $._term,
       repeat1(seq(',', $._term))
+    ),
+
+    _terms: $ => choice(
+      $._term,
+      $.terms,
     ),
 
     expressions: $ => prec.left(PREC.comma, seq(
@@ -215,6 +221,30 @@ module.exports = grammar({
       repeat($._indented_line),
       $._expressions,
     )),
+
+    let_assign: $ => choice(
+      seq(
+        'let',
+        repeat($._indented_line),
+        $.variable,
+        repeat(seq(
+          ',',
+          $.variable,
+        )),
+        repeat($._indented_line),
+        '=',
+        repeat($._indented_line),
+        $._expressions,
+      ),
+    ),
+
+    variable: $ => seq(
+      $.identifier,
+      optional(field('type', seq(
+        ':',
+        $.identifier,
+      ))),
+    ),
 
     modify_assign: $ => choice(
       binary_op($, '-=', prec.right, PREC.assign),
@@ -526,7 +556,7 @@ module.exports = grammar({
 
     match: $ => seq(
       'match',
-      $._expressions,
+      $._terms,
       $._block_start,
       seq(
         repeat1($.match_arm),
@@ -554,11 +584,25 @@ module.exports = grammar({
     ),
 
     match_patterns: $ => seq(
-      choice($._term, $.terms),
+      choice($._match_term, $.match_terms),
       repeat(seq(
         'or',
-        choice($._term, $.terms),
+        choice($._match_term, $.match_terms),
       ))
+    ),
+
+    _match_term: $ => choice(
+      $._constants,
+      $.number,
+      $.negate,
+      $.string,
+      $.variable,
+      $.tuple,
+    ),
+
+    match_terms: $ => seq(
+      $._match_term,
+      repeat1(seq(',', $._match_term))
     ),
 
     _else_arm: $ => seq(
@@ -581,11 +625,11 @@ module.exports = grammar({
     ),
 
     for_args: $ => seq(
-      $.identifier,
+      $.variable,
       repeat(
         seq(
           ',',
-          $.identifier,
+          $.variable,
         )
       ),
     ),
@@ -611,6 +655,10 @@ module.exports = grammar({
       '|',
       optional($.args),
       '|',
+      optional(field('output_type', seq(
+        '->',
+        $.identifier,
+      ))),
       field('body', choice($._expressions, $.block)),
     ),
 
@@ -630,7 +678,7 @@ module.exports = grammar({
     ),
 
     arg: $ => choice(
-      $.identifier,
+      $.variable,
       $.ellipsis,
       seq($.ellipsis, $.identifier),
       seq($.identifier, $.ellipsis),
