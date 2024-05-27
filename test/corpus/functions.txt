@@ -4,6 +4,7 @@ function_inline
 
 || null
 |a, b, c| 1 + 2
+|a: Number, b: String| -> Null null
 
 ---
 
@@ -13,11 +14,19 @@ function_inline
   )
   (function
     (args
-      (arg (identifier))
-      (arg (identifier))
-      (arg (identifier))
+      (arg (variable (identifier)))
+      (arg (variable (identifier)))
+      (arg (variable (identifier)))
     )
     body: (binary_op (number) (number))
+  )
+  (function
+    (args
+      (arg (variable (identifier) type: (identifier)))
+      (arg (variable (identifier) type: (identifier)))
+    )
+    output_type: (identifier)
+    body: (null)
   )
 )
 
@@ -27,7 +36,7 @@ function_block
 
 ||
   true
-|a, b|
+|a, b| -> Number
   a + b
 
 ---
@@ -38,9 +47,10 @@ function_block
   )
   (function
     (args
-      (arg (identifier))
-      (arg (identifier))
+      (arg (variable (identifier)))
+      (arg (variable (identifier)))
     )
+    output_type: (identifier)
     body: (block (binary_op (identifier) (identifier)))
   )
 )
@@ -58,17 +68,17 @@ function_arg_unpacking
 (module
   (function
     (args
-      (arg (identifier))
-      (arg (identifier))
+      (arg (variable (identifier)))
+      (arg (variable (identifier)))
       (arg (ellipsis))
     )
     body: (true)
   )
   (function
     (args
-      (arg (identifier))
+      (arg (variable (identifier)))
       (arg (tuple
-        (arg (identifier))
+        (arg (variable (identifier)))
         (arg (identifier) (ellipsis))
       ))
     )

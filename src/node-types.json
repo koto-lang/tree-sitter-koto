@@ -27,6 +27,10 @@
         {
           "type": "tuple",
           "named": true
+        },
+        {
+          "type": "variable",
+          "named": true
         }
       ]
     }
@@ -116,6 +120,10 @@
         },
         {
           "type": "import",
+          "named": true
+        },
+        {
+          "type": "let_assign",
           "named": true
         },
         {
@@ -283,6 +291,10 @@
         },
         {
           "type": "import",
+          "named": true
+        },
+        {
+          "type": "let_assign",
           "named": true
         },
         {
@@ -473,6 +485,10 @@
           "named": true
         },
         {
+          "type": "let_assign",
+          "named": true
+        },
+        {
           "type": "list",
           "named": true
         },
@@ -640,6 +656,10 @@
           "named": true
         },
         {
+          "type": "let_assign",
+          "named": true
+        },
+        {
           "type": "list",
           "named": true
         },
@@ -804,6 +824,10 @@
         },
         {
           "type": "import",
+          "named": true
+        },
+        {
+          "type": "let_assign",
           "named": true
         },
         {
@@ -1008,6 +1032,10 @@
           },
           {
             "type": "import",
+            "named": true
+          },
+          {
+            "type": "let_assign",
             "named": true
           },
           {
@@ -1281,6 +1309,10 @@
           "named": true
         },
         {
+          "type": "let_assign",
+          "named": true
+        },
+        {
           "type": "list",
           "named": true
         },
@@ -1445,6 +1477,10 @@
         },
         {
           "type": "import",
+          "named": true
+        },
+        {
+          "type": "let_assign",
           "named": true
         },
         {
@@ -1627,6 +1663,10 @@
           },
           {
             "type": "import",
+            "named": true
+          },
+          {
+            "type": "let_assign",
             "named": true
           },
           {
@@ -1826,6 +1866,10 @@
             "named": true
           },
           {
+            "type": "let_assign",
+            "named": true
+          },
+          {
             "type": "list",
             "named": true
           },
@@ -2012,6 +2056,10 @@
             "named": true
           },
           {
+            "type": "let_assign",
+            "named": true
+          },
+          {
             "type": "list",
             "named": true
           },
@@ -2185,6 +2233,10 @@
           "named": true
         },
         {
+          "type": "let_assign",
+          "named": true
+        },
+        {
           "type": "list",
           "named": true
         },
@@ -2349,6 +2401,10 @@
         },
         {
           "type": "import",
+          "named": true
+        },
+        {
+          "type": "let_assign",
           "named": true
         },
         {
@@ -2559,6 +2615,10 @@
             "named": true
           },
           {
+            "type": "let_assign",
+            "named": true
+          },
+          {
             "type": "list",
             "named": true
           },
@@ -2667,7 +2727,7 @@
       "required": true,
       "types": [
         {
-          "type": "identifier",
+          "type": "variable",
           "named": true
         }
       ]
@@ -2773,6 +2833,10 @@
             "named": true
           },
           {
+            "type": "let_assign",
+            "named": true
+          },
+          {
             "type": "list",
             "named": true
           },
@@ -2869,6 +2933,20 @@
             "named": true
           }
         ]
+      },
+      "output_type": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "->",
+            "named": false
+          },
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
       }
     },
     "children": {
@@ -2948,6 +3026,10 @@
           },
           {
             "type": "import",
+            "named": true
+          },
+          {
+            "type": "let_assign",
             "named": true
           },
           {
@@ -3110,6 +3192,10 @@
           },
           {
             "type": "import",
+            "named": true
+          },
+          {
+            "type": "let_assign",
             "named": true
           },
           {
@@ -3279,6 +3365,10 @@
             "named": true
           },
           {
+            "type": "let_assign",
+            "named": true
+          },
+          {
             "type": "list",
             "named": true
           },
@@ -3436,6 +3526,185 @@
     }
   },
   {
+    "type": "let_assign",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "assign",
+          "named": true
+        },
+        {
+          "type": "binary_op",
+          "named": true
+        },
+        {
+          "type": "boolean_op",
+          "named": true
+        },
+        {
+          "type": "break",
+          "named": true
+        },
+        {
+          "type": "chain",
+          "named": true
+        },
+        {
+          "type": "comparison_op",
+          "named": true
+        },
+        {
+          "type": "continue",
+          "named": true
+        },
+        {
+          "type": "debug",
+          "named": true
+        },
+        {
+          "type": "export",
+          "named": true
+        },
+        {
+          "type": "expressions",
+          "named": true
+        },
+        {
+          "type": "false",
+          "named": true
+        },
+        {
+          "type": "for",
+          "named": true
+        },
+        {
+          "type": "function",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "if",
+          "named": true
+        },
+        {
+          "type": "import",
+          "named": true
+        },
+        {
+          "type": "let_assign",
+          "named": true
+        },
+        {
+          "type": "list",
+          "named": true
+        },
+        {
+          "type": "loop",
+          "named": true
+        },
+        {
+          "type": "map",
+          "named": true
+        },
+        {
+          "type": "map_block",
+          "named": true
+        },
+        {
+          "type": "match",
+          "named": true
+        },
+        {
+          "type": "meta",
+          "named": true
+        },
+        {
+          "type": "modify_assign",
+          "named": true
+        },
+        {
+          "type": "negate",
+          "named": true
+        },
+        {
+          "type": "not",
+          "named": true
+        },
+        {
+          "type": "null",
+          "named": true
+        },
+        {
+          "type": "number",
+          "named": true
+        },
+        {
+          "type": "range",
+          "named": true
+        },
+        {
+          "type": "range_inclusive",
+          "named": true
+        },
+        {
+          "type": "return",
+          "named": true
+        },
+        {
+          "type": "self",
+          "named": true
+        },
+        {
+          "type": "string",
+          "named": true
+        },
+        {
+          "type": "switch",
+          "named": true
+        },
+        {
+          "type": "throw",
+          "named": true
+        },
+        {
+          "type": "true",
+          "named": true
+        },
+        {
+          "type": "try",
+          "named": true
+        },
+        {
+          "type": "tuple",
+          "named": true
+        },
+        {
+          "type": "until",
+          "named": true
+        },
+        {
+          "type": "variable",
+          "named": true
+        },
+        {
+          "type": "while",
+          "named": true
+        },
+        {
+          "type": "yield",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "list",
     "named": true,
     "fields": {},
@@ -3505,6 +3774,10 @@
         },
         {
           "type": "import",
+          "named": true
+        },
+        {
+          "type": "let_assign",
           "named": true
         },
         {
@@ -3728,6 +4001,10 @@
             "named": true
           },
           {
+            "type": "let_assign",
+            "named": true
+          },
+          {
             "type": "list",
             "named": true
           },
@@ -3831,55 +4108,7 @@
       "required": true,
       "types": [
         {
-          "type": "assign",
-          "named": true
-        },
-        {
-          "type": "binary_op",
-          "named": true
-        },
-        {
-          "type": "boolean_op",
-          "named": true
-        },
-        {
-          "type": "break",
-          "named": true
-        },
-        {
-          "type": "chain",
-          "named": true
-        },
-        {
-          "type": "comparison_op",
-          "named": true
-        },
-        {
-          "type": "continue",
-          "named": true
-        },
-        {
-          "type": "debug",
-          "named": true
-        },
-        {
-          "type": "export",
-          "named": true
-        },
-        {
-          "type": "expressions",
-          "named": true
-        },
-        {
           "type": "false",
-          "named": true
-        },
-        {
-          "type": "for",
-          "named": true
-        },
-        {
-          "type": "function",
           "named": true
         },
         {
@@ -3887,31 +4116,11 @@
           "named": true
         },
         {
-          "type": "if",
-          "named": true
-        },
-        {
-          "type": "import",
-          "named": true
-        },
-        {
           "type": "list",
           "named": true
         },
         {
-          "type": "loop",
-          "named": true
-        },
-        {
           "type": "map",
-          "named": true
-        },
-        {
-          "type": "map_block",
-          "named": true
-        },
-        {
-          "type": "match",
           "named": true
         },
         {
@@ -3920,10 +4129,6 @@
         },
         {
           "type": "meta",
-          "named": true
-        },
-        {
-          "type": "modify_assign",
           "named": true
         },
         {
@@ -3943,18 +4148,6 @@
           "named": true
         },
         {
-          "type": "range",
-          "named": true
-        },
-        {
-          "type": "range_inclusive",
-          "named": true
-        },
-        {
-          "type": "return",
-          "named": true
-        },
-        {
           "type": "self",
           "named": true
         },
@@ -3963,11 +4156,7 @@
           "named": true
         },
         {
-          "type": "switch",
-          "named": true
-        },
-        {
-          "type": "throw",
+          "type": "terms",
           "named": true
         },
         {
@@ -3975,23 +4164,7 @@
           "named": true
         },
         {
-          "type": "try",
-          "named": true
-        },
-        {
           "type": "tuple",
-          "named": true
-        },
-        {
-          "type": "until",
-          "named": true
-        },
-        {
-          "type": "while",
-          "named": true
-        },
-        {
-          "type": "yield",
           "named": true
         }
       ]
@@ -4067,6 +4240,10 @@
           },
           {
             "type": "import",
+            "named": true
+          },
+          {
+            "type": "let_assign",
             "named": true
           },
           {
@@ -4240,6 +4417,10 @@
             "named": true
           },
           {
+            "type": "let_assign",
+            "named": true
+          },
+          {
             "type": "list",
             "named": true
           },
@@ -4362,27 +4543,11 @@
           "named": true
         },
         {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "list",
-          "named": true
-        },
-        {
-          "type": "map",
-          "named": true
-        },
-        {
-          "type": "meta",
+          "type": "match_terms",
           "named": true
         },
         {
           "type": "negate",
-          "named": true
-        },
-        {
-          "type": "not",
           "named": true
         },
         {
@@ -4402,7 +4567,50 @@
           "named": true
         },
         {
-          "type": "terms",
+          "type": "true",
+          "named": true
+        },
+        {
+          "type": "tuple",
+          "named": true
+        },
+        {
+          "type": "variable",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "match_terms",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "false",
+          "named": true
+        },
+        {
+          "type": "negate",
+          "named": true
+        },
+        {
+          "type": "null",
+          "named": true
+        },
+        {
+          "type": "number",
+          "named": true
+        },
+        {
+          "type": "self",
+          "named": true
+        },
+        {
+          "type": "string",
           "named": true
         },
         {
@@ -4411,6 +4619,10 @@
         },
         {
           "type": "tuple",
+          "named": true
+        },
+        {
+          "type": "variable",
           "named": true
         }
       ]
@@ -4498,6 +4710,10 @@
         },
         {
           "type": "import",
+          "named": true
+        },
+        {
+          "type": "let_assign",
           "named": true
         },
         {
@@ -4688,6 +4904,10 @@
           "named": true
         },
         {
+          "type": "let_assign",
+          "named": true
+        },
+        {
           "type": "list",
           "named": true
         },
@@ -4852,6 +5072,10 @@
         },
         {
           "type": "import",
+          "named": true
+        },
+        {
+          "type": "let_assign",
           "named": true
         },
         {
@@ -5022,6 +5246,10 @@
           "named": true
         },
         {
+          "type": "let_assign",
+          "named": true
+        },
+        {
           "type": "list",
           "named": true
         },
@@ -5189,6 +5417,10 @@
           "named": true
         },
         {
+          "type": "let_assign",
+          "named": true
+        },
+        {
           "type": "list",
           "named": true
         },
@@ -5353,6 +5585,10 @@
         },
         {
           "type": "import",
+          "named": true
+        },
+        {
+          "type": "let_assign",
           "named": true
         },
         {
@@ -5528,6 +5764,10 @@
           "named": true
         },
         {
+          "type": "let_assign",
+          "named": true
+        },
+        {
           "type": "list",
           "named": true
         },
@@ -5692,6 +5932,10 @@
         },
         {
           "type": "import",
+          "named": true
+        },
+        {
+          "type": "let_assign",
           "named": true
         },
         {
@@ -5862,6 +6106,10 @@
           "named": true
         },
         {
+          "type": "let_assign",
+          "named": true
+        },
+        {
           "type": "list",
           "named": true
         },
@@ -6026,6 +6274,10 @@
         },
         {
           "type": "import",
+          "named": true
+        },
+        {
+          "type": "let_assign",
           "named": true
         },
         {
@@ -6208,6 +6460,10 @@
           "named": true
         },
         {
+          "type": "let_assign",
+          "named": true
+        },
+        {
           "type": "list",
           "named": true
         },
@@ -6380,6 +6636,10 @@
           },
           {
             "type": "import",
+            "named": true
+          },
+          {
+            "type": "let_assign",
             "named": true
           },
           {
@@ -6561,6 +6821,10 @@
             "named": true
           },
           {
+            "type": "let_assign",
+            "named": true
+          },
+          {
             "type": "list",
             "named": true
           },
@@ -6728,6 +6992,10 @@
           },
           {
             "type": "import",
+            "named": true
+          },
+          {
+            "type": "let_assign",
             "named": true
           },
           {
@@ -6962,6 +7230,10 @@
           "named": true
         },
         {
+          "type": "let_assign",
+          "named": true
+        },
+        {
           "type": "list",
           "named": true
         },
@@ -7148,6 +7420,10 @@
           "named": true
         },
         {
+          "type": "let_assign",
+          "named": true
+        },
+        {
           "type": "list",
           "named": true
         },
@@ -7325,6 +7601,10 @@
             "named": true
           },
           {
+            "type": "let_assign",
+            "named": true
+          },
+          {
             "type": "list",
             "named": true
           },
@@ -7425,6 +7705,36 @@
     }
   },
   {
+    "type": "variable",
+    "named": true,
+    "fields": {
+      "type": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": ":",
+            "named": false
+          },
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "while",
     "named": true,
     "fields": {
@@ -7500,6 +7810,10 @@
           },
           {
             "type": "import",
+            "named": true
+          },
+          {
+            "type": "let_assign",
             "named": true
           },
           {
@@ -7671,6 +7985,10 @@
           "named": true
         },
         {
+          "type": "let_assign",
+          "named": true
+        },
+        {
           "type": "list",
           "named": true
         },
@@ -7815,6 +8133,10 @@
   },
   {
     "type": "-=",
+    "named": false
+  },
+  {
+    "type": "->",
     "named": false
   },
   {
@@ -8027,6 +8349,10 @@
   },
   {
     "type": "in",
+    "named": false
+  },
+  {
+    "type": "let",
     "named": false
   },
   {
