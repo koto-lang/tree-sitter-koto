@@ -267,19 +267,39 @@ yield
 )
 
 ===========================================================================================
-export_identifier
+export_assign
 ===========================================================================================
 
-export foo
 export foo = 99
 
 ---
 
 (module
-  (export (identifier))
   (export
-    (identifier)
-    (number)
+    (assign
+      (identifier)
+      (number)
+    )
+  )
+)
+
+===========================================================================================
+export_let
+===========================================================================================
+
+export let foo: Number = 99
+
+---
+
+(module
+  (export
+    (let_assign
+      (variable
+        (identifier)
+        type: (identifier)
+      )
+      (number)
+    )
   )
 )
 

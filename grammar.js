@@ -344,27 +344,7 @@ module.exports = grammar({
 
     export: $ => prec.right(seq(
       'export',
-      choice(
-        seq(
-          choice(
-            $.identifier,
-            $.meta,
-          ),
-          optional(
-            seq(
-              repeat($._indented_line),
-              '=',
-              repeat($._indented_line),
-              $._expression,
-            ),
-          ),
-        ),
-        seq(
-          repeat($._indented_line),
-          $.map,
-        ),
-        $.map_block,
-      ),
+      $._expressions,
     )),
 
     number: _ => token(

@@ -2169,7 +2169,7 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": true,
       "types": [
         {
@@ -2206,6 +2206,10 @@
         },
         {
           "type": "export",
+          "named": true
+        },
+        {
+          "type": "expressions",
           "named": true
         },
         {
