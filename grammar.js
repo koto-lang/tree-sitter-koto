@@ -396,7 +396,8 @@ module.exports = grammar({
         repeat(seq(
           ',',
           $.entry_inline,
-        ))
+        )),
+        optional(','),
       )),
       '}'
     ),
