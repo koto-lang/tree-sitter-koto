@@ -184,6 +184,7 @@ module.exports = grammar({
             ),
             field('call', $.tuple),
             field('index', $._index),
+            $.null_check,
           )),
           optional($.call),
         ),
@@ -202,6 +203,8 @@ module.exports = grammar({
       ),
       ']'
     ),
+
+    null_check: _ => '?',
 
     call: $ => prec.right(PREC.chain, seq(
       repeat($._indented_line),

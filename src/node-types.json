@@ -1230,11 +1230,15 @@
       }
     },
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": false,
       "types": [
         {
           "type": "call",
+          "named": true
+        },
+        {
+          "type": "null_check",
           "named": true
         }
       ]
@@ -8373,6 +8377,10 @@
   },
   {
     "type": "null",
+    "named": true
+  },
+  {
+    "type": "null_check",
     "named": true
   },
   {

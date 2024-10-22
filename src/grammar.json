@@ -474,6 +474,10 @@
                             "type": "SYMBOL",
                             "name": "_index"
                           }
+                        },
+                        {
+                          "type": "SYMBOL",
+                          "name": "null_check"
                         }
                       ]
                     }
@@ -538,6 +542,10 @@
           "value": "]"
         }
       ]
+    },
+    "null_check": {
+      "type": "STRING",
+      "value": "?"
     },
     "call": {
       "type": "PREC_RIGHT",
