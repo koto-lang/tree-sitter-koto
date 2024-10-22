@@ -109,10 +109,10 @@ module.exports = grammar({
       $.range_inclusive,
     ),
 
-    terms: $ => seq(
+    terms: $ => prec.left(PREC.comma, seq(
       $._term,
       repeat1(seq(',', $._term))
-    ),
+    )),
 
     _terms: $ => choice(
       $._term,
@@ -496,35 +496,36 @@ module.exports = grammar({
       prec.right(seq(
         'if',
         field('condition', $._expression),
-        field('then', $.block),
+        optional(field('then', $.block)),
       )),
     ),
 
     else_if: $ => seq(
       'else if',
       field('condition', $._expression),
-      field('then', $.block),
+      optional(field('then', $.block)),
     ),
 
     else: $ => seq(
       'else',
-      $.block,
+      optional($.block),
     ),
 
-    switch: $ => seq(
+    switch: $ => prec.right(seq(
       'switch',
-      $._block_start,
-      choice(
-        seq(
-          repeat1($.switch_arm),
-          optional(
-            $._else_arm,
+      optional(seq($._block_start,
+        choice(
+          seq(
+            repeat1($.switch_arm),
+            optional(
+              $._else_arm,
+            ),
           ),
+          $._else_arm,
         ),
-        $._else_arm,
-      ),
-      $._block_end,
-    ),
+        $._block_end,
+      ))
+    )),
 
     switch_arm: $ => seq(
       $._block_continue,
@@ -538,18 +539,20 @@ module.exports = grammar({
       )
     ),
 
-    match: $ => seq(
+    match: $ => prec.right(seq(
       'match',
       $._terms,
-      $._block_start,
-      seq(
-        repeat1($.match_arm),
-        optional(
-          $._else_arm,
+      optional(seq(
+        $._block_start,
+        seq(
+          repeat1($.match_arm),
+          optional(
+            $._else_arm,
+          ),
         ),
-      ),
-      $._block_end,
-    ),
+        $._block_end
+      )),
+    )),
 
     match_arm: $ => seq(
       $._block_continue,
@@ -600,13 +603,13 @@ module.exports = grammar({
       )
     ),
 
-    for: $ => seq(
+    for: $ => prec.right(seq(
       'for',
       field('args', $.for_args),
       'in',
       field('range', $._expression),
-      field('body', $.block),
-    ),
+      optional(field('body', $.block)),
+    )),
 
     for_args: $ => seq(
       $.variable,
@@ -618,24 +621,24 @@ module.exports = grammar({
       ),
     ),
 
-    until: $ => seq(
+    until: $ => prec.right(seq(
       'until',
       field('condition', $._expression),
-      field('body', $.block),
-    ),
+      optional(field('body', $.block)),
+    )),
 
-    while: $ => seq(
+    while: $ => prec.right(seq(
       'while',
       field('condition', $._expression),
-      field('body', $.block),
-    ),
+      optional(field('body', $.block)),
+    )),
 
-    loop: $ => seq(
+    loop: $ => prec.right(seq(
       'loop',
-      $.block,
-    ),
+      optional($.block),
+    )),
 
-    function: $ => seq(
+    function: $ => prec.right(seq(
       '|',
       optional($.args),
       '|',
@@ -643,8 +646,8 @@ module.exports = grammar({
         '->',
         $.identifier,
       ))),
-      field('body', choice($._expressions, $.block)),
-    ),
+      optional(field('body', choice($._expressions, $.block))),
+    )),
 
     args: $ => seq(
       repeat($._newline),

@@ -3,7 +3,10 @@ for_single_arg
 ===========================================================================================
 
 for i in foo
+
+for i in foo
   i
+
 for i: String in foo
   i
   i
@@ -11,6 +14,10 @@ for i: String in foo
 ---
 
 (module
+  (for
+    args: (for_args (variable (identifier)))
+    range: (identifier)
+  )
   (for
     args: (for_args (variable (identifier)))
     range: (identifier)
@@ -62,12 +69,17 @@ for a: String, _: Number in foo
 until
 ===========================================================================================
 
+until x
+
 until foo()
   x += 1
 
 ---
 
 (module
+  (until
+    condition: (identifier)
+  )
   (until
     condition: (chain start: (identifier) call: (tuple))
     body: (block
@@ -80,6 +92,8 @@ until foo()
 while
 ===========================================================================================
 
+while x
+
 while i > 0
   print i
   i -= 1
@@ -87,6 +101,9 @@ while i > 0
 ---
 
 (module
+  (while 
+    condition: (identifier)
+  )
   (while
     condition: (comparison_op (identifier) (number))
     body: (block
@@ -104,6 +121,8 @@ loop
 ===========================================================================================
 
 loop
+
+loop
   if i > 10
     break
   else
@@ -113,6 +132,7 @@ loop
 ---
 
 (module
+  (loop)
   (loop
     (block
       (if
