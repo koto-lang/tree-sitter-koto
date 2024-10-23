@@ -109,7 +109,7 @@ while i > 0
     body: (block
       (chain
         start: (identifier)
-        (call (identifier))
+        (call (call_arg (identifier)))
       )
       (modify_assign (identifier) (number))
     )

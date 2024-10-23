@@ -62,10 +62,9 @@ tuple_nested
 
 (module
   (tuple
-    (identifier)
-    (identifier)
-    (tuple
-      (identifier))))
+    (element (identifier))
+    (element (identifier))
+    (element (tuple (element (identifier))))))
 
 ===========================================================================================
 tuple_nested_multi_line
@@ -81,10 +80,9 @@ tuple_nested_multi_line
 
 (module
   (tuple
-    (identifier)
-    (identifier)
-    (tuple
-      (identifier))))
+    (element (identifier))
+    (element (identifier))
+    (element (tuple (element (identifier))))))
 
 
 ===========================================================================================
@@ -101,10 +99,9 @@ list_multi_line
 
 (module
   (list
-    (identifier)
-    (identifier)
-    (tuple
-      (identifier))))
+    (element (identifier))
+    (element (identifier))
+    (element (tuple (element (identifier))))))
 
 ===========================================================================================
 binary_op

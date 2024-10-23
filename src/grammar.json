@@ -403,7 +403,7 @@
     },
     "chain": {
       "type": "PREC_RIGHT",
-      "value": 2,
+      "value": 4,
       "content": {
         "type": "SEQ",
         "members": [
@@ -554,7 +554,7 @@
     },
     "call": {
       "type": "PREC_RIGHT",
-      "value": 2,
+      "value": 4,
       "content": {
         "type": "SEQ",
         "members": [
@@ -567,7 +567,7 @@
           },
           {
             "type": "SYMBOL",
-            "name": "_expression"
+            "name": "call_arg"
           },
           {
             "type": "REPEAT",
@@ -594,13 +594,17 @@
                 },
                 {
                   "type": "SYMBOL",
-                  "name": "_expression"
+                  "name": "call_arg"
                 }
               ]
             }
           }
         ]
       }
+    },
+    "call_arg": {
+      "type": "SYMBOL",
+      "name": "_expression"
     },
     "assign": {
       "type": "PREC_RIGHT",
@@ -1934,56 +1938,64 @@
       }
     },
     "tuple": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "STRING",
-          "value": "("
-        },
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "_contained_expressions"
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
-        },
-        {
-          "type": "STRING",
-          "value": ")"
-        }
-      ]
+      "type": "PREC_RIGHT",
+      "value": 2,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "("
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_elements"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          {
+            "type": "STRING",
+            "value": ")"
+          }
+        ]
+      }
     },
     "list": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "STRING",
-          "value": "["
-        },
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "_contained_expressions"
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
-        },
-        {
-          "type": "STRING",
-          "value": "]"
-        }
-      ]
+      "type": "PREC_RIGHT",
+      "value": 2,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "["
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_elements"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          {
+            "type": "STRING",
+            "value": "]"
+          }
+        ]
+      }
     },
-    "_contained_expressions": {
+    "_elements": {
       "type": "CHOICE",
       "members": [
         {
@@ -2021,7 +2033,7 @@
             },
             {
               "type": "SYMBOL",
-              "name": "_expression"
+              "name": "element"
             },
             {
               "type": "REPEAT",
@@ -2048,7 +2060,7 @@
                   },
                   {
                     "type": "SYMBOL",
-                    "name": "_expression"
+                    "name": "element"
                   }
                 ]
               }
@@ -2082,6 +2094,10 @@
           ]
         }
       ]
+    },
+    "element": {
+      "type": "SYMBOL",
+      "name": "_expression"
     },
     "map": {
       "type": "SEQ",
@@ -3619,12 +3635,12 @@
       "chain"
     ],
     [
-      "_contained_expressions",
+      "element",
       "_index"
     ],
     [
-      "_contained_expressions",
-      "_contained_expressions"
+      "_elements",
+      "_elements"
     ]
   ],
   "precedences": [],

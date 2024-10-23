@@ -2,7 +2,8 @@
 
 const PREC = {
   comma: 1,
-  chain: 2,
+  elements: 2,
+  chain: 4,
   range: 7,
   assign: 12,
   or: 14,
@@ -46,8 +47,8 @@ module.exports = grammar({
   conflicts: $ => [
     [$.assign, $.modify_assign, $.binary_op, $.comparison_op, $.boolean_op],
     [$._term, $.chain],
-    [$._contained_expressions, $._index],
-    [$._contained_expressions, $._contained_expressions],
+    [$.element, $._index],
+    [$._elements, $._elements],
   ],
 
   word: $ => $.identifier,
@@ -208,14 +209,16 @@ module.exports = grammar({
 
     call: $ => prec.right(PREC.chain, seq(
       repeat($._indented_line),
-      $._expression,
+      $.call_arg,
       repeat(seq(
         repeat($._indented_line),
         ',',
         repeat($._indented_line),
-        $._expression,
+        $.call_arg,
       ))
     )),
+
+    call_arg: $ => $._expression,
 
     assign: $ => prec.right(PREC.assign, seq(
       $._expression,
@@ -369,9 +372,9 @@ module.exports = grammar({
       ),
     ),
 
-    tuple: $ => seq('(', optional($._contained_expressions), ')'),
-    list: $ => seq('[', optional($._contained_expressions), ']'),
-    _contained_expressions: $ => choice(
+    tuple: $ => prec.right(PREC.elements, seq('(', optional($._elements), ')')),
+    list: $ => prec.right(PREC.elements, seq('[', optional($._elements), ']')),
+    _elements: $ => choice(
       seq(
         repeat($._newline),
         ',',
@@ -379,13 +382,13 @@ module.exports = grammar({
       ),
       seq(
         repeat($._newline),
-        $._expression,
+        $.element,
         repeat(
           seq(
             repeat($._newline),
             ',',
             repeat($._newline),
-            $._expression,
+            $.element,
           )
         ),
         repeat($._newline),
@@ -395,6 +398,7 @@ module.exports = grammar({
         repeat($._newline),
       ),
     ),
+    element: $ => $._expression,
 
     map: $ => seq(
       '{',

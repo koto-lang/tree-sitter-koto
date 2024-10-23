@@ -43,7 +43,7 @@ a[1..]
 )
 
 ===========================================================================================
-function_call
+function_call_without_parens
 ===========================================================================================
 
 f x
@@ -54,14 +54,51 @@ f g 1, 2
 (module
   (chain
     start: (identifier)
-    (call (identifier))
+    (call 
+      (call_arg (identifier))
+    )
   )
   (chain
     start: (identifier)
-    (call
-      (chain
-        start: (identifier)
-        (call (number) (number))
+    (call 
+      (call_arg
+        (chain
+          start: (identifier)
+          (call 
+            (call_arg (number)) 
+            (call_arg (number))
+          )
+        )
+      )
+    )
+  )
+)
+
+===========================================================================================
+function_call_with_parens
+===========================================================================================
+
+f(x)
+f(g(1, 2))
+
+---
+
+(module
+  (chain
+    start: (identifier)
+    call: (tuple (element (identifier)))
+  )
+  (chain
+    start: (identifier)
+    call: (tuple 
+      (element
+        (chain
+          start: (identifier)
+          call: (tuple 
+            (element (number)) 
+            (element (number))
+          )
+        )
       )
     )
   )
