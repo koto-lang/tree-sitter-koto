@@ -114,7 +114,8 @@ map_block_meta
 
 return
   @+: null
-  @test foo: true
+  @test foo: || true
+  @meta bar: 99
 
 ---
 
@@ -126,8 +127,12 @@ return
         value: (null)
       )
       (entry_block
-        key: (meta name: (identifier))
-        value: (true)
+        key: (meta (test) name: (identifier))
+        value: (function body: (true))
+      )
+      (entry_block
+        key: (meta id: (meta_id) name: (identifier))
+        value: (number)
       )
     )
   )

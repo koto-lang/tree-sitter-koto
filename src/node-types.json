@@ -4640,6 +4640,16 @@
     "type": "meta",
     "named": true,
     "fields": {
+      "id": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "meta_id",
+            "named": true
+          }
+        ]
+      },
       "name": {
         "multiple": false,
         "required": false,
@@ -4650,6 +4660,16 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "test",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -8372,6 +8392,10 @@
     "named": false
   },
   {
+    "type": "meta_id",
+    "named": true
+  },
+  {
     "type": "not",
     "named": false
   },
@@ -8402,6 +8426,10 @@
   {
     "type": "switch",
     "named": false
+  },
+  {
+    "type": "test",
+    "named": true
   },
   {
     "type": "then",

@@ -1508,9 +1508,34 @@
       "type": "PATTERN",
       "value": "[\\p{XID_Start}_][\\p{XID_Continue}]*"
     },
+    "meta_id": {
+      "type": "PATTERN",
+      "value": "@[\\p{XID_Start}][\\p{XID_Continue}]*"
+    },
+    "test": {
+      "type": "STRING",
+      "value": "@test"
+    },
     "meta": {
       "type": "CHOICE",
       "members": [
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "test"
+            },
+            {
+              "type": "FIELD",
+              "name": "name",
+              "content": {
+                "type": "SYMBOL",
+                "name": "identifier"
+              }
+            }
+          ]
+        },
         {
           "type": "PREC_RIGHT",
           "value": 0,
@@ -1518,8 +1543,12 @@
             "type": "SEQ",
             "members": [
               {
-                "type": "PATTERN",
-                "value": "@[\\p{XID_Start}][\\p{XID_Continue}]*"
+                "type": "FIELD",
+                "name": "id",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "meta_id"
+                }
               },
               {
                 "type": "CHOICE",

@@ -309,14 +309,18 @@ module.exports = grammar({
     true: _ => 'true',
 
     identifier: _ => id,
+    meta_id: _ => meta_id,
+    test: _ => '@test',
 
     meta: $ => choice(
-      prec.right(
-        seq(
-          meta_id,
-          optional(field('name', $.identifier)),
-        ),
+      seq(
+        $.test,
+        field('name', $.identifier),
       ),
+      prec.right(seq(
+        field('id', $.meta_id),
+        optional(field('name', $.identifier)),
+      )),
       '@[]',
       '@||',
       '@+',
