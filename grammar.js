@@ -587,7 +587,7 @@ module.exports = grammar({
 
     match: $ => prec.right(seq(
       'match',
-      $._terms,
+      $.match_conditions,
       optional(seq(
         $._block_start,
         seq(
@@ -598,6 +598,14 @@ module.exports = grammar({
         ),
         $._block_end
       )),
+    )),
+
+    match_conditions: $ => prec.right(seq(
+      $._expression,
+      repeat(seq(
+        ',',
+        $._expression
+      ))
     )),
 
     match_arm: $ => seq(

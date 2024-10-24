@@ -234,22 +234,28 @@ match foo, bar
 
 match 1 + 1
 
+match foo.bar
+
 ---
 
 (module
   (match
-    (identifier)
+    (match_conditions (identifier))
   )
   (match
-    (terms
+    (match_conditions
       (identifier)
       (identifier)
     )
   )
-  (binary_op
-    (match
-      (number))
-    (number)
+  (match
+    (match_conditions (binary_op (number) (number)))
+  )
+  (match
+    (match_conditions (chain
+      start: (identifier)
+      lookup: (identifier)
+    ))
   )
 )
 
@@ -268,7 +274,7 @@ match foo
 
 (module
   (match
-    (identifier)
+    (match_conditions (identifier))
     (match_arm
       (match_patterns (string))
       then: (number)
@@ -309,7 +315,7 @@ match foo, bar
 
 (module
   (match
-    (terms (identifier) (identifier))
+    (match_conditions (identifier) (identifier))
     (match_arm
       (match_patterns (string))
       then: (block (identifier))
