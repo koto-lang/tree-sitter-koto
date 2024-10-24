@@ -18,6 +18,7 @@ enum TokenType {
   BLOCK_END,
   MAP_BLOCK_START,
   INDENTED_LINE,
+  WHITESPACE,
   COMMENT,
   STRING_START,
   STRING_END,
@@ -214,9 +215,11 @@ bool tree_sitter_koto_external_scanner_scan(
     void* payload,
     TSLexer* lexer,
     const bool* valid_symbols) {
+  const uint16_t start_column = lexer->get_column(lexer);
+
   printf(
       "scanner.scan: column: %u, lookahead: %i (%c)\n",
-      lexer->get_column(lexer),
+      start_column,
       lexer->lookahead,
       (char)lexer->lookahead);
   Scanner* scanner = (Scanner*)payload;
@@ -415,8 +418,14 @@ bool tree_sitter_koto_external_scanner_scan(
     lexer->result_symbol = BLOCK_CONTINUE;
     return true;
   }
+  // Whitespace?
+  else if ((valid_symbols[WHITESPACE]) && !newline && column > start_column) {
+    printf(">>>> whitespace\n");
+    lexer->result_symbol = WHITESPACE;
+    return true;
+  }
   // Indented line?
-  else if (valid_symbols[INDENTED_LINE] && newline && column > block_indent) {
+  else if ((valid_symbols[INDENTED_LINE]) && newline && column > block_indent) {
     printf(">>>> indented line\n");
     lexer->result_symbol = INDENTED_LINE;
     return true;

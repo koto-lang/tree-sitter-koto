@@ -33,6 +33,7 @@ module.exports = grammar({
     $._block_end,
     $._map_block_start,
     $._indented_line,
+    $._whitespace,
     $.comment,
     $._string_start,
     $._string_end,
@@ -47,8 +48,11 @@ module.exports = grammar({
   conflicts: $ => [
     [$.assign, $.modify_assign, $.binary_op, $.comparison_op, $.boolean_op],
     [$._term, $.chain],
+    // [$._term, $._chain_start],
+    // [$.chain, $._chain_start],
     [$.element, $._index],
     [$._elements, $._elements],
+    // [$.call],
   ],
 
   word: $ => $.identifier,
@@ -172,8 +176,18 @@ module.exports = grammar({
       $.null,
     ),
 
+    _chain_start: $ => prec.right(PREC.chain, choice(
+      $._constants,
+      $.number,
+      $.string,
+      $.identifier,
+      $.tuple,
+      $.list,
+      $.map,
+    )),
+
     chain: $ => prec.right(PREC.chain, seq(
-      field('start', $._term),
+      field('start', $._chain_start),
       choice(
         seq(
           repeat1(choice(
@@ -187,7 +201,7 @@ module.exports = grammar({
             field('index', $._index),
             $.null_check,
           )),
-          optional($.call),
+          // optional($.call),
         ),
         $.call
       )
@@ -207,8 +221,10 @@ module.exports = grammar({
 
     null_check: _ => '?',
 
-    call: $ => prec.right(PREC.chain, seq(
-      repeat($._indented_line),
+    call: $ => prec.right(-1, seq(
+      $._whitespace,
+      // repeat1($._whitespace),
+      // repeat($._indented_line),
       $.call_arg,
       repeat(seq(
         repeat($._indented_line),
@@ -311,8 +327,6 @@ module.exports = grammar({
     self: _ => 'self',
     true: _ => 'true',
 
-    identifier: _ => id,
-    meta_id: _ => meta_id,
     test: _ => '@test',
 
     meta: $ => choice(
@@ -485,6 +499,8 @@ module.exports = grammar({
 
     fill_char: $ => /./,
     alignment: $ => choice('<', '^', '>'),
+
+    then: _ => 'then',
 
     if: $ => choice(
       // Inline if
@@ -737,6 +753,9 @@ module.exports = grammar({
         /u\{[0-9a-fA-F]{1,6}\}/,
       )
     ),
+
+    identifier: _ => id,
+    meta_id: _ => meta_id,
   }
 });
 

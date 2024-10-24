@@ -1206,18 +1206,6 @@
             "named": true
           },
           {
-            "type": "meta",
-            "named": true
-          },
-          {
-            "type": "negate",
-            "named": true
-          },
-          {
-            "type": "not",
-            "named": true
-          },
-          {
             "type": "null",
             "named": true
           },
