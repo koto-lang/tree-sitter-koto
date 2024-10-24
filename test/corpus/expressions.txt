@@ -140,6 +140,31 @@ binary_op
 )
 
 ===========================================================================================
+binary_op_multi_line_pre
+:skip
+===========================================================================================
+
+1
+  + 2
+    * 3
+  + 4
+
+---
+
+(module
+  (binary_op
+    (binary_op
+      (binary_op
+        (number)
+        (number)
+      )
+      (number)
+    )
+    (number)
+  )
+)
+
+===========================================================================================
 binary_op_multi_line_post
 ===========================================================================================
 
@@ -171,7 +196,7 @@ assignment_single_line
 a = 3
 a, b = c
 a = b, c
-b += c = d
+a = 1, 2, 3, 4
 
 ---
 
@@ -188,6 +213,21 @@ b += c = d
     lhs: (identifier)
     (identifier) (identifier)
   )
+  (assign
+    lhs: (identifier)
+    (number) (number) (number) (number)
+  )
+)
+
+===========================================================================================
+modify_assign_of_assign
+===========================================================================================
+
+b += c = d
+
+---
+
+(module
   (modify_assign
     (identifier)
     (assign
@@ -420,6 +460,23 @@ from foo import bar as x, baz as y
     (import_module (identifier))
     (import_item (identifier) (identifier))
     (import_item (identifier) (identifier))
+  )
+)
+
+===========================================================================================
+import_with_three_items
+===========================================================================================
+
+from foo import a, b, c
+
+---
+
+(module
+  (import
+    (import_module (identifier))
+    (import_item (identifier))
+    (import_item (identifier))
+    (import_item (identifier))
   )
 )
 
