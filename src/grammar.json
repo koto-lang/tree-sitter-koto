@@ -215,6 +215,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "call"
+        },
+        {
+          "type": "SYMBOL",
           "name": "map_block"
         },
         {
@@ -401,6 +405,27 @@
         }
       ]
     },
+    "call": {
+      "type": "PREC_RIGHT",
+      "value": 99,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "FIELD",
+            "name": "function",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_term"
+            }
+          },
+          {
+            "type": "SYMBOL",
+            "name": "call_args"
+          }
+        ]
+      }
+    },
     "chain": {
       "type": "PREC_RIGHT",
       "value": 100,
@@ -416,143 +441,125 @@
             }
           },
           {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SEQ",
-                "members": [
-                  {
-                    "type": "REPEAT1",
-                    "content": {
-                      "type": "CHOICE",
-                      "members": [
-                        {
-                          "type": "SYMBOL",
-                          "name": "null_check"
-                        },
-                        {
-                          "type": "FIELD",
-                          "name": "call",
-                          "content": {
-                            "type": "SYMBOL",
-                            "name": "tuple"
-                          }
-                        },
-                        {
-                          "type": "FIELD",
-                          "name": "index",
-                          "content": {
-                            "type": "SYMBOL",
-                            "name": "_index"
-                          }
-                        },
-                        {
-                          "type": "SEQ",
-                          "members": [
-                            {
-                              "type": "REPEAT",
-                              "content": {
-                                "type": "SYMBOL",
-                                "name": "_indented_line"
-                              }
-                            },
-                            {
-                              "type": "FIELD",
-                              "name": "lookup",
-                              "content": {
-                                "type": "SEQ",
-                                "members": [
-                                  {
-                                    "type": "STRING",
-                                    "value": "."
-                                  },
-                                  {
-                                    "type": "CHOICE",
-                                    "members": [
-                                      {
-                                        "type": "SYMBOL",
-                                        "name": "identifier"
-                                      },
-                                      {
-                                        "type": "SYMBOL",
-                                        "name": "string"
-                                      }
-                                    ]
-                                  }
-                                ]
-                              }
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  },
-                  {
-                    "type": "CHOICE",
+            "type": "REPEAT1",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "null_check"
+                },
+                {
+                  "type": "FIELD",
+                  "name": "call",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "tuple"
+                  }
+                },
+                {
+                  "type": "FIELD",
+                  "name": "index",
+                  "content": {
+                    "type": "SEQ",
                     "members": [
                       {
-                        "type": "SYMBOL",
-                        "name": "call"
+                        "type": "STRING",
+                        "value": "["
                       },
                       {
-                        "type": "BLANK"
+                        "type": "CHOICE",
+                        "members": [
+                          {
+                            "type": "SYMBOL",
+                            "name": "_expression"
+                          },
+                          {
+                            "type": "SYMBOL",
+                            "name": "range_from"
+                          },
+                          {
+                            "type": "SYMBOL",
+                            "name": "range_to"
+                          },
+                          {
+                            "type": "SYMBOL",
+                            "name": "range_to_inclusive"
+                          },
+                          {
+                            "type": "SYMBOL",
+                            "name": "range_full"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "STRING",
+                        "value": "]"
                       }
                     ]
                   }
-                ]
-              },
-              {
-                "type": "SYMBOL",
-                "name": "call"
-              }
-            ]
+                },
+                {
+                  "type": "SEQ",
+                  "members": [
+                    {
+                      "type": "REPEAT",
+                      "content": {
+                        "type": "SYMBOL",
+                        "name": "_indented_line"
+                      }
+                    },
+                    {
+                      "type": "FIELD",
+                      "name": "lookup",
+                      "content": {
+                        "type": "SEQ",
+                        "members": [
+                          {
+                            "type": "STRING",
+                            "value": "."
+                          },
+                          {
+                            "type": "CHOICE",
+                            "members": [
+                              {
+                                "type": "SYMBOL",
+                                "name": "identifier"
+                              },
+                              {
+                                "type": "SYMBOL",
+                                "name": "string"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "type": "FIELD",
+            "name": "end_call",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "call_args"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            }
           }
         ]
       }
     },
-    "_index": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "STRING",
-          "value": "["
-        },
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "_expression"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "range_from"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "range_to"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "range_to_inclusive"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "range_full"
-            }
-          ]
-        },
-        {
-          "type": "STRING",
-          "value": "]"
-        }
-      ]
-    },
-    "null_check": {
-      "type": "STRING",
-      "value": "?"
-    },
-    "call": {
+    "call_args": {
       "type": "PREC_RIGHT",
       "value": 0,
       "content": {
@@ -601,6 +608,10 @@
           }
         ]
       }
+    },
+    "null_check": {
+      "type": "STRING",
+      "value": "?"
     },
     "call_arg": {
       "type": "SYMBOL",
@@ -3989,11 +4000,17 @@
     ],
     [
       "element",
-      "_index"
+      "chain"
     ],
     [
       "_elements",
       "_elements"
+    ],
+    [
+      "_term"
+    ],
+    [
+      "element"
     ]
   ],
   "precedences": [],

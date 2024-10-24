@@ -4,7 +4,7 @@ const PREC = {
   comma: -2,
   assign: -1,
   keyword: 1,
-  elements: 2,
+  container: 2,
   range: 7,
   or: 14,
   and: 15,
@@ -13,6 +13,7 @@ const PREC = {
   add: 18,
   multiply: 19,
   negate: 21,
+  call: 99,
   chain: 100,
 };
 
@@ -50,8 +51,10 @@ module.exports = grammar({
     [$._term, $.chain],
     [$._term, $._assign_target],
     [$._expression, $._assign_target],
-    [$.element, $._index],
+    [$.element, $.chain],
     [$._elements, $._elements],
+    [$._term],
+    [$.element],
   ],
 
   word: $ => $.identifier,
@@ -69,7 +72,7 @@ module.exports = grammar({
       $._eof,
     ),
 
-    terms: $ => prec.left(PREC.elements, seq(
+    terms: $ => prec.left(PREC.container, seq(
       $._term,
       repeat1(seq(',', $._term))
     )),
@@ -118,6 +121,7 @@ module.exports = grammar({
     _expression: $ => choice(
       $._term,
       $.chain,
+      $.call,
       $.map_block,
       $.if,
       $.switch,
@@ -175,44 +179,40 @@ module.exports = grammar({
       $.null,
     ),
 
-    chain: $ => prec.right(PREC.chain, seq(
-      field('start', $._term),
-      choice(
-        seq(
-          repeat1(
-            choice(
-              $.null_check,
-              field('call', $.tuple),
-              field('index', $._index),
-              seq(
-                repeat($._indented_line),
-                field('lookup', seq(
-                  '.', choice($.identifier, $.string),
-                )),
-              ),
-            ),
-          ),
-          optional($.call),
-        ),
-        $.call
-      )
+    call: $ => prec.right(PREC.call, seq(
+      field('function', $._term),
+      $.call_args,
     )),
 
-    _index: $ => seq(
-      '[',
-      choice(
-        $._expression,
-        $.range_from,
-        $.range_to,
-        $.range_to_inclusive,
-        $.range_full,
+    chain: $ => prec.right(PREC.chain, seq(
+      field('start', $._term),
+      repeat1(
+        choice(
+          $.null_check,
+          field('call', $.tuple),
+          field('index', seq(
+            '[',
+            choice(
+              $._expression,
+              $.range_from,
+              $.range_to,
+              $.range_to_inclusive,
+              $.range_full,
+            ),
+            ']',
+          )),
+          seq(
+            repeat($._indented_line),
+            field('lookup', seq(
+              '.', choice($.identifier, $.string),
+            )),
+          ),
+        ),
       ),
-      ']'
-    ),
+      field('end_call', optional($.call_args)),
+    )),
 
-    null_check: _ => '?',
-
-    call: $ => prec.right(seq(
+    call_args: $ => prec.right(seq(
       repeat($._indented_line),
       $.call_arg,
       repeat(
@@ -224,6 +224,7 @@ module.exports = grammar({
       ),
     )),
 
+    null_check: _ => '?',
     call_arg: $ => $._expression,
 
     assign: $ => prec.right(PREC.assign, seq(
@@ -409,8 +410,8 @@ module.exports = grammar({
       ),
     ),
 
-    tuple: $ => prec.right(PREC.elements, seq('(', optional($._elements), ')')),
-    list: $ => prec.right(PREC.elements, seq('[', optional($._elements), ']')),
+    tuple: $ => prec.right(PREC.container, seq('(', optional($._elements), ')')),
+    list: $ => prec.right(PREC.container, seq('[', optional($._elements), ']')),
     _elements: $ => choice(
       seq(
         repeat($._newline),

@@ -45,7 +45,6 @@ a[1..]
 
 ===========================================================================================
 index_chain_3
-:skip
 ===========================================================================================
 
 a[1][2][3]
@@ -70,9 +69,9 @@ f x
 ---
 
 (module
-  (chain
-    start: (identifier)
-    (call (call_arg (identifier)))
+  (call
+    function: (identifier)
+    (call_args (call_arg (identifier)))
   )
 )
 
@@ -85,9 +84,9 @@ f x, y
 ---
 
 (module
-  (chain
-    start: (identifier)
-    (call (call_arg (identifier)) (call_arg (identifier)))
+  (call
+    function: (identifier)
+    (call_args (call_arg (identifier)) (call_arg (identifier)))
   )
 )
 
@@ -100,9 +99,9 @@ f 1, 2, 3
 ---
 
 (module
-  (chain
-    start: (identifier)
-    (call (call_arg (number)) (call_arg (number)) (call_arg (number)))
+  (call
+    function: (identifier)
+    (call_args (call_arg (number)) (call_arg (number)) (call_arg (number)))
   )
 )
 
@@ -116,9 +115,9 @@ f
 ---
 
 (module
-  (chain
-    start: (identifier)
-    (call (call_arg (identifier)))
+  (call
+    function: (identifier)
+    (call_args (call_arg (identifier)))
   )
 )
 
@@ -134,9 +133,9 @@ f
 ---
 
 (module
-  (chain
-    start: (identifier)
-    (call (call_arg (number)) (call_arg (number)) (call_arg (number)))
+  (call
+    function: (identifier)
+    (call_args (call_arg (number)) (call_arg (number)) (call_arg (number)))
   )
 )
 
@@ -150,13 +149,13 @@ f g 1, 2
 ---
 
 (module
-  (chain
-    start: (identifier)
-    (call 
+  (call
+    function: (identifier)
+    (call_args 
       (call_arg 
-        (chain
-          start: (identifier)
-          (call (call_arg (number)) (call_arg (number)))
+        (call
+          function: (identifier)
+          (call_args (call_arg (number)) (call_arg (number)))
         )
       )
     )
@@ -206,13 +205,15 @@ f.g.h x, y, z
   (chain
     start: (identifier)
     lookup: (identifier)
-    (call (call_arg (identifier)))
+    end_call: (call_args (call_arg (identifier)))
   )
   (chain
     start: (identifier)
     lookup: (identifier)
     lookup: (identifier)
-    (call (call_arg (identifier)) (call_arg (identifier)) (call_arg (identifier)))
+    end_call: (call_args 
+      (call_arg (identifier)) (call_arg (identifier)) (call_arg (identifier))
+    )
   )
 )
 

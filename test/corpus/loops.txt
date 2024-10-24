@@ -107,9 +107,9 @@ while i > 0
   (while
     condition: (comparison_op (identifier) (number))
     body: (block
-      (chain
-        start: (identifier)
-        (call (call_arg (identifier)))
+      (call
+        function: (identifier)
+        (call_args (call_arg (identifier)))
       )
       (modify_assign (identifier) (number))
     )
