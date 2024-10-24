@@ -346,11 +346,12 @@ module.exports = grammar({
 
     negate: $ => prec(PREC.negate, (seq('-', $._expression))),
 
-    debug: $ => keyword_expression($, 'debug'),
-    not: $ => keyword_expression($, 'not'),
-    return: $ => keyword_expression($, 'return'),
-    yield: $ => keyword_expression($, 'yield'),
-    throw: $ => keyword_expression($, 'throw'),
+    not: $ => keyword_expression_single($, 'not'),
+
+    debug: $ => keyword_expression_multi($, 'debug'),
+    return: $ => keyword_expression_multi($, 'return'),
+    yield: $ => keyword_expression_multi($, 'yield'),
+    throw: $ => keyword_expression_multi($, 'throw'),
 
     export: $ => prec.right(seq(
       'export',
@@ -750,9 +751,16 @@ function binary_op($, operator, precedence_fn, precedence) {
   ));
 }
 
-function keyword_expression($, keyword) {
+function keyword_expression_single($, keyword) {
   return prec.right(seq(
     keyword,
     optional(seq(repeat($._indented_line), $._expression)),
+  ));
+}
+
+function keyword_expression_multi($, keyword) {
+  return prec.right(seq(
+    keyword,
+    optional(seq(repeat($._indented_line), $._expressions)),
   ));
 }
