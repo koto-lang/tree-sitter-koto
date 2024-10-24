@@ -66,6 +66,39 @@ module.exports = grammar({
       $._eof,
     ),
 
+    terms: $ => prec.left(PREC.comma, seq(
+      $._term,
+      repeat1(seq(',', $._term))
+    )),
+
+    _terms: $ => choice(
+      $._term,
+      $.terms,
+    ),
+
+    _expressions: $ => choice(
+      $._expression,
+      $.expressions,
+    ),
+
+    _block_expressions: $ => choice(
+      $._expressions,
+      $._cascade_arm,
+    ),
+
+    expressions: $ => prec.left(PREC.comma, seq(
+      $._expression,
+      repeat1(seq(
+        ',',
+        repeat($._indented_line),
+        $._expression,
+      )),
+      // Optional trailing comma
+      optional(seq(
+        ',',
+      )),
+    )),
+
     _term: $ => choice(
       $._constants,
       $.number,
@@ -108,39 +141,6 @@ module.exports = grammar({
       $.boolean_op,
       $.range,
       $.range_inclusive,
-    ),
-
-    terms: $ => prec.left(PREC.comma, seq(
-      $._term,
-      repeat1(seq(',', $._term))
-    )),
-
-    _terms: $ => choice(
-      $._term,
-      $.terms,
-    ),
-
-    expressions: $ => prec.left(PREC.comma, seq(
-      $._expression,
-      repeat1(seq(
-        ',',
-        repeat($._indented_line),
-        $._expression,
-      )),
-      // Optional trailing comma
-      optional(seq(
-        ',',
-      )),
-    )),
-
-    _expressions: $ => choice(
-      $._expression,
-      $.expressions,
-    ),
-
-    _block_expressions: $ => choice(
-      $._expressions,
-      $._cascade_arm,
     ),
 
     // Arms of if/else if/else or try/catch/finally cascades
