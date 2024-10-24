@@ -403,7 +403,7 @@
     },
     "chain": {
       "type": "PREC_RIGHT",
-      "value": 4,
+      "value": 100,
       "content": {
         "type": "SEQ",
         "members": [
@@ -426,6 +426,26 @@
                     "content": {
                       "type": "CHOICE",
                       "members": [
+                        {
+                          "type": "SYMBOL",
+                          "name": "null_check"
+                        },
+                        {
+                          "type": "FIELD",
+                          "name": "call",
+                          "content": {
+                            "type": "SYMBOL",
+                            "name": "tuple"
+                          }
+                        },
+                        {
+                          "type": "FIELD",
+                          "name": "index",
+                          "content": {
+                            "type": "SYMBOL",
+                            "name": "_index"
+                          }
+                        },
                         {
                           "type": "SEQ",
                           "members": [
@@ -463,26 +483,6 @@
                               }
                             }
                           ]
-                        },
-                        {
-                          "type": "FIELD",
-                          "name": "call",
-                          "content": {
-                            "type": "SYMBOL",
-                            "name": "tuple"
-                          }
-                        },
-                        {
-                          "type": "FIELD",
-                          "name": "index",
-                          "content": {
-                            "type": "SYMBOL",
-                            "name": "_index"
-                          }
-                        },
-                        {
-                          "type": "SYMBOL",
-                          "name": "null_check"
                         }
                       ]
                     }
@@ -554,7 +554,7 @@
     },
     "call": {
       "type": "PREC_RIGHT",
-      "value": 4,
+      "value": 0,
       "content": {
         "type": "SEQ",
         "members": [
@@ -2544,7 +2544,7 @@
     },
     "map_block": {
       "type": "PREC_RIGHT",
-      "value": 25,
+      "value": 0,
       "content": {
         "type": "SEQ",
         "members": [

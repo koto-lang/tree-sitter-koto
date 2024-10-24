@@ -5,7 +5,6 @@ const PREC = {
   assign: -1,
   keyword: 1,
   elements: 2,
-  chain: 4,
   range: 7,
   or: 14,
   and: 15,
@@ -14,7 +13,7 @@ const PREC = {
   add: 18,
   multiply: 19,
   negate: 21,
-  map: 25,
+  chain: 100,
 };
 
 const id = /[\p{XID_Start}_][\p{XID_Continue}]*/;
@@ -180,17 +179,19 @@ module.exports = grammar({
       field('start', $._term),
       choice(
         seq(
-          repeat1(choice(
-            seq(
-              repeat($._indented_line),
-              field('lookup', seq(
-                '.', choice($.identifier, $.string),
-              )),
+          repeat1(
+            choice(
+              $.null_check,
+              field('call', $.tuple),
+              field('index', $._index),
+              seq(
+                repeat($._indented_line),
+                field('lookup', seq(
+                  '.', choice($.identifier, $.string),
+                )),
+              ),
             ),
-            field('call', $.tuple),
-            field('index', $._index),
-            $.null_check,
-          )),
+          ),
           optional($.call),
         ),
         $.call
@@ -211,15 +212,16 @@ module.exports = grammar({
 
     null_check: _ => '?',
 
-    call: $ => prec.right(PREC.chain, seq(
+    call: $ => prec.right(seq(
       repeat($._indented_line),
       $.call_arg,
-      repeat(seq(
-        repeat($._indented_line),
-        ',',
-        repeat($._indented_line),
-        $.call_arg,
-      ))
+      repeat(
+        seq(repeat($._indented_line),
+          ',',
+          repeat($._indented_line),
+          $.call_arg,
+        ),
+      ),
     )),
 
     call_arg: $ => $._expression,
@@ -456,7 +458,7 @@ module.exports = grammar({
       )),
     ),
 
-    map_block: $ => prec.right(PREC.map, seq(
+    map_block: $ => prec.right(seq(
       $._map_block_start,
       $.entry_block,
       repeat(

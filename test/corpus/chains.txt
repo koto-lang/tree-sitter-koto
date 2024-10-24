@@ -62,10 +62,89 @@ a[1][2][3]
 )
 
 ===========================================================================================
-function_call_without_parens
+call_without_parens_1
 ===========================================================================================
 
 f x
+
+---
+
+(module
+  (chain
+    start: (identifier)
+    (call (call_arg (identifier)))
+  )
+)
+
+===========================================================================================
+call_without_parens_2
+===========================================================================================
+
+f x, y
+
+---
+
+(module
+  (chain
+    start: (identifier)
+    (call (call_arg (identifier)) (call_arg (identifier)))
+  )
+)
+
+===========================================================================================
+call_without_parens_3
+===========================================================================================
+
+f 1, 2, 3
+
+---
+
+(module
+  (chain
+    start: (identifier)
+    (call (call_arg (number)) (call_arg (number)) (call_arg (number)))
+  )
+)
+
+===========================================================================================
+call_without_parens_1_indented
+===========================================================================================
+
+f 
+  x
+
+---
+
+(module
+  (chain
+    start: (identifier)
+    (call (call_arg (identifier)))
+  )
+)
+
+===========================================================================================
+call_without_parens_3_indented
+===========================================================================================
+
+f 
+  1, 
+  2, 
+  3
+
+---
+
+(module
+  (chain
+    start: (identifier)
+    (call (call_arg (number)) (call_arg (number)) (call_arg (number)))
+  )
+)
+
+
+===========================================================================================
+call_without_parens_nested
+===========================================================================================
+
 f g 1, 2
 
 ---
@@ -74,19 +153,10 @@ f g 1, 2
   (chain
     start: (identifier)
     (call 
-      (call_arg (identifier))
-    )
-  )
-  (chain
-    start: (identifier)
-    (call 
-      (call_arg
+      (call_arg 
         (chain
           start: (identifier)
-          (call 
-            (call_arg (number)) 
-            (call_arg (number))
-          )
+          (call (call_arg (number)) (call_arg (number)))
         )
       )
     )
@@ -94,7 +164,7 @@ f g 1, 2
 )
 
 ===========================================================================================
-function_call_with_parens
+call_with_parens
 ===========================================================================================
 
 f(x)
@@ -120,6 +190,29 @@ f(g(1, 2))
         )
       )
     )
+  )
+)
+
+===========================================================================================
+call_after_lookup
+===========================================================================================
+
+f.g x
+f.g.h x, y, z
+
+---
+
+(module
+  (chain
+    start: (identifier)
+    lookup: (identifier)
+    (call (call_arg (identifier)))
+  )
+  (chain
+    start: (identifier)
+    lookup: (identifier)
+    lookup: (identifier)
+    (call (call_arg (identifier)) (call_arg (identifier)) (call_arg (identifier)))
   )
 )
 
