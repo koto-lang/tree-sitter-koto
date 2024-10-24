@@ -25,7 +25,22 @@ _héllø
 )
 
 ===========================================================================================
-comma_separated_single_line
+comma_separated_single_line_2
+===========================================================================================
+
+true, false
+
+---
+
+(module
+  (expressions
+    (true)
+    (false)
+  )
+)
+
+===========================================================================================
+comma_separated_single_line_3
 ===========================================================================================
 
 foo, 'bar', 123
@@ -154,19 +169,29 @@ assignment_single_line
 ===========================================================================================
 
 a = 3
+a, b = c
+a = b, c
 b += c = d
 
 ---
 
 (module
   (assign
-    (identifier)
+    lhs: (identifier)
     (number)
+  )
+  (assign
+    lhs: (assign_targets (identifier) (identifier))
+    (identifier)
+  )
+  (assign
+    lhs: (identifier)
+    (identifier) (identifier)
   )
   (modify_assign
     (identifier)
     (assign
-      (identifier)
+      lhs: (identifier)
       (identifier)
     )
   )
@@ -185,18 +210,14 @@ foo = 1,
 
 (module
   (assign
-    (identifier)
-    (expressions
-      (number)
-      (number)
-    )
+    lhs: (identifier)
+    (number)
+    (number)
   )
   (assign
-    (identifier)
-    (expressions
-      (number)
-      (number)
-    )
+    lhs: (identifier)
+    (number)
+    (number)
   )
 )
 
@@ -230,7 +251,7 @@ test_assignment
 
 (module
   (assign
-    (meta
+    lhs: (meta
       (test) name: (identifier)
     )
     (function
@@ -415,7 +436,7 @@ debug x, y
 (module
   (debug (identifier))
   (debug (binary_op (number) (number)))
-  (debug (expressions (identifier) (identifier)))
+  (debug (identifier) (identifier))
 )
 
 ===========================================================================================
@@ -444,7 +465,10 @@ finally
     )
   )
   (finally (block
-    (assign (identifier) (number))
+    (assign 
+      lhs: (identifier) 
+      (number)
+    )
   ))
 )
 
@@ -464,7 +488,7 @@ x = ||
 
 (module
   (assign
-    (identifier)
+    lhs: (identifier)
     (function
       body: (block
         (try (block (number)))

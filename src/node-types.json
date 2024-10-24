@@ -53,7 +53,30 @@
   {
     "type": "assign",
     "named": true,
-    "fields": {},
+    "fields": {
+      "lhs": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "assign_targets",
+            "named": true
+          },
+          {
+            "type": "chain",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "meta",
+            "named": true
+          }
+        ]
+      }
+    },
     "children": {
       "multiple": true,
       "required": true,
@@ -92,10 +115,6 @@
         },
         {
           "type": "export",
-          "named": true
-        },
-        {
-          "type": "expressions",
           "named": true
         },
         {
@@ -220,6 +239,29 @@
         },
         {
           "type": "yield",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "assign_targets",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "chain",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "meta",
           "named": true
         }
       ]
@@ -1435,7 +1477,7 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": false,
       "types": [
         {
@@ -1472,10 +1514,6 @@
         },
         {
           "type": "export",
-          "named": true
-        },
-        {
-          "type": "expressions",
           "named": true
         },
         {
@@ -6276,7 +6314,7 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": false,
       "types": [
         {
@@ -6313,10 +6351,6 @@
         },
         {
           "type": "export",
-          "named": true
-        },
-        {
-          "type": "expressions",
           "named": true
         },
         {
@@ -7233,7 +7267,7 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": false,
       "types": [
         {
@@ -7270,10 +7304,6 @@
         },
         {
           "type": "export",
-          "named": true
-        },
-        {
-          "type": "expressions",
           "named": true
         },
         {
@@ -7836,7 +7866,7 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": false,
       "types": [
         {
@@ -7873,10 +7903,6 @@
         },
         {
           "type": "export",
-          "named": true
-        },
-        {
-          "type": "expressions",
           "named": true
         },
         {

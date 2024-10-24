@@ -37,7 +37,7 @@ foo =
 
 (module
   (assign
-    (identifier)
+    lhs: (identifier)
     (map
       (entry_inline
         key: (identifier)

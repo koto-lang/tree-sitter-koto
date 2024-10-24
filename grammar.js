@@ -1,11 +1,12 @@
 /// <reference types="tree-sitter-cli/dsl" />
 
 const PREC = {
-  comma: 1,
+  comma: -2,
+  assign: -1,
+  keyword: 1,
   elements: 2,
   chain: 4,
   range: 7,
-  assign: 12,
   or: 14,
   and: 15,
   equality: 16,
@@ -13,6 +14,7 @@ const PREC = {
   add: 18,
   multiply: 19,
   negate: 21,
+  map: 25,
 };
 
 const id = /[\p{XID_Start}_][\p{XID_Continue}]*/;
@@ -45,8 +47,10 @@ module.exports = grammar({
   ],
 
   conflicts: $ => [
-    [$.assign, $.modify_assign, $.binary_op, $.comparison_op, $.boolean_op],
+    [$.binary_op, $.comparison_op, $.boolean_op],
     [$._term, $.chain],
+    [$._term, $._assign_target],
+    [$._expression, $._assign_target],
     [$.element, $._index],
     [$._elements, $._elements],
   ],
@@ -66,7 +70,7 @@ module.exports = grammar({
       $._eof,
     ),
 
-    terms: $ => prec.left(PREC.comma, seq(
+    terms: $ => prec.left(PREC.elements, seq(
       $._term,
       repeat1(seq(',', $._term))
     )),
@@ -221,12 +225,42 @@ module.exports = grammar({
     call_arg: $ => $._expression,
 
     assign: $ => prec.right(PREC.assign, seq(
-      $._expression,
+      field('lhs', choice($._assign_target, $.assign_targets)),
       repeat($._indented_line),
       '=',
       repeat($._indented_line),
-      $._expressions,
+      choice(
+        seq(
+          repeat($._indented_line),
+          $._expression,
+        ),
+        seq(
+          repeat($._indented_line),
+          $._expression,
+          repeat1(seq(
+            ',',
+            repeat($._indented_line),
+            $._expression,
+          )),
+          // Optional trailing comma
+          optional(','),
+        ),
+      )
     )),
+
+    assign_targets: $ => seq(
+      $._assign_target,
+      repeat1(seq(
+        ',',
+        $._assign_target
+      ))
+    ),
+
+    _assign_target: $ => choice(
+      $.identifier,
+      $.meta,
+      $.chain,
+    ),
 
     let_assign: $ => choice(
       seq(
@@ -253,11 +287,11 @@ module.exports = grammar({
     ),
 
     modify_assign: $ => choice(
-      binary_op($, '-=', prec.right, PREC.assign),
-      binary_op($, '+=', prec.right, PREC.assign),
-      binary_op($, '*=', prec.right, PREC.assign),
-      binary_op($, '/=', prec.right, PREC.assign),
-      binary_op($, '%=', prec.right, PREC.assign),
+      assign_op($, '-=', prec.right),
+      assign_op($, '+=', prec.right),
+      assign_op($, '*=', prec.right),
+      assign_op($, '/=', prec.right),
+      assign_op($, '%=', prec.right),
     ),
 
     binary_op: $ => choice(
@@ -348,10 +382,10 @@ module.exports = grammar({
 
     not: $ => keyword_expression_single($, 'not'),
 
-    debug: $ => keyword_expression_multi($, 'debug'),
-    return: $ => keyword_expression_multi($, 'return'),
-    yield: $ => keyword_expression_multi($, 'yield'),
-    throw: $ => keyword_expression_multi($, 'throw'),
+    debug: $ => keyword_expression_multi($, 'debug', PREC.keyword),
+    return: $ => keyword_expression_multi($, 'return', PREC.keyword),
+    yield: $ => keyword_expression_multi($, 'yield', PREC.keyword),
+    throw: $ => keyword_expression_multi($, 'throw', PREC.keyword),
 
     export: $ => prec.right(seq(
       'export',
@@ -422,7 +456,7 @@ module.exports = grammar({
       )),
     ),
 
-    map_block: $ => prec.right(seq(
+    map_block: $ => prec.right(PREC.map, seq(
       $._map_block_start,
       $.entry_block,
       repeat(
@@ -741,6 +775,16 @@ module.exports = grammar({
   }
 });
 
+function assign_op($, operator, precedence_fn) {
+  return precedence_fn(PREC.assign, seq(
+    $._assign_target,
+    repeat($._indented_line),
+    operator,
+    repeat($._indented_line),
+    $._expression
+  ));
+}
+
 function binary_op($, operator, precedence_fn, precedence) {
   return precedence_fn(precedence, seq(
     $._expression,
@@ -758,9 +802,26 @@ function keyword_expression_single($, keyword) {
   ));
 }
 
-function keyword_expression_multi($, keyword) {
-  return prec.right(seq(
+function keyword_expression_multi($, keyword, precedence) {
+  return prec.right(precedence, seq(
     keyword,
-    optional(seq(repeat($._indented_line), $._expressions)),
+    optional(
+      choice(
+        seq(
+          repeat($._indented_line),
+          $._expression,
+        ),
+        seq(
+          repeat($._indented_line),
+          $._expression,
+          repeat1(seq(
+            ',',
+            repeat($._indented_line),
+            $._expression,
+          )),
+          // Optional trailing comma
+          optional(','),
+        ),
+      ))
   ));
 }
