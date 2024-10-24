@@ -488,14 +488,7 @@ module.exports = grammar({
         $._string_start,
         repeat(choice(
           $.escape,
-          seq(
-            '{',
-            $._interpolation_start,
-            optional($._expressions),
-            optional($.format),
-            $._interpolation_end,
-            '}',
-          ),
+          $.interpolation,
           /./,
           /\s/
         )),
@@ -506,6 +499,15 @@ module.exports = grammar({
         repeat(/./),
         $._raw_string_end,
       ),
+    ),
+
+    interpolation: $ => seq(
+      '{',
+      $._interpolation_start,
+      optional($._expressions),
+      optional($.format),
+      $._interpolation_end,
+      '}',
     ),
 
     format: $ => seq(

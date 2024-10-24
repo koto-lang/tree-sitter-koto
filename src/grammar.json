@@ -2655,49 +2655,8 @@
                     "name": "escape"
                   },
                   {
-                    "type": "SEQ",
-                    "members": [
-                      {
-                        "type": "STRING",
-                        "value": "{"
-                      },
-                      {
-                        "type": "SYMBOL",
-                        "name": "_interpolation_start"
-                      },
-                      {
-                        "type": "CHOICE",
-                        "members": [
-                          {
-                            "type": "SYMBOL",
-                            "name": "_expressions"
-                          },
-                          {
-                            "type": "BLANK"
-                          }
-                        ]
-                      },
-                      {
-                        "type": "CHOICE",
-                        "members": [
-                          {
-                            "type": "SYMBOL",
-                            "name": "format"
-                          },
-                          {
-                            "type": "BLANK"
-                          }
-                        ]
-                      },
-                      {
-                        "type": "SYMBOL",
-                        "name": "_interpolation_end"
-                      },
-                      {
-                        "type": "STRING",
-                        "value": "}"
-                      }
-                    ]
+                    "type": "SYMBOL",
+                    "name": "interpolation"
                   },
                   {
                     "type": "PATTERN",
@@ -2735,6 +2694,51 @@
               "name": "_raw_string_end"
             }
           ]
+        }
+      ]
+    },
+    "interpolation": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "{"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_interpolation_start"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "_expressions"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "format"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_interpolation_end"
+        },
+        {
+          "type": "STRING",
+          "value": "}"
         }
       ]
     },

@@ -48,19 +48,23 @@ string_interpolated
 
 (module
   (string
-    (identifier)
+    (interpolation (identifier))
   )
   (string
-    (expressions
-      (identifier)
-      (identifier)
-    )
+    (interpolation    
+      (expressions
+        (identifier)
+        (identifier)
+      )
+    ) 
   )
   (string
-    (expressions
-      (identifier)
-      (comment)
-      (identifier)
+    (interpolation
+      (expressions
+        (identifier)
+        (comment)
+        (identifier)
+      )
     )
   )
 )
@@ -77,24 +81,30 @@ format_string_in_interpolated_expression
 
 (module
   (string
-    (identifier)
-    (format
-      (number)
+    (interpolation
+      (identifier)
+      (format
+        (number)
+      )
     )
   )
   (string
-    (identifier)
-    (format
-      (alignment)
-      (number)
+    (interpolation
+      (identifier)
+      (format
+        (alignment)
+        (number)
+      )
     )
   )
   (string
-    (identifier)
-    (format
-      (fill_char)
-      (alignment)
-      (number)
+    (interpolation
+      (identifier)
+      (format
+        (fill_char)
+        (alignment)
+        (number)
+      )
     )
   )
 )
@@ -173,6 +183,6 @@ incomplete_string_interpolation
 ---
 
 (ERROR
-  (string)
+  (string (interpolation))
   (ERROR)
 )
