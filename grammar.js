@@ -55,6 +55,9 @@ module.exports = grammar({
     [$._elements, $._elements],
     [$._term],
     [$.element],
+    [$.args],
+    [$.assign],
+    [$.assign_expressions],
   ],
 
   word: $ => $.identifier,
@@ -232,23 +235,13 @@ module.exports = grammar({
       repeat($._indented_line),
       '=',
       repeat($._indented_line),
-      choice(
+      field('rhs', optional(choice(
         seq(
           repeat($._indented_line),
           $._expression,
         ),
-        seq(
-          repeat($._indented_line),
-          $._expression,
-          repeat1(seq(
-            ',',
-            repeat($._indented_line),
-            $._expression,
-          )),
-          // Optional trailing comma
-          optional(','),
-        ),
-      )
+        $.assign_expressions,
+      )))
     )),
 
     assign_targets: $ => seq(
@@ -263,6 +256,18 @@ module.exports = grammar({
       $.identifier,
       $.meta,
       $.chain,
+    ),
+
+    assign_expressions: $ => seq(
+      repeat($._indented_line),
+      $._expression,
+      repeat1(seq(
+        ',',
+        repeat($._indented_line),
+        $._expression,
+      )),
+      // Optional trailing comma
+      optional(','),
     ),
 
     let_assign: $ => choice(
@@ -531,14 +536,15 @@ module.exports = grammar({
       prec.right(seq(
         'if',
         field('condition', $._expression),
-        'then',
-        field('then', $._expression),
-        optional(
-          seq(
-            'else',
-            field('else', $._expression),
+        optional(seq('then',
+          field('then', $._expression),
+          optional(
+            seq(
+              'else',
+              field('else', $._expression),
+            )
           )
-        )
+        )),
       )),
       // Multiline if
       prec.right(seq(
@@ -618,12 +624,12 @@ module.exports = grammar({
         $._expression,
       ))),
       'then',
-      field('then',
+      optional(field('then',
         choice(
           $._expressions,
           $.block,
         ),
-      )
+      ))
     ),
 
     match_patterns: $ => seq(
@@ -695,9 +701,7 @@ module.exports = grammar({
     )),
 
     function: $ => prec.right(seq(
-      '|',
-      optional($.args),
-      '|',
+      $.args,
       optional(field('output_type', seq(
         '->',
         $.identifier,
@@ -706,8 +710,9 @@ module.exports = grammar({
     )),
 
     args: $ => seq(
+      "|",
       repeat($._newline),
-      $.arg,
+      optional($.arg),
       repeat(
         seq(
           repeat($._newline),
@@ -718,6 +723,7 @@ module.exports = grammar({
       ),
       optional(','),
       repeat($._newline),
+      "|",
     ),
 
     arg: $ => choice(

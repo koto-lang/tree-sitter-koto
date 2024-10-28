@@ -9,7 +9,7 @@ function_without_body
 ---
 
 (module
-  (function)
+  (function (args))
   (function
     (args
       (arg (variable (identifier)))
@@ -17,6 +17,7 @@ function_without_body
     )
   )
   (function
+    (args)
     output_type: (identifier)
   )
 )
@@ -33,6 +34,7 @@ function_inline
 
 (module
   (function
+    (args)
     body: (null)
   )
   (function
@@ -66,6 +68,7 @@ function_block
 
 (module
   (function
+    (args)
     body: (block (true))
   )
   (function

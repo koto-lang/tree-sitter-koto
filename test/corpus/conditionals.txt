@@ -2,12 +2,14 @@
 if_inline
 ===========================================================================================
 
+if foo
 if foo then bar
 if a == b then 'hello' else 'bye'
 
 ---
 
 (module
+  (if condition: (identifier))
   (if condition: (identifier) then: (identifier))
   (if
     condition: (comparison_op (identifier) (identifier))

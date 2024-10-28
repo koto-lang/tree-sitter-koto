@@ -193,6 +193,7 @@ binary_op_multi_line_post
 assignment_single_line
 ===========================================================================================
 
+a =
 a = 3
 a, b = c
 a = b, c
@@ -203,19 +204,22 @@ a = 1, 2, 3, 4
 (module
   (assign
     lhs: (identifier)
-    (number)
+  )
+  (assign
+    lhs: (identifier)
+    rhs: (number)
   )
   (assign
     lhs: (assign_targets (identifier) (identifier))
-    (identifier)
+    rhs: (identifier)
   )
   (assign
     lhs: (identifier)
-    (identifier) (identifier)
+    rhs: (assign_expressions (identifier) (identifier))
   )
   (assign
     lhs: (identifier)
-    (number) (number) (number) (number)
+    rhs: (assign_expressions (number) (number) (number) (number))
   )
 )
 
@@ -232,7 +236,7 @@ b += c = d
     (identifier)
     (assign
       lhs: (identifier)
-      (identifier)
+      rhs: (identifier)
     )
   )
 )
@@ -251,13 +255,11 @@ foo = 1,
 (module
   (assign
     lhs: (identifier)
-    (number)
-    (number)
+    rhs: (assign_expressions (number) (number))
   )
   (assign
     lhs: (identifier)
-    (number)
-    (number)
+    rhs: (assign_expressions (number) (number))
   )
 )
 
@@ -294,7 +296,8 @@ test_assignment
     lhs: (meta
       (test) name: (identifier)
     )
-    (function
+    rhs: (function
+      (args)
       body: (true)
     )
   )
@@ -524,7 +527,7 @@ finally
   (finally (block
     (assign 
       lhs: (identifier) 
-      (number)
+      rhs: (number)
     )
   ))
 )
@@ -546,7 +549,8 @@ x = ||
 (module
   (assign
     lhs: (identifier)
-    (function
+    rhs: (function
+      (args)
       body: (block
         (try (block (number)))
         (catch

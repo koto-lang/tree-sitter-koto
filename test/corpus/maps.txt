@@ -38,7 +38,7 @@ foo =
 (module
   (assign
     lhs: (identifier)
-    (map
+    rhs: (map
       (entry_inline
         key: (identifier)
         value: (number)
@@ -128,7 +128,7 @@ return
       )
       (entry_block
         key: (meta (test) name: (identifier))
-        value: (function body: (true))
+        value: (function (args) body: (true))
       )
       (entry_block
         key: (meta id: (meta_id) name: (identifier))
