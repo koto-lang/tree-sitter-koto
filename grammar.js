@@ -91,7 +91,7 @@ module.exports = grammar({
     ),
 
     _block_expressions: $ => choice(
-      $._expressions,
+      seq($._expressions, repeat(seq(';', optional($._expressions)))),
       $._cascade_arm,
     ),
 
