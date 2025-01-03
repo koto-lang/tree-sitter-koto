@@ -288,11 +288,16 @@ module.exports = grammar({
 
     variable: $ => seq(
       $.identifier,
-      optional(field('type', seq(
+      optional(seq(
         ':',
-        $.identifier,
-      ))),
+        $.type,
+      )),
     ),
+
+    type: $ => prec.right(seq(
+      $.identifier,
+      optional('?'),
+    )),
 
     modify_assign: $ => choice(
       assign_op($, '-=', prec.right),
@@ -702,10 +707,10 @@ module.exports = grammar({
 
     function: $ => prec.right(seq(
       $.args,
-      optional(field('output_type', seq(
+      optional(seq(
         '->',
-        $.identifier,
-      ))),
+        $.type
+      )),
       optional(field('body', choice($._expressions, $.block))),
     )),
 

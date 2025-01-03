@@ -24,7 +24,7 @@ for i: String in foo
     body: (block (identifier))
   )
   (for
-    args: (for_args (variable (identifier) type: (identifier)))
+    args: (for_args (variable (identifier) (type (identifier))))
     range: (identifier)
     body: (block
       (identifier)
@@ -57,8 +57,8 @@ for a: String, _: Number in foo
   )
   (for
     args: (for_args
-      (variable (identifier) type: (identifier))
-      (variable (identifier) type: (identifier))
+      (variable (identifier) (type (identifier)))
+      (variable (identifier) (type (identifier)))
     )
     range: (identifier)
     body: (block (identifier))

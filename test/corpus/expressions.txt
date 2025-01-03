@@ -293,6 +293,7 @@ let_assignment
 ===========================================================================================
 
 let x: String = 'hello'
+let y: String? = 'goodbye'
 
 ---
 
@@ -300,7 +301,14 @@ let x: String = 'hello'
   (let_assign
     (variable
       (identifier)
-      type: (identifier)
+      (type (identifier))
+    )
+    (string)
+  )
+  (let_assign
+    (variable
+      (identifier)
+      (type (identifier))
     )
     (string)
   )
@@ -401,7 +409,7 @@ export let foo: Number = 99
     (let_assign
       (variable
         (identifier)
-        type: (identifier)
+        (type (identifier))
       )
       (number)
     )

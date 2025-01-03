@@ -18,7 +18,7 @@ function_without_body
   )
   (function
     (args)
-    output_type: (identifier)
+    (type (identifier))
   )
 )
 
@@ -28,7 +28,7 @@ function_inline
 
 || null
 |a, b, c| 1 + 2
-|a: Number, b: String| -> Null null
+|a: Number, b: String| null
 
 ---
 
@@ -47,10 +47,9 @@ function_inline
   )
   (function
     (args
-      (arg (variable (identifier) type: (identifier)))
-      (arg (variable (identifier) type: (identifier)))
+      (arg (variable (identifier) (type (identifier))))
+      (arg (variable (identifier) (type (identifier))))
     )
-    output_type: (identifier)
     body: (null)
   )
 )
@@ -63,6 +62,8 @@ function_block
   true
 |a, b| -> Number
   a + b
+|x| -> Number?
+  x * x
 
 ---
 
@@ -76,7 +77,14 @@ function_block
       (arg (variable (identifier)))
       (arg (variable (identifier)))
     )
-    output_type: (identifier)
+    (type (identifier))
+    body: (block (binary_op (identifier) (identifier)))
+  )
+  (function
+    (args
+      (arg (variable (identifier)))
+    )
+    (type (identifier))
     body: (block (binary_op (identifier) (identifier)))
   )
 )
