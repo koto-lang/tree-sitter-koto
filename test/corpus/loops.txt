@@ -109,7 +109,7 @@ while i > 0
     body: (block
       (call
         function: (identifier)
-        (call_args (call_arg (identifier)))
+        (call_arg (identifier))
       )
       (modify_assign (identifier) (number))
     )

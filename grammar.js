@@ -124,8 +124,6 @@ module.exports = grammar({
     _expression: $ => choice(
       $._term,
       $.chain,
-      $.call,
-      $.map_block,
       $.if,
       $.switch,
       $.match,
@@ -151,6 +149,8 @@ module.exports = grammar({
       $.boolean_op,
       $.range,
       $.range_inclusive,
+      $.map_block,
+      $.call,
     ),
 
     // Arms of if/else if/else or try/catch/finally cascades
@@ -184,7 +184,7 @@ module.exports = grammar({
 
     call: $ => prec.right(PREC.call, seq(
       field('function', $._term),
-      $.call_args,
+      $._call_args,
     )),
 
     chain: $ => prec.right(PREC.chain, seq(
@@ -212,10 +212,10 @@ module.exports = grammar({
           ),
         ),
       ),
-      field('end_call', optional($.call_args)),
+      optional($._call_args),
     )),
 
-    call_args: $ => prec.right(seq(
+    _call_args: $ => prec.right(seq(
       repeat($._indented_line),
       $.call_arg,
       repeat(

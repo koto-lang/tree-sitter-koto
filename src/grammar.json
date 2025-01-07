@@ -244,14 +244,6 @@
         },
         {
           "type": "SYMBOL",
-          "name": "call"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "map_block"
-        },
-        {
-          "type": "SYMBOL",
           "name": "if"
         },
         {
@@ -349,6 +341,14 @@
         {
           "type": "SYMBOL",
           "name": "range_inclusive"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "map_block"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "call"
         }
       ]
     },
@@ -450,7 +450,7 @@
           },
           {
             "type": "SYMBOL",
-            "name": "call_args"
+            "name": "_call_args"
           }
         ]
       }
@@ -570,25 +570,21 @@
             }
           },
           {
-            "type": "FIELD",
-            "name": "end_call",
-            "content": {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "SYMBOL",
-                  "name": "call_args"
-                },
-                {
-                  "type": "BLANK"
-                }
-              ]
-            }
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_call_args"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
           }
         ]
       }
     },
-    "call_args": {
+    "_call_args": {
       "type": "PREC_RIGHT",
       "value": 0,
       "content": {

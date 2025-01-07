@@ -1059,11 +1059,11 @@
       }
     },
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": true,
       "types": [
         {
-          "type": "call_args",
+          "type": "call_arg",
           "named": true
         }
       ]
@@ -1245,21 +1245,6 @@
     }
   },
   {
-    "type": "call_args",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "call_arg",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "catch",
     "named": true,
     "fields": {},
@@ -1288,16 +1273,6 @@
         "types": [
           {
             "type": "tuple",
-            "named": true
-          }
-        ]
-      },
-      "end_call": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "call_args",
             "named": true
           }
         ]
@@ -1577,6 +1552,10 @@
       "multiple": true,
       "required": false,
       "types": [
+        {
+          "type": "call_arg",
+          "named": true
+        },
         {
           "type": "null_check",
           "named": true
