@@ -103,9 +103,7 @@ module.exports = grammar({
         $._expression,
       )),
       // Optional trailing comma
-      optional(seq(
-        ',',
-      )),
+      optional(','),
     )),
 
     _term: $ => choice(
@@ -717,27 +715,34 @@ module.exports = grammar({
     args: $ => seq(
       "|",
       repeat($._newline),
-      optional($.arg),
-      repeat(
-        seq(
-          repeat($._newline),
-          ',',
-          repeat($._newline),
-          $.arg,
+      optional(seq(
+        $.arg,
+        repeat(
+          seq(
+            repeat($._newline),
+            ',',
+            repeat($._newline),
+            $.arg,
+          ),
         ),
-      ),
-      optional(','),
+        optional(','),
+      )),
       repeat($._newline),
       "|",
     ),
 
     arg: $ => choice(
-      $.variable,
+      seq($.variable, optional($.default)),
       $.ellipsis,
       seq($.ellipsis, $.identifier),
       seq($.identifier, $.ellipsis),
       alias($._tuple_args, $.tuple),
       alias($._list_args, $.list),
+    ),
+
+    default: $ => seq(
+      '=',
+      $._term,
     ),
 
     _tuple_args: $ => seq('(', $._contained_args, ')'),

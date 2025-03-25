@@ -170,13 +170,8 @@
             "type": "CHOICE",
             "members": [
               {
-                "type": "SEQ",
-                "members": [
-                  {
-                    "type": "STRING",
-                    "value": ","
-                  }
-                ]
+                "type": "STRING",
+                "value": ","
               },
               {
                 "type": "BLANK"
@@ -3682,50 +3677,55 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "SYMBOL",
-              "name": "arg"
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
-        },
-        {
-          "type": "REPEAT",
-          "content": {
-            "type": "SEQ",
-            "members": [
-              {
-                "type": "REPEAT",
-                "content": {
+              "type": "SEQ",
+              "members": [
+                {
                   "type": "SYMBOL",
-                  "name": "_newline"
+                  "name": "arg"
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "REPEAT",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "_newline"
+                        }
+                      },
+                      {
+                        "type": "STRING",
+                        "value": ","
+                      },
+                      {
+                        "type": "REPEAT",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "_newline"
+                        }
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "arg"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "STRING",
+                      "value": ","
+                    },
+                    {
+                      "type": "BLANK"
+                    }
+                  ]
                 }
-              },
-              {
-                "type": "STRING",
-                "value": ","
-              },
-              {
-                "type": "REPEAT",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "_newline"
-                }
-              },
-              {
-                "type": "SYMBOL",
-                "name": "arg"
-              }
-            ]
-          }
-        },
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "STRING",
-              "value": ","
+              ]
             },
             {
               "type": "BLANK"
@@ -3749,8 +3749,25 @@
       "type": "CHOICE",
       "members": [
         {
-          "type": "SYMBOL",
-          "name": "variable"
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "variable"
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "default"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            }
+          ]
         },
         {
           "type": "SYMBOL",
@@ -3799,6 +3816,19 @@
           },
           "named": true,
           "value": "list"
+        }
+      ]
+    },
+    "default": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "="
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_term"
         }
       ]
     },
@@ -4198,5 +4228,6 @@
     }
   ],
   "inline": [],
-  "supertypes": []
+  "supertypes": [],
+  "reserved": {}
 }

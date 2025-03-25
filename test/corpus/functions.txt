@@ -28,7 +28,6 @@ function_inline
 
 || null
 |a, b, c| 1 + 2
-|a: Number, b: String| null
 
 ---
 
@@ -45,10 +44,29 @@ function_inline
     )
     body: (binary_op (number) (number))
   )
+)
+
+===========================================================================================
+function_with_default_arg
+===========================================================================================
+
+|a = 1| null
+|a = [], b = 'hello', c = true| null
+
+---
+
+(module
   (function
     (args
-      (arg (variable (identifier) (type (identifier))))
-      (arg (variable (identifier) (type (identifier))))
+      (arg (variable (identifier)) (default (number)))
+    )
+    body: (null)
+  )
+  (function
+    (args
+      (arg (variable (identifier)) (default (list)))
+      (arg (variable (identifier)) (default (string)))
+      (arg (variable (identifier)) (default (true)))
     )
     body: (null)
   )
