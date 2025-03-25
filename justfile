@@ -1,5 +1,5 @@
 generate:
-  tree-sitter generate
+  tree-sitter generate --abi 14
 
 highlight *ARGS: generate
   tree-sitter highlight {{ARGS}}
