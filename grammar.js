@@ -406,15 +406,15 @@ module.exports = grammar({
     number: _ => token(
       choice(
         // Ints
-        seq(/\d+/, optional(/e[+-]?\d+/)),
+        /\d[\d_]*(e[+-]?\d[\d_]*)?/,
         // Floats
-        seq(/\d*/, '.', /\d+/, optional(/e[+-]?\d+/)),
+        /[\d_]*\.\d[\d_]*(e[+-]?\d[\d_]*)?/,
         // Binary
-        /0b[01]+/,
+        /0b[01][01_]*/,
         // Octal
-        /0o[0-7]+/,
+        /0o[0-7][0-7_]*/,
         // Hex
-        /0x[0-9a-fA-F]+/,
+        /0x[0-9a-fA-F][0-9a-fA-F_]*/,
       ),
     ),
 

@@ -2288,66 +2288,24 @@
         "type": "CHOICE",
         "members": [
           {
-            "type": "SEQ",
-            "members": [
-              {
-                "type": "PATTERN",
-                "value": "\\d+"
-              },
-              {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "PATTERN",
-                    "value": "e[+-]?\\d+"
-                  },
-                  {
-                    "type": "BLANK"
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "type": "SEQ",
-            "members": [
-              {
-                "type": "PATTERN",
-                "value": "\\d*"
-              },
-              {
-                "type": "STRING",
-                "value": "."
-              },
-              {
-                "type": "PATTERN",
-                "value": "\\d+"
-              },
-              {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "PATTERN",
-                    "value": "e[+-]?\\d+"
-                  },
-                  {
-                    "type": "BLANK"
-                  }
-                ]
-              }
-            ]
+            "type": "PATTERN",
+            "value": "\\d[\\d_]*(e[+-]?\\d[\\d_]*)?"
           },
           {
             "type": "PATTERN",
-            "value": "0b[01]+"
+            "value": "[\\d_]*\\.\\d[\\d_]*(e[+-]?\\d[\\d_]*)?"
           },
           {
             "type": "PATTERN",
-            "value": "0o[0-7]+"
+            "value": "0b[01][01_]*"
           },
           {
             "type": "PATTERN",
-            "value": "0x[0-9a-fA-F]+"
+            "value": "0o[0-7][0-7_]*"
+          },
+          {
+            "type": "PATTERN",
+            "value": "0x[0-9a-fA-F][0-9a-fA-F_]*"
           }
         ]
       }
