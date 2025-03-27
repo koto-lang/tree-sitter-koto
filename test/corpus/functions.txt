@@ -51,7 +51,7 @@ function_with_default_arg
 ===========================================================================================
 
 |a = 1| null
-|a = [], b = 'hello', c = true| null
+|a = [], b = 'hello', c = true, d = 1..2| null
 
 ---
 
@@ -67,6 +67,7 @@ function_with_default_arg
       (arg (variable (identifier)) (default (list)))
       (arg (variable (identifier)) (default (string)))
       (arg (variable (identifier)) (default (true)))
+      (arg (variable (identifier)) (default (range (number) (number))))
     )
     body: (null)
   )

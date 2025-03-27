@@ -463,23 +463,11 @@
       "required": true,
       "types": [
         {
-          "type": "assign",
-          "named": true
-        },
-        {
           "type": "binary_op",
           "named": true
         },
         {
           "type": "boolean_op",
-          "named": true
-        },
-        {
-          "type": "break",
-          "named": true
-        },
-        {
-          "type": "call",
           "named": true
         },
         {
@@ -491,27 +479,11 @@
           "named": true
         },
         {
-          "type": "continue",
-          "named": true
-        },
-        {
           "type": "debug",
           "named": true
         },
         {
-          "type": "export",
-          "named": true
-        },
-        {
           "type": "false",
-          "named": true
-        },
-        {
-          "type": "for",
-          "named": true
-        },
-        {
-          "type": "function",
           "named": true
         },
         {
@@ -523,19 +495,7 @@
           "named": true
         },
         {
-          "type": "import",
-          "named": true
-        },
-        {
-          "type": "let_assign",
-          "named": true
-        },
-        {
           "type": "list",
-          "named": true
-        },
-        {
-          "type": "loop",
           "named": true
         },
         {
@@ -543,19 +503,7 @@
           "named": true
         },
         {
-          "type": "map_block",
-          "named": true
-        },
-        {
-          "type": "match",
-          "named": true
-        },
-        {
           "type": "meta",
-          "named": true
-        },
-        {
-          "type": "modify_assign",
           "named": true
         },
         {
@@ -583,10 +531,6 @@
           "named": true
         },
         {
-          "type": "return",
-          "named": true
-        },
-        {
           "type": "self",
           "named": true
         },
@@ -595,35 +539,11 @@
           "named": true
         },
         {
-          "type": "switch",
-          "named": true
-        },
-        {
-          "type": "throw",
-          "named": true
-        },
-        {
           "type": "true",
           "named": true
         },
         {
-          "type": "try",
-          "named": true
-        },
-        {
           "type": "tuple",
-          "named": true
-        },
-        {
-          "type": "until",
-          "named": true
-        },
-        {
-          "type": "while",
-          "named": true
-        },
-        {
-          "type": "yield",
           "named": true
         }
       ]
@@ -833,23 +753,11 @@
       "required": true,
       "types": [
         {
-          "type": "assign",
-          "named": true
-        },
-        {
           "type": "binary_op",
           "named": true
         },
         {
           "type": "boolean_op",
-          "named": true
-        },
-        {
-          "type": "break",
-          "named": true
-        },
-        {
-          "type": "call",
           "named": true
         },
         {
@@ -861,27 +769,11 @@
           "named": true
         },
         {
-          "type": "continue",
-          "named": true
-        },
-        {
           "type": "debug",
           "named": true
         },
         {
-          "type": "export",
-          "named": true
-        },
-        {
           "type": "false",
-          "named": true
-        },
-        {
-          "type": "for",
-          "named": true
-        },
-        {
-          "type": "function",
           "named": true
         },
         {
@@ -893,19 +785,7 @@
           "named": true
         },
         {
-          "type": "import",
-          "named": true
-        },
-        {
-          "type": "let_assign",
-          "named": true
-        },
-        {
           "type": "list",
-          "named": true
-        },
-        {
-          "type": "loop",
           "named": true
         },
         {
@@ -913,19 +793,7 @@
           "named": true
         },
         {
-          "type": "map_block",
-          "named": true
-        },
-        {
-          "type": "match",
-          "named": true
-        },
-        {
           "type": "meta",
-          "named": true
-        },
-        {
-          "type": "modify_assign",
           "named": true
         },
         {
@@ -953,10 +821,6 @@
           "named": true
         },
         {
-          "type": "return",
-          "named": true
-        },
-        {
           "type": "self",
           "named": true
         },
@@ -965,35 +829,11 @@
           "named": true
         },
         {
-          "type": "switch",
-          "named": true
-        },
-        {
-          "type": "throw",
-          "named": true
-        },
-        {
           "type": "true",
           "named": true
         },
         {
-          "type": "try",
-          "named": true
-        },
-        {
           "type": "tuple",
-          "named": true
-        },
-        {
-          "type": "until",
-          "named": true
-        },
-        {
-          "type": "while",
-          "named": true
-        },
-        {
-          "type": "yield",
           "named": true
         }
       ]
@@ -1294,23 +1134,11 @@
             "named": false
           },
           {
-            "type": "assign",
-            "named": true
-          },
-          {
             "type": "binary_op",
             "named": true
           },
           {
             "type": "boolean_op",
-            "named": true
-          },
-          {
-            "type": "break",
-            "named": true
-          },
-          {
-            "type": "call",
             "named": true
           },
           {
@@ -1322,27 +1150,11 @@
             "named": true
           },
           {
-            "type": "continue",
-            "named": true
-          },
-          {
             "type": "debug",
             "named": true
           },
           {
-            "type": "export",
-            "named": true
-          },
-          {
             "type": "false",
-            "named": true
-          },
-          {
-            "type": "for",
-            "named": true
-          },
-          {
-            "type": "function",
             "named": true
           },
           {
@@ -1354,19 +1166,7 @@
             "named": true
           },
           {
-            "type": "import",
-            "named": true
-          },
-          {
-            "type": "let_assign",
-            "named": true
-          },
-          {
             "type": "list",
-            "named": true
-          },
-          {
-            "type": "loop",
             "named": true
           },
           {
@@ -1374,19 +1174,7 @@
             "named": true
           },
           {
-            "type": "map_block",
-            "named": true
-          },
-          {
-            "type": "match",
-            "named": true
-          },
-          {
             "type": "meta",
-            "named": true
-          },
-          {
-            "type": "modify_assign",
             "named": true
           },
           {
@@ -1430,10 +1218,6 @@
             "named": true
           },
           {
-            "type": "return",
-            "named": true
-          },
-          {
             "type": "self",
             "named": true
           },
@@ -1442,35 +1226,11 @@
             "named": true
           },
           {
-            "type": "switch",
-            "named": true
-          },
-          {
-            "type": "throw",
-            "named": true
-          },
-          {
             "type": "true",
             "named": true
           },
           {
-            "type": "try",
-            "named": true
-          },
-          {
             "type": "tuple",
-            "named": true
-          },
-          {
-            "type": "until",
-            "named": true
-          },
-          {
-            "type": "while",
-            "named": true
-          },
-          {
-            "type": "yield",
             "named": true
           }
         ]
@@ -1576,23 +1336,11 @@
       "required": true,
       "types": [
         {
-          "type": "assign",
-          "named": true
-        },
-        {
           "type": "binary_op",
           "named": true
         },
         {
           "type": "boolean_op",
-          "named": true
-        },
-        {
-          "type": "break",
-          "named": true
-        },
-        {
-          "type": "call",
           "named": true
         },
         {
@@ -1604,27 +1352,11 @@
           "named": true
         },
         {
-          "type": "continue",
-          "named": true
-        },
-        {
           "type": "debug",
           "named": true
         },
         {
-          "type": "export",
-          "named": true
-        },
-        {
           "type": "false",
-          "named": true
-        },
-        {
-          "type": "for",
-          "named": true
-        },
-        {
-          "type": "function",
           "named": true
         },
         {
@@ -1636,19 +1368,7 @@
           "named": true
         },
         {
-          "type": "import",
-          "named": true
-        },
-        {
-          "type": "let_assign",
-          "named": true
-        },
-        {
           "type": "list",
-          "named": true
-        },
-        {
-          "type": "loop",
           "named": true
         },
         {
@@ -1656,19 +1376,7 @@
           "named": true
         },
         {
-          "type": "map_block",
-          "named": true
-        },
-        {
-          "type": "match",
-          "named": true
-        },
-        {
           "type": "meta",
-          "named": true
-        },
-        {
-          "type": "modify_assign",
           "named": true
         },
         {
@@ -1696,10 +1404,6 @@
           "named": true
         },
         {
-          "type": "return",
-          "named": true
-        },
-        {
           "type": "self",
           "named": true
         },
@@ -1708,35 +1412,11 @@
           "named": true
         },
         {
-          "type": "switch",
-          "named": true
-        },
-        {
-          "type": "throw",
-          "named": true
-        },
-        {
           "type": "true",
           "named": true
         },
         {
-          "type": "try",
-          "named": true
-        },
-        {
           "type": "tuple",
-          "named": true
-        },
-        {
-          "type": "until",
-          "named": true
-        },
-        {
-          "type": "while",
-          "named": true
-        },
-        {
-          "type": "yield",
           "named": true
         }
       ]
@@ -1926,11 +1606,35 @@
       "required": true,
       "types": [
         {
+          "type": "binary_op",
+          "named": true
+        },
+        {
+          "type": "boolean_op",
+          "named": true
+        },
+        {
+          "type": "chain",
+          "named": true
+        },
+        {
+          "type": "comparison_op",
+          "named": true
+        },
+        {
+          "type": "debug",
+          "named": true
+        },
+        {
           "type": "false",
           "named": true
         },
         {
           "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "if",
           "named": true
         },
         {
@@ -1959,6 +1663,14 @@
         },
         {
           "type": "number",
+          "named": true
+        },
+        {
+          "type": "range",
+          "named": true
+        },
+        {
+          "type": "range_inclusive",
           "named": true
         },
         {
@@ -1989,23 +1701,11 @@
       "required": true,
       "types": [
         {
-          "type": "assign",
-          "named": true
-        },
-        {
           "type": "binary_op",
           "named": true
         },
         {
           "type": "boolean_op",
-          "named": true
-        },
-        {
-          "type": "break",
-          "named": true
-        },
-        {
-          "type": "call",
           "named": true
         },
         {
@@ -2017,27 +1717,11 @@
           "named": true
         },
         {
-          "type": "continue",
-          "named": true
-        },
-        {
           "type": "debug",
           "named": true
         },
         {
-          "type": "export",
-          "named": true
-        },
-        {
           "type": "false",
-          "named": true
-        },
-        {
-          "type": "for",
-          "named": true
-        },
-        {
-          "type": "function",
           "named": true
         },
         {
@@ -2049,19 +1733,7 @@
           "named": true
         },
         {
-          "type": "import",
-          "named": true
-        },
-        {
-          "type": "let_assign",
-          "named": true
-        },
-        {
           "type": "list",
-          "named": true
-        },
-        {
-          "type": "loop",
           "named": true
         },
         {
@@ -2069,19 +1741,7 @@
           "named": true
         },
         {
-          "type": "map_block",
-          "named": true
-        },
-        {
-          "type": "match",
-          "named": true
-        },
-        {
           "type": "meta",
-          "named": true
-        },
-        {
-          "type": "modify_assign",
           "named": true
         },
         {
@@ -2109,10 +1769,6 @@
           "named": true
         },
         {
-          "type": "return",
-          "named": true
-        },
-        {
           "type": "self",
           "named": true
         },
@@ -2121,35 +1777,11 @@
           "named": true
         },
         {
-          "type": "switch",
-          "named": true
-        },
-        {
-          "type": "throw",
-          "named": true
-        },
-        {
           "type": "true",
           "named": true
         },
         {
-          "type": "try",
-          "named": true
-        },
-        {
           "type": "tuple",
-          "named": true
-        },
-        {
-          "type": "until",
-          "named": true
-        },
-        {
-          "type": "while",
-          "named": true
-        },
-        {
-          "type": "yield",
           "named": true
         }
       ]
@@ -6172,23 +5804,11 @@
       "required": true,
       "types": [
         {
-          "type": "assign",
-          "named": true
-        },
-        {
           "type": "binary_op",
           "named": true
         },
         {
           "type": "boolean_op",
-          "named": true
-        },
-        {
-          "type": "break",
-          "named": true
-        },
-        {
-          "type": "call",
           "named": true
         },
         {
@@ -6200,27 +5820,11 @@
           "named": true
         },
         {
-          "type": "continue",
-          "named": true
-        },
-        {
           "type": "debug",
           "named": true
         },
         {
-          "type": "export",
-          "named": true
-        },
-        {
           "type": "false",
-          "named": true
-        },
-        {
-          "type": "for",
-          "named": true
-        },
-        {
-          "type": "function",
           "named": true
         },
         {
@@ -6232,19 +5836,7 @@
           "named": true
         },
         {
-          "type": "import",
-          "named": true
-        },
-        {
-          "type": "let_assign",
-          "named": true
-        },
-        {
           "type": "list",
-          "named": true
-        },
-        {
-          "type": "loop",
           "named": true
         },
         {
@@ -6252,19 +5844,7 @@
           "named": true
         },
         {
-          "type": "map_block",
-          "named": true
-        },
-        {
-          "type": "match",
-          "named": true
-        },
-        {
           "type": "meta",
-          "named": true
-        },
-        {
-          "type": "modify_assign",
           "named": true
         },
         {
@@ -6292,10 +5872,6 @@
           "named": true
         },
         {
-          "type": "return",
-          "named": true
-        },
-        {
           "type": "self",
           "named": true
         },
@@ -6304,35 +5880,11 @@
           "named": true
         },
         {
-          "type": "switch",
-          "named": true
-        },
-        {
-          "type": "throw",
-          "named": true
-        },
-        {
           "type": "true",
           "named": true
         },
         {
-          "type": "try",
-          "named": true
-        },
-        {
           "type": "tuple",
-          "named": true
-        },
-        {
-          "type": "until",
-          "named": true
-        },
-        {
-          "type": "while",
-          "named": true
-        },
-        {
-          "type": "yield",
           "named": true
         }
       ]
@@ -6347,23 +5899,11 @@
       "required": true,
       "types": [
         {
-          "type": "assign",
-          "named": true
-        },
-        {
           "type": "binary_op",
           "named": true
         },
         {
           "type": "boolean_op",
-          "named": true
-        },
-        {
-          "type": "break",
-          "named": true
-        },
-        {
-          "type": "call",
           "named": true
         },
         {
@@ -6375,27 +5915,11 @@
           "named": true
         },
         {
-          "type": "continue",
-          "named": true
-        },
-        {
           "type": "debug",
           "named": true
         },
         {
-          "type": "export",
-          "named": true
-        },
-        {
           "type": "false",
-          "named": true
-        },
-        {
-          "type": "for",
-          "named": true
-        },
-        {
-          "type": "function",
           "named": true
         },
         {
@@ -6407,19 +5931,7 @@
           "named": true
         },
         {
-          "type": "import",
-          "named": true
-        },
-        {
-          "type": "let_assign",
-          "named": true
-        },
-        {
           "type": "list",
-          "named": true
-        },
-        {
-          "type": "loop",
           "named": true
         },
         {
@@ -6427,19 +5939,7 @@
           "named": true
         },
         {
-          "type": "map_block",
-          "named": true
-        },
-        {
-          "type": "match",
-          "named": true
-        },
-        {
           "type": "meta",
-          "named": true
-        },
-        {
-          "type": "modify_assign",
           "named": true
         },
         {
@@ -6467,10 +5967,6 @@
           "named": true
         },
         {
-          "type": "return",
-          "named": true
-        },
-        {
           "type": "self",
           "named": true
         },
@@ -6479,35 +5975,11 @@
           "named": true
         },
         {
-          "type": "switch",
-          "named": true
-        },
-        {
-          "type": "throw",
-          "named": true
-        },
-        {
           "type": "true",
           "named": true
         },
         {
-          "type": "try",
-          "named": true
-        },
-        {
           "type": "tuple",
-          "named": true
-        },
-        {
-          "type": "until",
-          "named": true
-        },
-        {
-          "type": "while",
-          "named": true
-        },
-        {
-          "type": "yield",
           "named": true
         }
       ]
@@ -6527,23 +5999,11 @@
       "required": true,
       "types": [
         {
-          "type": "assign",
-          "named": true
-        },
-        {
           "type": "binary_op",
           "named": true
         },
         {
           "type": "boolean_op",
-          "named": true
-        },
-        {
-          "type": "break",
-          "named": true
-        },
-        {
-          "type": "call",
           "named": true
         },
         {
@@ -6555,27 +6015,11 @@
           "named": true
         },
         {
-          "type": "continue",
-          "named": true
-        },
-        {
           "type": "debug",
           "named": true
         },
         {
-          "type": "export",
-          "named": true
-        },
-        {
           "type": "false",
-          "named": true
-        },
-        {
-          "type": "for",
-          "named": true
-        },
-        {
-          "type": "function",
           "named": true
         },
         {
@@ -6587,19 +6031,7 @@
           "named": true
         },
         {
-          "type": "import",
-          "named": true
-        },
-        {
-          "type": "let_assign",
-          "named": true
-        },
-        {
           "type": "list",
-          "named": true
-        },
-        {
-          "type": "loop",
           "named": true
         },
         {
@@ -6607,19 +6039,7 @@
           "named": true
         },
         {
-          "type": "map_block",
-          "named": true
-        },
-        {
-          "type": "match",
-          "named": true
-        },
-        {
           "type": "meta",
-          "named": true
-        },
-        {
-          "type": "modify_assign",
           "named": true
         },
         {
@@ -6647,10 +6067,6 @@
           "named": true
         },
         {
-          "type": "return",
-          "named": true
-        },
-        {
           "type": "self",
           "named": true
         },
@@ -6659,35 +6075,11 @@
           "named": true
         },
         {
-          "type": "switch",
-          "named": true
-        },
-        {
-          "type": "throw",
-          "named": true
-        },
-        {
           "type": "true",
           "named": true
         },
         {
-          "type": "try",
-          "named": true
-        },
-        {
           "type": "tuple",
-          "named": true
-        },
-        {
-          "type": "until",
-          "named": true
-        },
-        {
-          "type": "while",
-          "named": true
-        },
-        {
-          "type": "yield",
           "named": true
         }
       ]
@@ -6702,23 +6094,11 @@
       "required": true,
       "types": [
         {
-          "type": "assign",
-          "named": true
-        },
-        {
           "type": "binary_op",
           "named": true
         },
         {
           "type": "boolean_op",
-          "named": true
-        },
-        {
-          "type": "break",
-          "named": true
-        },
-        {
-          "type": "call",
           "named": true
         },
         {
@@ -6730,27 +6110,11 @@
           "named": true
         },
         {
-          "type": "continue",
-          "named": true
-        },
-        {
           "type": "debug",
           "named": true
         },
         {
-          "type": "export",
-          "named": true
-        },
-        {
           "type": "false",
-          "named": true
-        },
-        {
-          "type": "for",
-          "named": true
-        },
-        {
-          "type": "function",
           "named": true
         },
         {
@@ -6762,19 +6126,7 @@
           "named": true
         },
         {
-          "type": "import",
-          "named": true
-        },
-        {
-          "type": "let_assign",
-          "named": true
-        },
-        {
           "type": "list",
-          "named": true
-        },
-        {
-          "type": "loop",
           "named": true
         },
         {
@@ -6782,19 +6134,7 @@
           "named": true
         },
         {
-          "type": "map_block",
-          "named": true
-        },
-        {
-          "type": "match",
-          "named": true
-        },
-        {
           "type": "meta",
-          "named": true
-        },
-        {
-          "type": "modify_assign",
           "named": true
         },
         {
@@ -6822,10 +6162,6 @@
           "named": true
         },
         {
-          "type": "return",
-          "named": true
-        },
-        {
           "type": "self",
           "named": true
         },
@@ -6834,35 +6170,11 @@
           "named": true
         },
         {
-          "type": "switch",
-          "named": true
-        },
-        {
-          "type": "throw",
-          "named": true
-        },
-        {
           "type": "true",
           "named": true
         },
         {
-          "type": "try",
-          "named": true
-        },
-        {
           "type": "tuple",
-          "named": true
-        },
-        {
-          "type": "until",
-          "named": true
-        },
-        {
-          "type": "while",
-          "named": true
-        },
-        {
-          "type": "yield",
           "named": true
         }
       ]
@@ -6877,23 +6189,11 @@
       "required": true,
       "types": [
         {
-          "type": "assign",
-          "named": true
-        },
-        {
           "type": "binary_op",
           "named": true
         },
         {
           "type": "boolean_op",
-          "named": true
-        },
-        {
-          "type": "break",
-          "named": true
-        },
-        {
-          "type": "call",
           "named": true
         },
         {
@@ -6905,27 +6205,11 @@
           "named": true
         },
         {
-          "type": "continue",
-          "named": true
-        },
-        {
           "type": "debug",
           "named": true
         },
         {
-          "type": "export",
-          "named": true
-        },
-        {
           "type": "false",
-          "named": true
-        },
-        {
-          "type": "for",
-          "named": true
-        },
-        {
-          "type": "function",
           "named": true
         },
         {
@@ -6937,19 +6221,7 @@
           "named": true
         },
         {
-          "type": "import",
-          "named": true
-        },
-        {
-          "type": "let_assign",
-          "named": true
-        },
-        {
           "type": "list",
-          "named": true
-        },
-        {
-          "type": "loop",
           "named": true
         },
         {
@@ -6957,19 +6229,7 @@
           "named": true
         },
         {
-          "type": "map_block",
-          "named": true
-        },
-        {
-          "type": "match",
-          "named": true
-        },
-        {
           "type": "meta",
-          "named": true
-        },
-        {
-          "type": "modify_assign",
           "named": true
         },
         {
@@ -6997,10 +6257,6 @@
           "named": true
         },
         {
-          "type": "return",
-          "named": true
-        },
-        {
           "type": "self",
           "named": true
         },
@@ -7009,35 +6265,11 @@
           "named": true
         },
         {
-          "type": "switch",
-          "named": true
-        },
-        {
-          "type": "throw",
-          "named": true
-        },
-        {
           "type": "true",
           "named": true
         },
         {
-          "type": "try",
-          "named": true
-        },
-        {
           "type": "tuple",
-          "named": true
-        },
-        {
-          "type": "until",
-          "named": true
-        },
-        {
-          "type": "while",
-          "named": true
-        },
-        {
-          "type": "yield",
           "named": true
         }
       ]

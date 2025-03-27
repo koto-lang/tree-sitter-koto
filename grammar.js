@@ -50,7 +50,7 @@ module.exports = grammar({
     [$.binary_op, $.comparison_op, $.boolean_op],
     [$._term, $.chain],
     [$._term, $._assign_target],
-    [$._expression, $._assign_target],
+    [$._term_ext, $._assign_target],
     [$.element, $.chain],
     [$._elements, $._elements],
     [$._term],
@@ -119,10 +119,20 @@ module.exports = grammar({
       $.not,
     ),
 
-    _expression: $ => choice(
+    _term_ext: $ => choice(
       $._term,
       $.chain,
+      $.range,
+      $.range_inclusive,
       $.if,
+      $.debug,
+      $.binary_op,
+      $.comparison_op,
+      $.boolean_op,
+    ),
+
+    _expression: $ => choice(
+      $._term_ext,
       $.switch,
       $.match,
       $.for,
@@ -135,18 +145,12 @@ module.exports = grammar({
       $.yield,
       $.break,
       $.continue,
-      $.debug,
       $.import,
       $.export,
       $.try,
       $.assign,
       $.let_assign,
       $.modify_assign,
-      $.binary_op,
-      $.comparison_op,
-      $.boolean_op,
-      $.range,
-      $.range_inclusive,
       $.map_block,
       $.call,
     ),
@@ -194,7 +198,7 @@ module.exports = grammar({
           field('index', seq(
             '[',
             choice(
-              $._expression,
+              $._term_ext,
               $.range_from,
               $.range_to,
               $.range_to_inclusive,
@@ -328,23 +332,23 @@ module.exports = grammar({
     ),
 
     range: $ => prec.left(PREC.range, seq(
-      $._expression, '..', $._expression
+      $._term_ext, '..', $._term_ext
     )),
 
     range_inclusive: $ => prec.left(PREC.range, seq(
-      $._expression, '..=', $._expression
+      $._term_ext, '..=', $._term_ext
     )),
 
     range_from: $ => prec.left(PREC.range, seq(
-      $._expression, '..'
+      $._term_ext, '..'
     )),
 
     range_to: $ => prec.left(PREC.range, seq(
-      '..', $._expression
+      '..', $._term_ext
     )),
 
     range_to_inclusive: $ => prec.left(PREC.range, seq(
-      '..=', $._expression
+      '..=', $._term_ext
     )),
 
     range_full: _ => '..',
@@ -444,7 +448,7 @@ module.exports = grammar({
         repeat($._newline),
       ),
     ),
-    element: $ => $._expression,
+    element: $ => $._term_ext,
 
     map: $ => seq(
       '{',
@@ -742,7 +746,7 @@ module.exports = grammar({
 
     default: $ => seq(
       '=',
-      $._term,
+      $._term_ext,
     ),
 
     _tuple_args: $ => seq('(', $._contained_args, ')'),
@@ -816,11 +820,11 @@ function assign_op($, operator, precedence_fn) {
 
 function binary_op($, operator, precedence_fn, precedence) {
   return precedence_fn(precedence, seq(
-    $._expression,
+    $._term_ext,
     repeat($._indented_line),
     operator,
     repeat($._indented_line),
-    $._expression
+    $._term_ext
   ));
 }
 
