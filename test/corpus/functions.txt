@@ -113,7 +113,7 @@ function_arg_unpacking
 ===========================================================================================
 
 |a, b, ...| true
-|a, (b, c...)| true
+|a, (b, c...) = (1, 2)| true
 |[...x, (...y)]| true
 
 ---
@@ -130,10 +130,18 @@ function_arg_unpacking
   (function
     (args
       (arg (variable (identifier)))
-      (arg (tuple
-        (arg (variable (identifier)))
-        (arg (identifier) (ellipsis))
-      ))
+      (arg
+        (tuple
+          (arg (variable (identifier)))
+          (arg (identifier) (ellipsis))
+        )
+        (default
+          (tuple
+            (element (number))
+            (element (number))
+          )
+        )
+      )
     )
     body: (true)
   )

@@ -740,8 +740,8 @@ module.exports = grammar({
       $.ellipsis,
       seq($.ellipsis, $.identifier),
       seq($.identifier, $.ellipsis),
-      alias($._tuple_args, $.tuple),
-      alias($._list_args, $.list),
+      seq(alias($._tuple_args, $.tuple), optional($.default)),
+      seq(alias($._list_args, $.list), optional($.default)),
     ),
 
     default: $ => seq(
