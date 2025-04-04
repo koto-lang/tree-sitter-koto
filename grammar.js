@@ -616,10 +616,10 @@ module.exports = grammar({
     )),
 
     match_conditions: $ => prec.right(seq(
-      $._expression,
+      $._term_ext,
       repeat(seq(
         ',',
-        $._expression
+        $._term_ext
       ))
     )),
 
@@ -628,7 +628,7 @@ module.exports = grammar({
       $.match_patterns,
       optional(field('condition', seq(
         'if',
-        $._expression,
+        $._term_ext,
       ))),
       'then',
       optional(field('then',

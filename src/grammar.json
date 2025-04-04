@@ -3179,7 +3179,7 @@
         "members": [
           {
             "type": "SYMBOL",
-            "name": "_expression"
+            "name": "_term_ext"
           },
           {
             "type": "REPEAT",
@@ -3192,7 +3192,7 @@
                 },
                 {
                   "type": "SYMBOL",
-                  "name": "_expression"
+                  "name": "_term_ext"
                 }
               ]
             }
@@ -3226,7 +3226,7 @@
                   },
                   {
                     "type": "SYMBOL",
-                    "name": "_expression"
+                    "name": "_term_ext"
                   }
                 ]
               }
