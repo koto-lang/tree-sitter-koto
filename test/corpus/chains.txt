@@ -65,6 +65,7 @@ call_without_parens_1_single_line
 ===========================================================================================
 
 f x
+f -42
 
 ---
 
@@ -72,6 +73,10 @@ f x
   (chain
     start: (identifier)
     (call_arg (identifier))
+  )
+  (chain
+    start: (identifier)
+    (call_arg (negate (number)))
   )
 )
 
@@ -155,6 +160,44 @@ f g 1, 2
       (chain
         start: (identifier)
         (call_arg (number)) (call_arg (number))
+      )
+    )
+  )
+)
+
+===========================================================================================
+call_with_parenthesized_call_as_arg
+===========================================================================================
+
+f (g 1)
+f (g -1)
+
+---
+
+(module
+  (chain
+    start: (identifier)
+    (call_arg
+      (tuple
+        (element
+          (chain
+            start: (identifier)
+            (call_arg (number))
+          )
+        )
+      )
+    )
+  )
+  (chain
+    start: (identifier)
+    (call_arg
+      (tuple
+        (element
+          (chain
+            start: (identifier)
+            (call_arg (negate (number)))
+          )
+        )
       )
     )
   )

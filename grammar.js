@@ -12,9 +12,8 @@ const PREC = {
   comparison: 17,
   add: 18,
   multiply: 19,
-  negate: 21,
+  negate: 20,
   chain: 100,
-  call_args: 101,
 };
 
 const id = /[\p{XID_Start}_][\p{XID_Continue}]*/;
@@ -50,7 +49,6 @@ module.exports = grammar({
     [$.binary_op, $.comparison_op, $.boolean_op],
     [$._elements, $._elements],
     [$._term, $._assign_target],
-    [$._term, $.chain],
     [$._term_base, $._assign_target],
     [$.args],
     [$.assign],
@@ -186,7 +184,7 @@ module.exports = grammar({
     ),
 
     // Used for chained lookup/index/call expressions, e.g. `x[0].foo(123)`
-    chain: $ => seq(
+    chain: $ => prec(PREC.chain, seq(
       // The start of the chain
       field('start', $._term_base),
       // Followig
@@ -228,7 +226,7 @@ module.exports = grammar({
         // Paren-free call, e.g. `f 123`
         $._call_args,
       ),
-    ),
+    )),
 
     // Capture parenthesized call args, the opening '(' was already captured in $.chain
     call_args: $ => seq(
@@ -418,7 +416,7 @@ module.exports = grammar({
       '@<=',
     ),
 
-    negate: $ => prec(PREC.negate, (seq('-', $._expression))),
+    negate: $ => prec(PREC.negate, seq('-', $._term)),
 
     not: $ => keyword_expression_single($, 'not'),
 
