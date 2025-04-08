@@ -5,6 +5,7 @@ const PREC = {
   assign: -1,
   keyword: 1,
   container: 2,
+  parenthesized: 3,
   range: 7,
   or: 14,
   and: 15,
@@ -47,13 +48,13 @@ module.exports = grammar({
 
   conflicts: $ => [
     [$.binary_op, $.comparison_op, $.boolean_op],
-    [$._elements, $._elements],
     [$._term, $._assign_target],
     [$._term_base, $._assign_target],
     [$.args],
     [$.assign],
     [$.assign_expressions],
     [$.chain],
+    [$._flexi_comma],
   ],
 
   word: $ => $.identifier,
@@ -108,6 +109,7 @@ module.exports = grammar({
       $.string,
       $.identifier,
       $.meta,
+      $.parenthesized,
       $.tuple,
       $.list,
       $.map,
@@ -445,32 +447,66 @@ module.exports = grammar({
       ),
     ),
 
-    tuple: $ => prec.right(PREC.container, seq('(', optional($._elements), ')')),
-    list: $ => prec.right(PREC.container, seq('[', optional($._elements), ']')),
-    _elements: $ => choice(
-      seq(
-        repeat($._newline),
-        ',',
-        repeat($._newline),
-      ),
-      seq(
-        repeat($._newline),
-        $.element,
-        repeat(
-          seq(
-            repeat($._newline),
-            ',',
-            repeat($._newline),
+    parenthesized: $ => prec(PREC.parenthesized, seq('(', $._expression, ')')),
+
+    tuple: $ => prec(PREC.container, seq(
+      '(',
+      optional(choice(
+        // Just a comma
+        $._flexi_comma,
+        // At least one element, with at least one comma, e.g. `(x,)`, `(x, y)`
+        seq(
+          repeat($._newline),
+          $.element,
+          $._flexi_comma,
+          optional(seq(
             $.element,
-          )
+            repeat(
+              seq(
+                $._flexi_comma,
+                $.element,
+              )
+            ),
+            repeat($._newline),
+            optional(','),
+          )),
+          repeat($._newline),
         ),
-        repeat($._newline),
-        optional(
-          ','
+      )),
+      ')',
+    )),
+
+    list: $ => prec(PREC.container, seq(
+      '[',
+      optional(choice(
+        // just a comma
+        $._flexi_comma,
+        // At least one element, with optional trailing comma
+        seq(
+          repeat($._newline),
+          $.element,
+          repeat(
+            seq(
+              $._flexi_comma,
+              $.element,
+            )
+          ),
+          repeat($._newline),
+          optional(
+            ','
+          ),
+          repeat($._newline),
         ),
-        repeat($._newline),
-      ),
+      )),
+      ']',
+    )),
+
+    _flexi_comma: $ => seq(
+      repeat($._newline),
+      ',',
+      repeat($._newline),
     ),
+
     element: $ => $._term_ext,
 
     map: $ => seq(
@@ -746,9 +782,7 @@ module.exports = grammar({
         $.arg,
         repeat(
           seq(
-            repeat($._newline),
-            ',',
-            repeat($._newline),
+            $._flexi_comma,
             $.arg,
           ),
         ),

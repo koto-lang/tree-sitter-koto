@@ -97,14 +97,30 @@ a, b, c; 1, 2, 3
 )
 
 ===========================================================================================
+parenthesized
+===========================================================================================
+
+(1)
+((x,))
+
+---
+
+(module
+  (parenthesized (number))
+  (parenthesized (tuple (element (identifier))))
+)
+
+===========================================================================================
 tuple_empty
 ===========================================================================================
 
+()
 (,)
 
 ---
 
 (module
+  (tuple)
   (tuple)
 )
 
@@ -112,7 +128,7 @@ tuple_empty
 tuple_nested
 ===========================================================================================
 
-(foo, bar, (baz))
+(foo, bar, (baz,))
 
 ---
 
@@ -138,7 +154,7 @@ tuple_nested_multi_line
   (tuple
     (element (identifier))
     (element (identifier))
-    (element (tuple (element (identifier))))))
+    (element (parenthesized (identifier)))))
 
 
 ===========================================================================================
@@ -157,7 +173,7 @@ list_multi_line
   (list
     (element (identifier))
     (element (identifier))
-    (element (tuple (element (identifier))))))
+    (element (parenthesized (identifier)))))
 
 ===========================================================================================
 binary_op

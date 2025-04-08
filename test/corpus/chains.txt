@@ -178,12 +178,10 @@ f (g -1)
   (chain
     start: (identifier)
     (call_arg
-      (tuple
-        (element
-          (chain
-            start: (identifier)
-            (call_arg (number))
-          )
+      (parenthesized
+        (chain
+          start: (identifier)
+          (call_arg (number))
         )
       )
     )
@@ -191,12 +189,10 @@ f (g -1)
   (chain
     start: (identifier)
     (call_arg
-      (tuple
-        (element
-          (chain
-            start: (identifier)
-            (call_arg (negate (number)))
-          )
+      (parenthesized
+        (chain
+          start: (identifier)
+          (call_arg (negate (number)))
         )
       )
     )
