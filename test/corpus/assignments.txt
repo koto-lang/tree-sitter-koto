@@ -1,0 +1,122 @@
+===========================================================================================
+assignment_single_line
+===========================================================================================
+
+a =
+a = 3
+a, b = c
+a = b, c
+a = 1, 2, 3, 4
+
+---
+
+(module
+  (assign
+    lhs: (identifier)
+  )
+  (assign
+    lhs: (identifier)
+    rhs: (number)
+  )
+  (assign
+    lhs: (assign_targets (identifier) (identifier))
+    rhs: (identifier)
+  )
+  (assign
+    lhs: (identifier)
+    rhs: (assign_expressions (identifier) (identifier))
+  )
+  (assign
+    lhs: (identifier)
+    rhs: (assign_expressions (number) (number) (number) (number))
+  )
+)
+
+===========================================================================================
+modify_assign_of_assign
+===========================================================================================
+
+b += c = d
+
+---
+
+(module
+  (modify_assign
+    (identifier)
+    (assign
+      lhs: (identifier)
+      rhs: (identifier)
+    )
+  )
+)
+
+===========================================================================================
+assignment_multi_line
+===========================================================================================
+
+a =
+  1, 2
+foo = 1,
+      2
+
+---
+
+(module
+  (assign
+    lhs: (identifier)
+    rhs: (assign_expressions (number) (number))
+  )
+  (assign
+    lhs: (identifier)
+    rhs: (assign_expressions (number) (number))
+  )
+)
+
+
+===========================================================================================
+let_assignment
+===========================================================================================
+
+let x: String = 'hello'
+let y: String? = 'goodbye'
+
+---
+
+(module
+  (let_assign
+    (variable
+      (identifier)
+      (type (identifier))
+    )
+    (string)
+  )
+  (let_assign
+    (variable
+      (identifier)
+      (type (identifier))
+    )
+    (string)
+  )
+)
+
+
+===========================================================================================
+test_assignment
+===========================================================================================
+
+@test foo = || true
+
+---
+
+(module
+  (assign
+    lhs: (meta
+      (test) name: (identifier)
+    )
+    rhs: (function
+      (args)
+      body: (true)
+    )
+  )
+)
+
