@@ -56,6 +56,23 @@ foo, 'bar', 123
 )
 
 ===========================================================================================
+comma_separated_single_line_4
+===========================================================================================
+
+'hello', a, 123, b
+
+---
+
+(module
+  (expressions
+    (string)
+    (identifier)
+    (number)
+    (identifier)
+  )
+)
+
+===========================================================================================
 semicolon_separated
 ===========================================================================================
 
@@ -547,7 +564,7 @@ finally
 (module
   (try
     (block
-      (throw (chain start: (identifier) call: (tuple)))
+      (throw (chain start: (identifier) call: (call_args)))
     )
   )
   (catch
@@ -557,8 +574,8 @@ finally
     )
   )
   (finally (block
-    (assign 
-      lhs: (identifier) 
+    (assign
+      lhs: (identifier)
       rhs: (number)
     )
   ))
@@ -607,11 +624,11 @@ catch e
 ---
 
 (module
-  (try (block (chain start: (identifier) call: (tuple))))
+  (try (block (chain start: (identifier) call: (call_args))))
   (catch
     (identifier)
     (block
-      (chain start: (identifier) call: (tuple))
+      (chain start: (identifier) call: (call_args))
     )
   )
 )

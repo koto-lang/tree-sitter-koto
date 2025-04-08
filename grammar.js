@@ -13,8 +13,8 @@ const PREC = {
   add: 18,
   multiply: 19,
   negate: 21,
-  call: 99,
   chain: 100,
+  call_args: 101,
 };
 
 const id = /[\p{XID_Start}_][\p{XID_Continue}]*/;
@@ -48,16 +48,14 @@ module.exports = grammar({
 
   conflicts: $ => [
     [$.binary_op, $.comparison_op, $.boolean_op],
-    [$._term, $.chain],
-    [$._term, $._assign_target],
-    [$._term_ext, $._assign_target],
-    [$.element, $.chain],
     [$._elements, $._elements],
-    [$._term],
-    [$.element],
+    [$._term, $._assign_target],
+    [$._term, $.chain],
+    [$._term_base, $._assign_target],
     [$.args],
     [$.assign],
     [$.assign_expressions],
+    [$.chain],
   ],
 
   word: $ => $.identifier,
@@ -95,7 +93,7 @@ module.exports = grammar({
       $._cascade_arm,
     ),
 
-    expressions: $ => prec.left(PREC.comma, seq(
+    expressions: $ => prec.right(PREC.comma, seq(
       $._expression,
       repeat1(seq(
         ',',
@@ -106,7 +104,7 @@ module.exports = grammar({
       optional(','),
     )),
 
-    _term: $ => choice(
+    _term_base: $ => choice(
       $._constants,
       $.number,
       $.string,
@@ -119,9 +117,13 @@ module.exports = grammar({
       $.not,
     ),
 
+    _term: $ => choice(
+      $._term_base,
+      $.chain,
+    ),
+
     _term_ext: $ => choice(
       $._term,
-      $.chain,
       $.range,
       $.range_inclusive,
       $.if,
@@ -129,12 +131,12 @@ module.exports = grammar({
       $.binary_op,
       $.comparison_op,
       $.boolean_op,
+      $.switch,
+      $.match,
     ),
 
     _expression: $ => choice(
       $._term_ext,
-      $.switch,
-      $.match,
       $.for,
       $.while,
       $.until,
@@ -152,7 +154,6 @@ module.exports = grammar({
       $.let_assign,
       $.modify_assign,
       $.map_block,
-      $.call,
     ),
 
     // Arms of if/else if/else or try/catch/finally cascades
@@ -184,44 +185,63 @@ module.exports = grammar({
       $.null,
     ),
 
-    call: $ => prec.right(PREC.call, seq(
-      field('function', $._term),
-      $._call_args,
-    )),
-
-    chain: $ => prec.right(PREC.chain, seq(
-      field('start', $._term),
-      repeat1(
-        choice(
-          $.null_check,
-          field('call', $.tuple),
-          field('index', seq(
-            '[',
+    // Used for chained lookup/index/call expressions, e.g. `x[0].foo(123)`
+    chain: $ => seq(
+      // The start of the chain
+      field('start', $._term_base),
+      // Followig
+      choice(
+        seq(
+          repeat1(
             choice(
-              $._term_ext,
-              $.range_from,
-              $.range_to,
-              $.range_to_inclusive,
-              $.range_full,
-            ),
-            ']',
-          )),
-          seq(
-            repeat($._indented_line),
-            field('lookup', seq(
-              '.', choice($.identifier, $.string),
-            )),
+              // ?
+              $.null_check,
+              // () - parenthesized call
+              field('call', seq(
+                token.immediate('('),
+                $.call_args,
+              )),
+              // [] - indexing
+              field('index', seq(
+                token.immediate('['),
+                choice(
+                  $._term_ext,
+                  $.range_from,
+                  $.range_to,
+                  $.range_to_inclusive,
+                  $.range_full,
+                ),
+                ']',
+              )),
+              // .lookup
+              seq(
+                repeat($._indented_line),
+                field('lookup', seq(
+                  '.', choice($.identifier, $.string),
+                )),
+              ),
+            )
           ),
+          // Optional paren-free call, e.g. `x.foo 123`
+          optional($._call_args),
         ),
+        // Paren-free call, e.g. `f 123`
+        $._call_args,
       ),
+    ),
+
+    // Capture parenthesized call args, the opening '(' was already captured in $.chain
+    call_args: $ => seq(
       optional($._call_args),
-    )),
+      ')'
+    ),
 
     _call_args: $ => prec.right(seq(
       repeat($._indented_line),
       $.call_arg,
       repeat(
-        seq(repeat($._indented_line),
+        seq(
+          repeat($._indented_line),
           ',',
           repeat($._indented_line),
           $.call_arg,
@@ -229,8 +249,13 @@ module.exports = grammar({
       ),
     )),
 
+    call_arg: $ => choice(
+      $._term_ext,
+      // Allow nested function calls in arguments with higher precedence
+      prec.right(PREC.chain, $.chain),
+    ),
+
     null_check: _ => '?',
-    call_arg: $ => $._expression,
 
     assign: $ => prec.right(PREC.assign, seq(
       field('lhs', choice($._assign_target, $.assign_targets)),

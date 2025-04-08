@@ -99,11 +99,11 @@
 (export
   (identifier) @module)
 
-(call
-  function: (identifier) @function.method)
-
 (chain
   lookup: (identifier) @variable.member)
+
+(call_arg
+  (identifier) @function.method)
 
 [
   (true)
