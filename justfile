@@ -1,10 +1,10 @@
 generate:
   tree-sitter generate --abi 14
 
-highlight *ARGS: generate
+highlight *ARGS:
   tree-sitter highlight {{ARGS}}
 
-test *ARGS: generate
+test *ARGS:
   tree-sitter test {{ARGS}}
 
 watch COMMAND *ARGS:
