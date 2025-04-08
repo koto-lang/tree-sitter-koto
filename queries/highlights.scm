@@ -19,6 +19,7 @@
   ".."
   "..="
   "->"
+  (null_check)
 ] @operator
 
 [
@@ -79,9 +80,12 @@
   "|"
 ] @punctuation.bracket
 
+(string (interpolation ["{" "}"] @punctuation.special))
+
 [
   ";"
   ":"
+  ","
 ] @punctuation.delimiter
 
 (identifier) @variable
@@ -95,11 +99,11 @@
 (export
   (identifier) @module)
 
-(chain
-  lookup: (identifier) @variable.member)
+(call
+  function: (identifier) @function.method)
 
 (chain
-  start: (identifier) @function.call)
+  lookup: (identifier) @variable.member)
 
 [
   (true)
@@ -135,9 +139,10 @@
 
 (self) @variable.builtin
 
+(type
+  _ @type)
+
 (arg
   (_ (identifier) @variable.parameter))
 
 (ellipsis) @variable.parameter
-
-(type _ @type)
