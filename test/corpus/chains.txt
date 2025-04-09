@@ -66,6 +66,7 @@ call_without_parens_1_single_line
 
 f x
 f -42
+f || 99
 
 ---
 
@@ -77,6 +78,15 @@ f -42
   (chain
     start: (identifier)
     (call_arg (negate (number)))
+  )
+  (chain
+    start: (identifier)
+    (call_arg
+      (function
+        (args)
+        body: (number)
+      )
+    )
   )
 )
 

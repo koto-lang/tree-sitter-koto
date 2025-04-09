@@ -133,6 +133,7 @@ module.exports = grammar({
       $.boolean_op,
       $.switch,
       $.match,
+      $.function,
     ),
 
     _expression: $ => choice(
@@ -141,7 +142,6 @@ module.exports = grammar({
       $.while,
       $.until,
       $.loop,
-      $.function,
       $.return,
       $.throw,
       $.yield,
@@ -789,7 +789,8 @@ module.exports = grammar({
         optional(','),
       )),
       repeat($._newline),
-      "|",
+      // Use token.immediate to avoid confusing the closing | as the start of a new function
+      token.immediate("|"),
     ),
 
     arg: $ => choice(

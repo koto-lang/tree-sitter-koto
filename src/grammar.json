@@ -285,6 +285,10 @@
         {
           "type": "SYMBOL",
           "name": "match"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "function"
         }
       ]
     },
@@ -310,10 +314,6 @@
         {
           "type": "SYMBOL",
           "name": "loop"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "function"
         },
         {
           "type": "SYMBOL",
@@ -3835,8 +3835,11 @@
           }
         },
         {
-          "type": "STRING",
-          "value": "|"
+          "type": "IMMEDIATE_TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "|"
+          }
         }
       ]
     },

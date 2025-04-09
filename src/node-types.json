@@ -487,6 +487,10 @@
           "named": true
         },
         {
+          "type": "function",
+          "named": true
+        },
+        {
           "type": "identifier",
           "named": true
         },
@@ -789,6 +793,10 @@
           "named": true
         },
         {
+          "type": "function",
+          "named": true
+        },
+        {
           "type": "identifier",
           "named": true
         },
@@ -893,6 +901,10 @@
         },
         {
           "type": "false",
+          "named": true
+        },
+        {
+          "type": "function",
           "named": true
         },
         {
@@ -1056,6 +1068,10 @@
           },
           {
             "type": "false",
+            "named": true
+          },
+          {
+            "type": "function",
             "named": true
           },
           {
@@ -1274,6 +1290,10 @@
         },
         {
           "type": "false",
+          "named": true
+        },
+        {
+          "type": "function",
           "named": true
         },
         {
@@ -1559,6 +1579,10 @@
           "named": true
         },
         {
+          "type": "function",
+          "named": true
+        },
+        {
           "type": "identifier",
           "named": true
         },
@@ -1663,6 +1687,10 @@
         },
         {
           "type": "false",
+          "named": true
+        },
+        {
+          "type": "function",
           "named": true
         },
         {
@@ -4378,6 +4406,10 @@
             "named": true
           },
           {
+            "type": "function",
+            "named": true
+          },
+          {
             "type": "identifier",
             "named": true
           },
@@ -4675,6 +4707,10 @@
         },
         {
           "type": "false",
+          "named": true
+        },
+        {
+          "type": "function",
           "named": true
         },
         {
@@ -5716,6 +5752,10 @@
           "named": true
         },
         {
+          "type": "function",
+          "named": true
+        },
+        {
           "type": "identifier",
           "named": true
         },
@@ -5820,6 +5860,10 @@
         },
         {
           "type": "false",
+          "named": true
+        },
+        {
+          "type": "function",
           "named": true
         },
         {
@@ -5935,6 +5979,10 @@
           "named": true
         },
         {
+          "type": "function",
+          "named": true
+        },
+        {
           "type": "identifier",
           "named": true
         },
@@ -6042,6 +6090,10 @@
           "named": true
         },
         {
+          "type": "function",
+          "named": true
+        },
+        {
           "type": "identifier",
           "named": true
         },
@@ -6146,6 +6198,10 @@
         },
         {
           "type": "false",
+          "named": true
+        },
+        {
+          "type": "function",
           "named": true
         },
         {
