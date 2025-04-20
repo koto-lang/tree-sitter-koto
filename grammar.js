@@ -13,7 +13,8 @@ const PREC = {
   comparison: 17,
   add: 18,
   multiply: 19,
-  negate: 20,
+  power: 20,
+  negate: 21,
   chain: 100,
 };
 
@@ -332,6 +333,7 @@ module.exports = grammar({
       assign_op($, '*=', prec.right),
       assign_op($, '/=', prec.right),
       assign_op($, '%=', prec.right),
+      assign_op($, '^=', prec.right),
     ),
 
     binary_op: $ => choice(
@@ -340,6 +342,7 @@ module.exports = grammar({
       binary_op($, '*', prec.left, PREC.multiply),
       binary_op($, '/', prec.left, PREC.multiply),
       binary_op($, '%', prec.left, PREC.multiply),
+      binary_op($, '^', prec.right, PREC.power),
     ),
 
     comparison_op: $ => choice(
