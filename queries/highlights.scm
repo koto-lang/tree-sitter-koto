@@ -102,7 +102,13 @@
   (identifier) @module)
 
 (chain
+  start: (identifier) @function)
+
+(chain
   lookup: (identifier) @variable.member)
+
+(call
+  function: (identifier)) @function
 
 (call_arg
   (identifier) @function.method)

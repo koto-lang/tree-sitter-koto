@@ -105,6 +105,10 @@
             "named": true
           },
           {
+            "type": "call",
+            "named": true
+          },
+          {
             "type": "chain",
             "named": true
           },
@@ -278,6 +282,10 @@
         },
         {
           "type": "break",
+          "named": true
+        },
+        {
+          "type": "call",
           "named": true
         },
         {
@@ -590,6 +598,10 @@
           "named": true
         },
         {
+          "type": "call",
+          "named": true
+        },
+        {
           "type": "catch",
           "named": true
         },
@@ -872,6 +884,36 @@
     }
   },
   {
+    "type": "call",
+    "named": true,
+    "fields": {
+      "function": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "chain",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "call_arg",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "call_arg",
     "named": true,
     "fields": {},
@@ -885,6 +927,10 @@
         },
         {
           "type": "boolean_op",
+          "named": true
+        },
+        {
+          "type": "call",
           "named": true
         },
         {
@@ -1250,10 +1296,6 @@
       "required": false,
       "types": [
         {
-          "type": "call_arg",
-          "named": true
-        },
-        {
           "type": "null_check",
           "named": true
         }
@@ -1393,6 +1435,10 @@
         },
         {
           "type": "break",
+          "named": true
+        },
+        {
+          "type": "call",
           "named": true
         },
         {
@@ -1808,6 +1854,10 @@
             "named": true
           },
           {
+            "type": "call",
+            "named": true
+          },
+          {
             "type": "chain",
             "named": true
           },
@@ -2012,6 +2062,10 @@
             "named": true
           },
           {
+            "type": "call",
+            "named": true
+          },
+          {
             "type": "chain",
             "named": true
           },
@@ -2206,6 +2260,10 @@
             "named": true
           },
           {
+            "type": "call",
+            "named": true
+          },
+          {
             "type": "chain",
             "named": true
           },
@@ -2387,6 +2445,10 @@
           "named": true
         },
         {
+          "type": "call",
+          "named": true
+        },
+        {
           "type": "chain",
           "named": true
         },
@@ -2563,6 +2625,10 @@
         },
         {
           "type": "break",
+          "named": true
+        },
+        {
+          "type": "call",
           "named": true
         },
         {
@@ -2778,6 +2844,10 @@
           },
           {
             "type": "break",
+            "named": true
+          },
+          {
+            "type": "call",
             "named": true
           },
           {
@@ -2999,6 +3069,10 @@
             "named": true
           },
           {
+            "type": "call",
+            "named": true
+          },
+          {
             "type": "chain",
             "named": true
           },
@@ -3193,6 +3267,10 @@
             "named": true
           },
           {
+            "type": "call",
+            "named": true
+          },
+          {
             "type": "chain",
             "named": true
           },
@@ -3360,6 +3438,10 @@
           },
           {
             "type": "break",
+            "named": true
+          },
+          {
+            "type": "call",
             "named": true
           },
           {
@@ -3534,6 +3616,10 @@
           },
           {
             "type": "break",
+            "named": true
+          },
+          {
+            "type": "call",
             "named": true
           },
           {
@@ -3770,6 +3856,10 @@
           "named": true
         },
         {
+          "type": "call",
+          "named": true
+        },
+        {
           "type": "chain",
           "named": true
         },
@@ -3950,6 +4040,10 @@
         },
         {
           "type": "break",
+          "named": true
+        },
+        {
+          "type": "call",
           "named": true
         },
         {
@@ -4201,6 +4295,10 @@
           },
           {
             "type": "break",
+            "named": true
+          },
+          {
+            "type": "call",
             "named": true
           },
           {
@@ -4509,6 +4607,10 @@
           },
           {
             "type": "break",
+            "named": true
+          },
+          {
+            "type": "call",
             "named": true
           },
           {
@@ -4947,6 +5049,10 @@
           "named": true
         },
         {
+          "type": "call",
+          "named": true
+        },
+        {
           "type": "chain",
           "named": true
         },
@@ -5120,6 +5226,10 @@
         },
         {
           "type": "break",
+          "named": true
+        },
+        {
+          "type": "call",
           "named": true
         },
         {
@@ -5389,6 +5499,10 @@
           "named": true
         },
         {
+          "type": "call",
+          "named": true
+        },
+        {
           "type": "chain",
           "named": true
         },
@@ -5566,6 +5680,10 @@
         },
         {
           "type": "break",
+          "named": true
+        },
+        {
+          "type": "call",
           "named": true
         },
         {
@@ -6304,6 +6422,10 @@
           "named": true
         },
         {
+          "type": "call",
+          "named": true
+        },
+        {
           "type": "chain",
           "named": true
         },
@@ -6502,6 +6624,10 @@
             "named": true
           },
           {
+            "type": "call",
+            "named": true
+          },
+          {
             "type": "chain",
             "named": true
           },
@@ -6692,6 +6818,10 @@
             "named": true
           },
           {
+            "type": "call",
+            "named": true
+          },
+          {
             "type": "chain",
             "named": true
           },
@@ -6863,6 +6993,10 @@
           },
           {
             "type": "break",
+            "named": true
+          },
+          {
+            "type": "call",
             "named": true
           },
           {
@@ -7043,6 +7177,10 @@
         },
         {
           "type": "break",
+          "named": true
+        },
+        {
+          "type": "call",
           "named": true
         },
         {
@@ -7280,6 +7418,10 @@
             "named": true
           },
           {
+            "type": "call",
+            "named": true
+          },
+          {
             "type": "chain",
             "named": true
           },
@@ -7485,6 +7627,10 @@
             "named": true
           },
           {
+            "type": "call",
+            "named": true
+          },
+          {
             "type": "chain",
             "named": true
           },
@@ -7658,6 +7804,10 @@
         },
         {
           "type": "break",
+          "named": true
+        },
+        {
+          "type": "call",
           "named": true
         },
         {

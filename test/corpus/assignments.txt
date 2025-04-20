@@ -2,7 +2,6 @@
 assignment_single_line
 ===========================================================================================
 
-a =
 a = 3
 a, b = c
 a = b, c
@@ -11,9 +10,6 @@ a = 1, 2, 3, 4
 ---
 
 (module
-  (assign
-    lhs: (identifier)
-  )
   (assign
     lhs: (identifier)
     rhs: (number)

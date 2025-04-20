@@ -97,10 +97,12 @@ a, b, c; 1, 2, 3
 )
 
 ===========================================================================================
-binary_op
+binary_ops
 ===========================================================================================
 
-1 + 2 * 3 + 4
+1 + 2 * 3 - 4
+w + x * y - z
+10 % 2 ^ 3
 
 ---
 
@@ -114,6 +116,23 @@ binary_op
       )
     )
     (number)
+  )
+  (binary_op
+    (binary_op
+      (identifier)
+      (binary_op
+        (identifier)
+        (identifier)
+      )
+    )
+    (identifier)
+  )
+  (binary_op
+    (number)
+    (binary_op
+      (number)
+      (number)
+    )
   )
 )
 

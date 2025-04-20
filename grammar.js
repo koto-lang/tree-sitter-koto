@@ -4,6 +4,7 @@ const PREC = {
   comma: -2,
   assign: -1,
   keyword: 1,
+  call: 1,
   container: 2,
   parenthesized: 3,
   range: 7,
@@ -54,7 +55,6 @@ module.exports = grammar({
     [$.args],
     [$.assign],
     [$.assign_expressions],
-    [$.chain],
     [$._flexi_comma],
   ],
 
@@ -139,6 +139,7 @@ module.exports = grammar({
 
     _expression: $ => choice(
       $._term_ext,
+      $.call,
       $.for,
       $.while,
       $.until,
@@ -186,49 +187,50 @@ module.exports = grammar({
       $.null,
     ),
 
-    // Used for chained lookup/index/call expressions, e.g. `x[0].foo(123)`
+    // Used for chained lookup/index/call expressions, e.g. `x[0]?.foo(123)`
     chain: $ => prec(PREC.chain, seq(
       // The start of the chain
       field('start', $._term_base),
-      // Followig
-      choice(
-        seq(
-          repeat1(
+      // Following chain nodes
+      repeat1(
+        choice(
+          // ?
+          $.null_check,
+          // () - parenthesized call
+          field('call', seq(
+            token.immediate('('),
+            $.call_args,
+          )),
+          // [] - indexing
+          field('index', seq(
+            token.immediate('['),
             choice(
-              // ?
-              $.null_check,
-              // () - parenthesized call
-              field('call', seq(
-                token.immediate('('),
-                $.call_args,
-              )),
-              // [] - indexing
-              field('index', seq(
-                token.immediate('['),
-                choice(
-                  $._term_ext,
-                  $.range_from,
-                  $.range_to,
-                  $.range_to_inclusive,
-                  $.range_full,
-                ),
-                ']',
-              )),
-              // .lookup
-              seq(
-                repeat($._indented_line),
-                field('lookup', seq(
-                  '.', choice($.identifier, $.string),
-                )),
-              ),
-            )
+              $._term_ext,
+              $.range_from,
+              $.range_to,
+              $.range_to_inclusive,
+              $.range_full,
+            ),
+            ']',
+          )),
+          // .lookup
+          seq(
+            repeat($._indented_line),
+            field('lookup', seq(
+              '.', choice($.identifier, $.string),
+            )),
           ),
-          // Optional paren-free call, e.g. `x.foo 123`
-          optional($._call_args),
-        ),
-        // Paren-free call, e.g. `f 123`
-        $._call_args,
+        )
       ),
+    )),
+
+    // Paren-free calls
+    call: $ => prec.right(PREC.call, seq(
+      field('function', choice(
+        $.identifier,
+        $.chain,
+      )),
+      $._call_args
     )),
 
     // Capture parenthesized call args, the opening '(' was already captured in $.chain
@@ -252,6 +254,7 @@ module.exports = grammar({
 
     call_arg: $ => choice(
       $._term_ext,
+      $.call,
       // Allow nested function calls in arguments with higher precedence
       prec.right(PREC.chain, $.chain),
     ),

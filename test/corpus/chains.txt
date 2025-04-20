@@ -71,16 +71,16 @@ f || 99
 ---
 
 (module
-  (chain
-    start: (identifier)
+  (call
+    function: (identifier)
     (call_arg (identifier))
   )
-  (chain
-    start: (identifier)
+  (call
+    function: (identifier)
     (call_arg (negate (number)))
   )
-  (chain
-    start: (identifier)
+  (call
+    function: (identifier)
     (call_arg
       (function
         (args)
@@ -99,8 +99,8 @@ f x, y
 ---
 
 (module
-  (chain
-    start: (identifier)
+  (call
+    function: (identifier)
     (call_arg (identifier)) (call_arg (identifier))
   )
 )
@@ -114,8 +114,8 @@ f 1, 2, 3
 ---
 
 (module
-  (chain
-    start: (identifier)
+  (call
+    function: (identifier)
     (call_arg (number)) (call_arg (number)) (call_arg (number))
   )
 )
@@ -130,8 +130,8 @@ f
 ---
 
 (module
-  (chain
-    start: (identifier)
+  (call
+    function: (identifier)
     (call_arg (identifier))
   )
 )
@@ -148,8 +148,8 @@ f
 ---
 
 (module
-  (chain
-    start: (identifier)
+  (call
+    function: (identifier)
     (call_arg (number)) (call_arg (number)) (call_arg (number))
   )
 )
@@ -164,11 +164,11 @@ f g 1, 2
 ---
 
 (module
-  (chain
-    start: (identifier)
+  (call
+    function: (identifier)
     (call_arg
-      (chain
-        start: (identifier)
+      (call
+        function: (identifier)
         (call_arg (number)) (call_arg (number))
       )
     )
@@ -185,23 +185,23 @@ f (g -1)
 ---
 
 (module
-  (chain
-    start: (identifier)
+  (call
+    function: (identifier)
     (call_arg
       (parenthesized
-        (chain
-          start: (identifier)
+        (call
+          function: (identifier)
           (call_arg (number))
         )
       )
     )
   )
-  (chain
-    start: (identifier)
+  (call
+    function: (identifier)
     (call_arg
       (parenthesized
-        (chain
-          start: (identifier)
+        (call
+          function: (identifier)
           (call_arg (negate (number)))
         )
       )
@@ -254,15 +254,19 @@ f.g.h x, y, z
 ---
 
 (module
-  (chain
-    start: (identifier)
-    lookup: (identifier)
+  (call
+    function: (chain
+      start: (identifier)
+      lookup: (identifier)
+    )
     (call_arg (identifier))
   )
-  (chain
-    start: (identifier)
-    lookup: (identifier)
-    lookup: (identifier)
+  (call
+    function: (chain
+      start: (identifier)
+      lookup: (identifier)
+      lookup: (identifier)
+    )
     (call_arg (identifier)) (call_arg (identifier)) (call_arg (identifier))
   )
 )
@@ -304,8 +308,8 @@ f.g(a 0, 1, 2)
     lookup: (identifier)
     call: (call_args
       (call_arg
-        (chain
-          start: (identifier)
+        (call
+          function: (identifier)
           (call_arg (number)) (call_arg (number)) (call_arg (number))
         )
       )
@@ -356,6 +360,7 @@ foo
 (module
   (chain
     start: (identifier)
+    (ERROR)
     lookup: (identifier)
     call: (call_args)
   )
