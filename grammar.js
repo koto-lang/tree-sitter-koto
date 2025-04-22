@@ -53,7 +53,7 @@ module.exports = grammar({
     [$._term, $._assign_target],
     [$._term_base, $._assign_target],
     [$.args],
-    [$.assign],
+    [$._assign_rhs],
     [$.assign_expressions],
     [$._flexi_comma],
   ],
@@ -153,6 +153,7 @@ module.exports = grammar({
       $.export,
       $.try,
       $.assign,
+      $.multi_assign,
       $.let_assign,
       $.modify_assign,
       $.map_block,
@@ -262,7 +263,16 @@ module.exports = grammar({
     null_check: _ => '?',
 
     assign: $ => prec.right(PREC.assign, seq(
-      field('lhs', choice($._assign_target, $.assign_targets)),
+      field('lhs', $._assign_target),
+      $._assign_rhs,
+    )),
+
+    multi_assign: $ => prec.right(PREC.assign, seq(
+      field('lhs', $.assign_targets),
+      $._assign_rhs,
+    )),
+
+    _assign_rhs: $ => prec.right(PREC.assign, seq(
       repeat($._indented_line),
       '=',
       repeat($._indented_line),

@@ -14,7 +14,7 @@ a = 1, 2, 3, 4
     lhs: (identifier)
     rhs: (number)
   )
-  (assign
+  (multi_assign
     lhs: (assign_targets (identifier) (identifier))
     rhs: (identifier)
   )
