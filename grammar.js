@@ -51,7 +51,7 @@ module.exports = grammar({
   conflicts: $ => [
     [$.binary_op, $.comparison_op, $.boolean_op],
     [$._term, $._assign_target],
-    [$._term_base, $._assign_target],
+    [$._term_ext, $._assign_target],
     [$.args],
     [$._assign_rhs],
     [$.assign_expressions],
@@ -71,16 +71,6 @@ module.exports = grammar({
       ),
       $._block_end,
       $._eof,
-    ),
-
-    terms: $ => prec.left(PREC.container, seq(
-      $._term,
-      repeat1(seq(',', $._term))
-    )),
-
-    _terms: $ => choice(
-      $._term,
-      $.terms,
     ),
 
     _expressions: $ => choice(
@@ -104,7 +94,7 @@ module.exports = grammar({
       optional(','),
     )),
 
-    _term_base: $ => choice(
+    _term: $ => choice(
       $._constants,
       $.number,
       $.string,
@@ -116,11 +106,6 @@ module.exports = grammar({
       $.map,
       $.negate,
       $.not,
-    ),
-
-    _term: $ => choice(
-      $._term_base,
-      $.chain,
     ),
 
     _term_ext: $ => choice(
@@ -135,6 +120,7 @@ module.exports = grammar({
       $.switch,
       $.match,
       $.function,
+      $.chain,
     ),
 
     _expression: $ => choice(
@@ -191,7 +177,7 @@ module.exports = grammar({
     // Used for chained lookup/index/call expressions, e.g. `x[0]?.foo(123)`
     chain: $ => prec(PREC.chain, seq(
       // The start of the chain
-      field('start', $._term_base),
+      field('start', $._term),
       // Following chain nodes
       repeat1(
         choice(
@@ -436,7 +422,7 @@ module.exports = grammar({
       '@<=',
     ),
 
-    negate: $ => prec(PREC.negate, seq('-', $._term)),
+    negate: $ => prec(PREC.negate, seq('-', choice($._term, $.chain))),
 
     not: $ => keyword_expression_single($, 'not'),
 

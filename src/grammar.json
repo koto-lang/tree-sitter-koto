@@ -36,48 +36,6 @@
         }
       ]
     },
-    "terms": {
-      "type": "PREC_LEFT",
-      "value": 2,
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "SYMBOL",
-            "name": "_term"
-          },
-          {
-            "type": "REPEAT1",
-            "content": {
-              "type": "SEQ",
-              "members": [
-                {
-                  "type": "STRING",
-                  "value": ","
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "_term"
-                }
-              ]
-            }
-          }
-        ]
-      }
-    },
-    "_terms": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "_term"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "terms"
-        }
-      ]
-    },
     "_expressions": {
       "type": "CHOICE",
       "members": [
@@ -181,7 +139,7 @@
         ]
       }
     },
-    "_term_base": {
+    "_term": {
       "type": "CHOICE",
       "members": [
         {
@@ -227,19 +185,6 @@
         {
           "type": "SYMBOL",
           "name": "not"
-        }
-      ]
-    },
-    "_term": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "_term_base"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "chain"
         }
       ]
     },
@@ -289,6 +234,10 @@
         {
           "type": "SYMBOL",
           "name": "function"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "chain"
         }
       ]
     },
@@ -466,7 +415,7 @@
             "name": "start",
             "content": {
               "type": "SYMBOL",
-              "name": "_term_base"
+              "name": "_term"
             }
           },
           {
@@ -2029,8 +1978,17 @@
             "value": "-"
           },
           {
-            "type": "SYMBOL",
-            "name": "_term"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_term"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "chain"
+              }
+            ]
           }
         ]
       }
@@ -4384,7 +4342,7 @@
       "_assign_target"
     ],
     [
-      "_term_base",
+      "_term_ext",
       "_assign_target"
     ],
     [
