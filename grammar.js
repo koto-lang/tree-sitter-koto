@@ -1,22 +1,21 @@
 /// <reference types="tree-sitter-cli/dsl" />
 
 const PREC = {
-  comma: -2,
-  assign: -1,
-  keyword: 1,
-  call: 1,
-  container: 2,
-  parenthesized: 3,
-  range: 7,
-  or: 14,
-  and: 15,
-  equality: 16,
-  comparison: 17,
-  add: 18,
-  multiply: 19,
-  power: 20,
-  negate: 21,
-  chain: 100,
+  comma: 1,
+  assign: 2,
+  keyword: 3,
+  call: 4,
+  parenthesized: 5,
+  range: 6,
+  or: 7,
+  and: 8,
+  equality: 9,
+  comparison: 10,
+  add: 11,
+  multiply: 12,
+  power: 13,
+  negate: 14,
+  chain: 15,
 };
 
 const id = /[\p{XID_Start}_][\p{XID_Continue}]*/;
@@ -51,7 +50,7 @@ module.exports = grammar({
   conflicts: $ => [
     [$.binary_op, $.comparison_op, $.boolean_op],
     [$._term, $._assign_target],
-    [$._term_ext, $._assign_target],
+    [$._term, $.assign_targets],
     [$.args],
     [$._assign_rhs],
     [$.assign_expressions],
@@ -76,6 +75,7 @@ module.exports = grammar({
     _expressions: $ => choice(
       $._expression,
       $.expressions,
+      $.multi_assign,
     ),
 
     _block_expressions: $ => choice(
@@ -139,15 +139,14 @@ module.exports = grammar({
       $.export,
       $.try,
       $.assign,
-      $.multi_assign,
       $.let_assign,
       $.modify_assign,
       $.map_block,
     ),
 
-    // Arms of if/else if/else or try/catch/finally cascades
-    // Ideally these would be included in $.if and $.try, but they intefere with block
-    // continuation. Parsing them separately will do for now.
+    // Arms used in if/`else if`/else or try/catch/finally cascades.
+    // Ideally these would be included in $.if and $.try, but they interfere with block continuation.
+    // Parsing them separately will do for now.
     _cascade_arm: $ => choice(
       $.else_if,
       $.else,
@@ -262,20 +261,17 @@ module.exports = grammar({
       repeat($._indented_line),
       '=',
       repeat($._indented_line),
-      field('rhs', optional(choice(
-        seq(
-          repeat($._indented_line),
-          $._expression,
-        ),
+      field('rhs', choice(
+        $._expression,
         $.assign_expressions,
-      )))
+      ))
     )),
 
     assign_targets: $ => seq(
-      $._assign_target,
+      $.identifier,
       repeat1(seq(
         ',',
-        $._assign_target
+        $.identifier,
       ))
     ),
 
@@ -285,17 +281,17 @@ module.exports = grammar({
       $.chain,
     ),
 
-    assign_expressions: $ => seq(
+    assign_expressions: $ => prec(PREC.assign, seq(
       repeat($._indented_line),
       $._expression,
       repeat1(seq(
-        ',',
+        token.immediate(','),
         repeat($._indented_line),
         $._expression,
       )),
       // Optional trailing comma
       optional(','),
-    ),
+    )),
 
     let_assign: $ => choice(
       seq(
@@ -307,9 +303,7 @@ module.exports = grammar({
           $.variable,
         )),
         repeat($._indented_line),
-        '=',
-        repeat($._indented_line),
-        $._expressions,
+        $._assign_rhs,
       ),
     ),
 
@@ -453,7 +447,7 @@ module.exports = grammar({
 
     parenthesized: $ => prec(PREC.parenthesized, seq('(', $._expression, ')')),
 
-    tuple: $ => prec(PREC.container, seq(
+    tuple: $ => prec(PREC.parenthesized, seq(
       '(',
       optional(choice(
         // Just a comma
@@ -480,7 +474,7 @@ module.exports = grammar({
       ')',
     )),
 
-    list: $ => prec(PREC.container, seq(
+    list: $ => prec(PREC.parenthesized, seq(
       '[',
       optional(choice(
         // just a comma
