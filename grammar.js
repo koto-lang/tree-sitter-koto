@@ -299,7 +299,7 @@ module.exports = grammar({
         repeat($._indented_line),
         $.variable,
         repeat(seq(
-          ',',
+          token.immediate(','),
           $.variable,
         )),
         repeat($._indented_line),
@@ -501,7 +501,7 @@ module.exports = grammar({
 
     _flexi_comma: $ => seq(
       repeat($._newline),
-      ',',
+      token.immediate(','),
       repeat($._newline),
     ),
 
@@ -807,7 +807,14 @@ module.exports = grammar({
 
     _tuple_args: $ => seq('(', $._contained_args, ')'),
     _list_args: $ => seq('[', $._contained_args, ']'),
-    _contained_args: $ => seq($.arg, repeat(seq(',', $.arg)), optional(',')),
+    _contained_args: $ => seq(
+      $.arg,
+      repeat(seq(
+        token.immediate(','),
+        $.arg,
+      )),
+      optional(',')
+    ),
 
     ellipsis: _ => '...',
 
