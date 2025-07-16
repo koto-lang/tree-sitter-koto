@@ -821,9 +821,13 @@ module.exports = grammar({
     import: $ => prec.right(seq(
       optional(seq('from', $.import_module)),
       'import',
-      $.import_item,
-      repeat(seq(',', $.import_item)),
-    )),
+      choice(
+        seq(
+          $.import_item,
+          repeat(seq(',', $.import_item)),
+        ),
+        '*',
+      ))),
 
     import_module: $ => choice(
       seq(

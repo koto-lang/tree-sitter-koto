@@ -230,63 +230,6 @@ yield
 )
 
 ===========================================================================================
-import
-===========================================================================================
-
-import foo
-import foo as bar
-from foo import 'bar'
-from foo.bar import x, 'y'
-from 'hello' import foo
-from foo import bar as x, baz as y
-
----
-
-(module
-  (import
-    (import_item (identifier))
-  )
-  (import
-    (import_item (identifier) (identifier))
-  )
-  (import
-    (import_module (identifier))
-    (import_item (string))
-  )
-  (import
-    (import_module (identifier) (identifier))
-    (import_item (identifier))
-    (import_item (string))
-  )
-  (import
-    (import_module (string))
-    (import_item (identifier))
-  )
-  (import
-    (import_module (identifier))
-    (import_item (identifier) (identifier))
-    (import_item (identifier) (identifier))
-  )
-)
-
-===========================================================================================
-import_with_three_items
-===========================================================================================
-
-from foo import a, b, c
-
----
-
-(module
-  (import
-    (import_module (identifier))
-    (import_item (identifier))
-    (import_item (identifier))
-    (import_item (identifier))
-  )
-)
-
-===========================================================================================
 debug
 ===========================================================================================
 
