@@ -193,57 +193,78 @@
       ]
     },
     "_term_ext": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "_term"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "range"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "range_inclusive"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "if"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "debug"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "binary_op"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "comparison_op"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "boolean_op"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "switch"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "match"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "function"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "chain"
-        }
-      ]
+      "type": "PREC_RIGHT",
+      "value": 0,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_term"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "range"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "range_inclusive"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "if"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "debug"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "binary_op"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "comparison_op"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "boolean_op"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "switch"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "match"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "function"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "chain"
+              }
+            ]
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "ellipsis"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          }
+        ]
+      }
     },
     "_expression": {
       "type": "CHOICE",

@@ -108,20 +108,23 @@ module.exports = grammar({
       $.not,
     ),
 
-    _term_ext: $ => choice(
-      $._term,
-      $.range,
-      $.range_inclusive,
-      $.if,
-      $.debug,
-      $.binary_op,
-      $.comparison_op,
-      $.boolean_op,
-      $.switch,
-      $.match,
-      $.function,
-      $.chain,
-    ),
+    _term_ext: $ => prec.right(seq(
+      choice(
+        $._term,
+        $.range,
+        $.range_inclusive,
+        $.if,
+        $.debug,
+        $.binary_op,
+        $.comparison_op,
+        $.boolean_op,
+        $.switch,
+        $.match,
+        $.function,
+        $.chain,
+      ),
+      optional($.ellipsis)
+    )),
 
     _expression: $ => choice(
       $._term_ext,

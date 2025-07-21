@@ -65,6 +65,7 @@ call_without_parens_1_single_line
 ===========================================================================================
 
 f x
+f x...
 f -42
 f || 99
 
@@ -74,6 +75,10 @@ f || 99
   (call
     function: (identifier)
     (call_arg (identifier))
+  )
+  (call
+    function: (identifier)
+    (call_arg (identifier) (ellipsis))
   )
   (call
     function: (identifier)
@@ -215,7 +220,7 @@ call_with_parens
 
 f()
 f(x)
-f(g(1, 2))
+f(g(1, 2)...)
 
 ---
 
@@ -239,6 +244,7 @@ f(g(1, 2))
             (call_arg (number))
           )
         )
+        (ellipsis)
       )
     )
   )
