@@ -14,7 +14,7 @@ finally
 (module
   (try
     (block
-      (throw (chain start: (identifier) call: (call_args)))
+      (throw (chain start: (identifier) (call_args)))
     )
   )
   (catch
@@ -74,11 +74,11 @@ catch e
 ---
 
 (module
-  (try (block (chain start: (identifier) call: (call_args))))
+  (try (block (chain start: (identifier) (call_args))))
   (catch
     (identifier)
     (block
-      (chain start: (identifier) call: (call_args))
+      (chain start: (identifier) (call_args))
     )
   )
 )

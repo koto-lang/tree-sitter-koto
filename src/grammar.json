@@ -449,107 +449,16 @@
                   "name": "null_check"
                 },
                 {
-                  "type": "FIELD",
-                  "name": "call",
-                  "content": {
-                    "type": "SEQ",
-                    "members": [
-                      {
-                        "type": "IMMEDIATE_TOKEN",
-                        "content": {
-                          "type": "STRING",
-                          "value": "("
-                        }
-                      },
-                      {
-                        "type": "SYMBOL",
-                        "name": "call_args"
-                      }
-                    ]
-                  }
+                  "type": "SYMBOL",
+                  "name": "call_args"
                 },
                 {
-                  "type": "FIELD",
-                  "name": "index",
-                  "content": {
-                    "type": "SEQ",
-                    "members": [
-                      {
-                        "type": "IMMEDIATE_TOKEN",
-                        "content": {
-                          "type": "STRING",
-                          "value": "["
-                        }
-                      },
-                      {
-                        "type": "CHOICE",
-                        "members": [
-                          {
-                            "type": "SYMBOL",
-                            "name": "_term_ext"
-                          },
-                          {
-                            "type": "SYMBOL",
-                            "name": "range_from"
-                          },
-                          {
-                            "type": "SYMBOL",
-                            "name": "range_to"
-                          },
-                          {
-                            "type": "SYMBOL",
-                            "name": "range_to_inclusive"
-                          },
-                          {
-                            "type": "SYMBOL",
-                            "name": "range_full"
-                          }
-                        ]
-                      },
-                      {
-                        "type": "STRING",
-                        "value": "]"
-                      }
-                    ]
-                  }
+                  "type": "SYMBOL",
+                  "name": "index"
                 },
                 {
-                  "type": "SEQ",
-                  "members": [
-                    {
-                      "type": "REPEAT",
-                      "content": {
-                        "type": "SYMBOL",
-                        "name": "_indented_line"
-                      }
-                    },
-                    {
-                      "type": "FIELD",
-                      "name": "lookup",
-                      "content": {
-                        "type": "SEQ",
-                        "members": [
-                          {
-                            "type": "STRING",
-                            "value": "."
-                          },
-                          {
-                            "type": "CHOICE",
-                            "members": [
-                              {
-                                "type": "SYMBOL",
-                                "name": "identifier"
-                              },
-                              {
-                                "type": "SYMBOL",
-                                "name": "string"
-                              }
-                            ]
-                          }
-                        ]
-                      }
-                    }
-                  ]
+                  "type": "SYMBOL",
+                  "name": "lookup"
                 }
               ]
             }
@@ -590,6 +499,13 @@
     "call_args": {
       "type": "SEQ",
       "members": [
+        {
+          "type": "IMMEDIATE_TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "("
+          }
+        },
         {
           "type": "CHOICE",
           "members": [
@@ -678,6 +594,88 @@
           }
         }
       ]
+    },
+    "index": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "IMMEDIATE_TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "["
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "_term_ext"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "range_from"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "range_to"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "range_to_inclusive"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "range_full"
+            }
+          ]
+        },
+        {
+          "type": "STRING",
+          "value": "]"
+        }
+      ]
+    },
+    "lookup": {
+      "type": "PREC_RIGHT",
+      "value": 15,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_indented_line"
+            }
+          },
+          {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "IMMEDIATE_TOKEN",
+                "content": {
+                  "type": "STRING",
+                  "value": "."
+                }
+              },
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "identifier"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "string"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
     },
     "null_check": {
       "type": "STRING",

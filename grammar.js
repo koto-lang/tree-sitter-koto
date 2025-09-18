@@ -176,44 +176,24 @@ module.exports = grammar({
       $.null,
     ),
 
-    // Used for chained lookup/index/call expressions, e.g. `x[0]?.foo(123)`
+    // Chained lookup/index/call expressions
+    // e.g. `x[0]?.foo(123)`
     chain: $ => prec(PREC.chain, seq(
       // The start of the chain
       field('start', $._term),
-      // Following chain nodes
+      // All following chain nodes
       repeat1(
         choice(
-          // ?
-          $.null_check,
-          // () - parenthesized call
-          field('call', seq(
-            token.immediate('('),
-            $.call_args,
-          )),
-          // [] - indexing
-          field('index', seq(
-            token.immediate('['),
-            choice(
-              $._term_ext,
-              $.range_from,
-              $.range_to,
-              $.range_to_inclusive,
-              $.range_full,
-            ),
-            ']',
-          )),
-          // .lookup
-          seq(
-            repeat($._indented_line),
-            field('lookup', seq(
-              '.', choice($.identifier, $.string),
-            )),
-          ),
+          $.null_check, // ?
+          $.call_args,  // ()
+          $.index,      // []
+          $.lookup,     // .
         )
       ),
     )),
 
     // Paren-free calls
+    // e.g. `f 1, 2`
     call: $ => prec.right(PREC.call, seq(
       field('function', choice(
         $.identifier,
@@ -222,8 +202,12 @@ module.exports = grammar({
       $._call_args
     )),
 
-    // Capture parenthesized call args, the opening '(' was already captured in $.chain
+    // Parenthesized call args, captured in a chain
+    // e.g. `f(1, 2)`
+    //        ^^^^^^ call_args
+    //       ^ chain start
     call_args: $ => seq(
+      token.immediate('('),
       optional($._call_args),
       ')'
     ),
@@ -247,6 +231,34 @@ module.exports = grammar({
       // Allow nested function calls in arguments with higher precedence
       prec.right(PREC.chain, $.chain),
     ),
+
+    // Index operation, captured in a chain
+    // e.g. `f[1]`
+    //        ^^^ index
+    //       ^ chain start
+    index: $ => seq(
+      token.immediate('['),
+      choice(
+        $._term_ext,
+        $.range_from,
+        $.range_to,
+        $.range_to_inclusive,
+        $.range_full,
+      ),
+      ']',
+    ),
+
+    // `.` lookup operation, captured in a chain
+    // e.g. `f.x`
+    //        ^^ lookup
+    //       ^ chain start
+    lookup: $ => prec.right(PREC.chain, seq(
+      repeat($._indented_line),
+      seq(
+        token.immediate('.'),
+        choice($.identifier, $.string),
+      ),
+    )),
 
     null_check: _ => '?',
 

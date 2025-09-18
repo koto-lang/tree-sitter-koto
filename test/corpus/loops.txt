@@ -81,7 +81,7 @@ until foo()
     condition: (identifier)
   )
   (until
-    condition: (chain start: (identifier) call: (call_args))
+    condition: (chain start: (identifier) (call_args))
     body: (block
       (modify_assign (identifier) (number))
     )

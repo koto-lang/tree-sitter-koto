@@ -10,15 +10,15 @@ a.b.c.d.e.f
 (module
   (chain
     start: (identifier)
-    lookup: (identifier)
+    (lookup (identifier))
   )
   (chain
     start: (identifier)
-    lookup: (identifier)
-    lookup: (identifier)
-    lookup: (identifier)
-    lookup: (identifier)
-    lookup: (identifier)
+    (lookup (identifier))
+    (lookup (identifier))
+    (lookup (identifier))
+    (lookup (identifier))
+    (lookup (identifier))
   )
 )
 
@@ -34,11 +34,11 @@ a[1..]
 (module
   (chain
     start: (identifier)
-    index: (number)
+    (index (number))
   )
   (chain
     start: (identifier)
-    index: (range_from (number))
+    (index (range_from (number)))
   )
 )
 
@@ -54,9 +54,9 @@ a[1][2][3]
 (module
   (chain
     start: (identifier)
-    index: (number)
-    index: (number)
-    index: (number)
+    (index (number))
+    (index (number))
+    (index (number))
   )
 )
 
@@ -227,19 +227,19 @@ f(g(1, 2)...)
 (module
   (chain
     start: (identifier)
-    call: (call_args)
+    (call_args)
   )
   (chain
     start: (identifier)
-    call: (call_args (call_arg (identifier)))
+    (call_args (call_arg (identifier)))
   )
   (chain
     start: (identifier)
-    call: (call_args
+    (call_args
       (call_arg
         (chain
           start: (identifier)
-          call: (call_args
+          (call_args
             (call_arg (number))
             (call_arg (number))
           )
@@ -263,15 +263,15 @@ f.g.h x, y, z
   (call
     function: (chain
       start: (identifier)
-      lookup: (identifier)
+      (lookup (identifier))
     )
     (call_arg (identifier))
   )
   (call
     function: (chain
       start: (identifier)
-      lookup: (identifier)
-      lookup: (identifier)
+      (lookup (identifier))
+      (lookup (identifier))
     )
     (call_arg (identifier)) (call_arg (identifier)) (call_arg (identifier))
   )
@@ -289,14 +289,14 @@ f.g.h(x, y, z)
 (module
   (chain
     start: (identifier)
-    lookup: (identifier)
-    call: (call_args (call_arg (identifier)))
+    (lookup (identifier))
+    (call_args (call_arg (identifier)))
   )
   (chain
     start: (identifier)
-    lookup: (identifier)
-    lookup: (identifier)
-    call: (call_args (call_arg (identifier)) (call_arg (identifier)) (call_arg (identifier)))
+    (lookup (identifier))
+    (lookup (identifier))
+    (call_args (call_arg (identifier)) (call_arg (identifier)) (call_arg (identifier)))
   )
 )
 
@@ -311,8 +311,8 @@ f.g(a 0, 1, 2)
 (module
   (chain
     start: (identifier)
-    lookup: (identifier)
-    call: (call_args
+    (lookup (identifier))
+    (call_args
       (call_arg
         (call
           function: (identifier)
@@ -336,21 +336,21 @@ a.b().c()
 (module
   (chain
     start: (identifier)
-    lookup: (identifier)
-    call: (call_args)
+    (lookup (identifier))
+    (call_args)
   )
   (chain
     start: (identifier)
-    lookup: (identifier)
-    call: (call_args)
-    lookup: (identifier)
+    (lookup (identifier))
+    (call_args)
+    (lookup (identifier))
   )
   (chain
     start: (identifier)
-    lookup: (identifier)
-    call: (call_args)
-    lookup: (identifier)
-    call: (call_args)
+    (lookup (identifier))
+    (call_args)
+    (lookup (identifier))
+    (call_args)
   )
 )
 
@@ -367,8 +367,8 @@ foo
   (chain
     start: (identifier)
     (ERROR)
-    lookup: (identifier)
-    call: (call_args)
+    (lookup (identifier))
+    (call_args)
   )
 )
 
@@ -384,6 +384,6 @@ foo?.bar
   (chain
     start: (identifier)
     (null_check)
-    lookup: (identifier)
+    (lookup (identifier))
   )
 )

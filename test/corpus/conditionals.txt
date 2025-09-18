@@ -256,7 +256,7 @@ match foo.bar
   (match
     (match_conditions (chain
       start: (identifier)
-      lookup: (identifier)
+      (lookup (identifier))
     ))
   )
 )
