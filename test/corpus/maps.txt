@@ -20,7 +20,7 @@ map_inline
       value: (number)
     )
     (entry_inline
-      key: (string)
+      key: (string (string_content))
       value: (binary_op (number) (number))
     )
   )
@@ -65,7 +65,7 @@ return
         value: (number)
       )
       (entry_block
-        key: (string)
+        key: (string (string_content))
         value: (number)
       )
     )
@@ -88,7 +88,7 @@ return
   (return
     (map_block
       (entry_block
-        key: (string)
+        key: (string (string_content))
         value: (number)
       )
       (entry_block
@@ -102,7 +102,7 @@ return
       )
       (entry_block
         key: (identifier)
-        value: (string)
+        value: (string (string_content))
       )
     )
   )

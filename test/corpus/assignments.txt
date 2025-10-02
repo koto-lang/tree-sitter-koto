@@ -84,14 +84,14 @@ let y: String? = 'goodbye'
       (identifier)
       (type (identifier))
     )
-    (string)
+    (string (string_content))
   )
   (let_assign
     (variable
       (identifier)
       (type (identifier))
     )
-    (string)
+    (string (string_content))
   )
 )
 

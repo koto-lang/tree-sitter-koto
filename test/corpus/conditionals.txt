@@ -13,8 +13,8 @@ if a == b then 'hello' else 'bye'
   (if condition: (identifier) then: (identifier))
   (if
     condition: (comparison_op (identifier) (identifier))
-    then: (string)
-    else: (string)
+    then: (string (string_content))
+    else: (string (string_content))
   )
 )
 
@@ -52,7 +52,7 @@ else
     )
     then: (block (identifier))
   )
-  (else (block (string)))
+  (else (block (string (string_content))))
 )
 
 ===========================================================================================
@@ -96,7 +96,7 @@ else
   )
   (else_if
     condition: (true)
-    then: (block (string))
+    then: (block (string (string_content)))
   )
   (else (block (identifier)))
 )
@@ -132,7 +132,7 @@ switch
   (switch
     (switch_arm
       condition: (comparison_op (identifier) (number))
-      then: (string)
+      then: (string (string_content))
     )
   )
 )
@@ -191,7 +191,7 @@ switch
     (switch_arm
       condition: (comparison_op (identifier) (number))
       then: (block
-        (string)
+        (string (string_content))
         (number)
       )
     )
@@ -278,7 +278,7 @@ match foo
   (match
     (match_conditions (identifier))
     (match_arm
-      (match_patterns (string))
+      (match_patterns (string (string_content)))
       then: (number)
     )
     (match_arm
@@ -338,13 +338,13 @@ match foo, bar
   (match
     (match_conditions (identifier) (identifier))
     (match_arm
-      (match_patterns (string))
+      (match_patterns (string (string_content)))
       then: (block (identifier))
     )
     (match_arm
       (match_patterns (number) (number))
       then: (block (identifier))
     )
-    else: (block (string))
+    else: (block (string (string_content)))
   )
 )

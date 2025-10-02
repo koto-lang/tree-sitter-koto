@@ -6759,6 +6759,11 @@
     }
   },
   {
+    "type": "raw_string_content",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "return",
     "named": true,
     "fields": {},
@@ -6943,6 +6948,25 @@
   },
   {
     "type": "string",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "raw_string_content",
+          "named": true
+        },
+        {
+          "type": "string_content",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "string_content",
     "named": true,
     "fields": {},
     "children": {

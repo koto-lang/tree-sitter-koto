@@ -2890,28 +2890,16 @@
               "name": "_string_start"
             },
             {
-              "type": "REPEAT",
-              "content": {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "SYMBOL",
-                    "name": "escape"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "interpolation"
-                  },
-                  {
-                    "type": "PATTERN",
-                    "value": "."
-                  },
-                  {
-                    "type": "PATTERN",
-                    "value": "\\s"
-                  }
-                ]
-              }
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "string_content"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
             },
             {
               "type": "SYMBOL",
@@ -2927,11 +2915,16 @@
               "name": "_raw_string_start"
             },
             {
-              "type": "REPEAT",
-              "content": {
-                "type": "PATTERN",
-                "value": "."
-              }
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "raw_string_content"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
             },
             {
               "type": "SYMBOL",
@@ -2940,6 +2933,37 @@
           ]
         }
       ]
+    },
+    "raw_string_content": {
+      "type": "REPEAT1",
+      "content": {
+        "type": "PATTERN",
+        "value": "."
+      }
+    },
+    "string_content": {
+      "type": "REPEAT1",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "escape"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "interpolation"
+          },
+          {
+            "type": "PATTERN",
+            "value": "."
+          },
+          {
+            "type": "PATTERN",
+            "value": "\\s"
+          }
+        ]
+      }
     },
     "interpolation": {
       "type": "SEQ",

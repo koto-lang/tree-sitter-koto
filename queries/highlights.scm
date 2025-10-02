@@ -82,7 +82,7 @@
   "|"
 ] @punctuation.bracket
 
-(string (interpolation ["{" "}"] @punctuation.special))
+(string_content (interpolation ["{" "}"] @punctuation.special))
 
 [
   ";"

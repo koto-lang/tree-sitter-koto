@@ -98,6 +98,6 @@ catch error
 (module
   (try (block (number)))
   (catch (identifier) (block (number)))
-  (string)
+  (string (string_content))
 )
 

@@ -570,20 +570,26 @@ module.exports = grammar({
     string: $ => choice(
       seq(
         $._string_start,
-        repeat(choice(
-          $.escape,
-          $.interpolation,
-          /./,
-          /\s/
-        )),
+        optional($.string_content),
         $._string_end,
       ),
       seq(
         $._raw_string_start,
-        repeat(/./),
+        optional($.raw_string_content),
         $._raw_string_end,
       ),
     ),
+
+    string_content: $ => repeat1(
+      choice(
+        $.escape,
+        $.interpolation,
+        /./,
+        /\s/
+      )
+    ),
+
+    raw_string_content: $ => repeat1(/./),
 
     interpolation: $ => seq(
       '{',

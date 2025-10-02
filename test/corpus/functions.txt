@@ -65,7 +65,7 @@ function_with_default_arg
   (function
     (args
       (arg (variable (identifier)) (default (list)))
-      (arg (variable (identifier)) (default (string)))
+      (arg (variable (identifier)) (default (string (string_content))))
       (arg (variable (identifier)) (default (true)))
       (arg (variable (identifier)) (default (range (number) (number))))
     )

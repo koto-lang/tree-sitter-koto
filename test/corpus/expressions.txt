@@ -50,7 +50,7 @@ foo, 'bar', 123
 (module
   (expressions
     (identifier)
-    (string)
+    (string (string_content))
     (number)
   )
 )
@@ -65,7 +65,7 @@ comma_separated_single_line_4
 
 (module
   (expressions
-    (string)
+    (string (string_content))
     (identifier)
     (number)
     (identifier)
