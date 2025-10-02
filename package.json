@@ -20,10 +20,8 @@
   "author": "Ian Hobson",
   "license": "MIT",
   "dependencies": {
-    "node-addon-api": "^7.1.0",
-    "node-gyp-build": "^4.8.0"
-  },
-  "peerDependencies": {
+    "node-addon-api": "^8.2.2",
+    "node-gyp-build": "^4.8.4",
     "tree-sitter": "^0.22.4"
   },
   "peerDependenciesMeta": {
