@@ -134,18 +134,18 @@ loop
 (module
   (loop)
   (loop
-    (block
+    body: (block
       (if
         condition: (comparison_op
           (identifier)
           (number)
         )
         then: (block (break))
+        (else (block
+          (modify_assign (identifier) (number))
+          (continue)
+        ))
       )
-      (else (block
-        (modify_assign (identifier) (number))
-        (continue)
-      ))
     )
   )
 )

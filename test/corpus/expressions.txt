@@ -33,7 +33,7 @@ true, false
 ---
 
 (module
-  (expressions
+  (comma_separated
     (true)
     (false)
   )
@@ -48,7 +48,7 @@ foo, 'bar', 123
 ---
 
 (module
-  (expressions
+  (comma_separated
     (identifier)
     (string (string_content))
     (number)
@@ -64,7 +64,7 @@ comma_separated_single_line_4
 ---
 
 (module
-  (expressions
+  (comma_separated
     (string (string_content))
     (identifier)
     (number)
@@ -84,12 +84,12 @@ a, b, c; 1, 2, 3
 (module
   (true)
   (false)
-  (expressions
+  (comma_separated
     (identifier)
     (identifier)
     (identifier)
   )
-  (expressions
+  (comma_separated
     (number)
     (number)
     (number)
@@ -168,12 +168,13 @@ binary_op_multi_line_post
 1 +
   2 *
     3 +
-  4
+      4
 
 ---
 
 (module
   (binary_op
+    (number)
     (binary_op
       (number)
       (binary_op
@@ -181,7 +182,6 @@ binary_op_multi_line_post
         (number)
       )
     )
-    (number)
   )
 )
 
@@ -242,5 +242,5 @@ debug x, y
 (module
   (debug (identifier))
   (debug (binary_op (number) (number)))
-  (debug (identifier) (identifier))
+  (debug (comma_separated (identifier) (identifier)))
 )

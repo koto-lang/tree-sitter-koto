@@ -13,11 +13,8 @@
 
 enum TokenType {
   NEWLINE,
-  BLOCK_START,
-  BLOCK_CONTINUE,
-  BLOCK_END,
-  MAP_BLOCK_START,
-  INDENTED_LINE,
+  INDENT,
+  DEDENT,
   COMMENT,
   STRING_START,
   STRING_END,
@@ -25,7 +22,6 @@ enum TokenType {
   RAW_STRING_END,
   INTERPOLATION_START,
   INTERPOLATION_END,
-  END_OF_FILE,
   ERROR_SENTINEL,
 };
 
@@ -87,9 +83,6 @@ typedef struct {
   IndentVec indents;
   // Keeping track of the quote type used for the current string
   QuoteVec quotes;
-  // If the previous token was a block start or end,
-  // then subsequent block ends and continues can be generated without newlines.
-  bool block_level_just_changed;
   // We need to block comments from being accepted while a string is being parsed.
   // interpolated strings are parsed from grammar.js, and without disabling comments,
   // "#" would be parsed as a string containing a comment rather than simply a string.
@@ -103,7 +96,6 @@ typedef struct {
 static void initialize_scanner(Scanner* scanner) {
   VEC_CLEAR(scanner->indents);
   VEC_CLEAR(scanner->quotes);
-  scanner->block_level_just_changed = false;
   scanner->in_string = false;
   scanner->raw_string_hash_count = 0;
 }
@@ -119,59 +111,6 @@ static void skip_whitespace(TSLexer* lexer) {
     printf("...skipping (%u)\n", next);
     skip(lexer);
   }
-}
-
-static void skip_string(TSLexer* lexer, bool multiline) {
-  const char end = lexer->lookahead;
-  advance(lexer);
-  while (true) {
-    const char next = lexer->lookahead;
-
-    switch (next) {
-    case '\'':
-    case '"':
-      if (next == end) {
-        advance(lexer);
-        return;
-      }
-      skip_string(lexer, multiline);
-      break;
-
-    case '\n':
-      if (!multiline) {
-        return;
-      }
-    }
-
-    advance(lexer);
-  }
-}
-
-static bool line_starts_with_map_key(TSLexer* lexer) {
-  // This is called at the first non-whitespace character,
-  // skip forward to see if the line starts with a map key,
-  const uint16_t line_start = lexer->get_column(lexer);
-  while (true) {
-    switch (lexer->lookahead) {
-    case ':':
-      return lexer->get_column(lexer) > line_start;
-
-    case '\'':
-    case '"':
-      skip_string(lexer, false);
-      break;
-
-    case '{': // prevent keys in inline maps from being detected
-    case '\n':
-    case '\0':
-      return false;
-
-    default:
-      skip(lexer);
-    }
-  }
-
-  return false;
 }
 
 static void consume_multiline_comment(TSLexer* lexer) {
@@ -324,64 +263,6 @@ bool tree_sitter_koto_external_scanner_scan(
     return true;
   }
 
-  bool newline = false;
-
-  // Consume newlines and starting indentation
-  while (true) {
-    // new_indent = lexer->get_column(lexer);
-    if (lexer->lookahead == '\r') {
-      skip(lexer);
-    }
-    if (lexer->lookahead == '\n') {
-      skip(lexer);
-      newline = true;
-    } else {
-      break;
-    }
-    skip_whitespace(lexer);
-  }
-
-  const uint16_t column = lexer->get_column(lexer);
-  const uint16_t block_indent
-      = VEC_SIZE(scanner->indents) > 0 ? VEC_BACK(scanner->indents) : 0;
-  const bool block_just_changed = scanner->block_level_just_changed;
-  scanner->block_level_just_changed = false;
-  const bool eof = lexer->eof(lexer);
-
-  printf(
-      "scanner.scan: column: %u, block_indent: %u num_indents: %u newline: %i eof: %i\n",
-      column,
-      block_indent,
-      scanner->indents.len,
-      newline,
-      eof);
-
-  // Initial block?
-  if (valid_symbols[BLOCK_START] && VEC_SIZE(scanner->indents) == 0) {
-    printf(">>>> initial block start: %u\n", column);
-    VEC_PUSH(scanner->indents, column);
-    scanner->block_level_just_changed = true;
-    lexer->result_symbol = BLOCK_START;
-    return true;
-  }
-  // Block end?
-  // This should be detected before the following call to mark_end so that the
-  // end of the block is placed at the last token in the block rather than at the start of
-  // the following line.
-  else if (
-      valid_symbols[BLOCK_END]
-      && (eof || (newline || block_just_changed) && column < block_indent)) {
-    printf(">>>> block end: %u\n", column);
-    VEC_POP(scanner->indents);
-    scanner->block_level_just_changed = true;
-    lexer->result_symbol = BLOCK_END;
-    return true;
-  }
-
-  // Mark the current end, telling the lexer that the consumed tokens are significant.
-  lexer->mark_end(lexer);
-  next = lexer->lookahead;
-
   // Comment?
   if (valid_symbols[COMMENT] && !scanner->in_string && next == '#') {
     consume_comment(lexer);
@@ -389,48 +270,72 @@ bool tree_sitter_koto_external_scanner_scan(
     lexer->result_symbol = COMMENT;
     return true;
   }
-  // Map block start?
-  else if (
-      valid_symbols[MAP_BLOCK_START] && newline && column > block_indent
-      && line_starts_with_map_key(lexer)) {
-    printf(">>>> map block start: %u\n", column);
+
+  // Newline and indentation handling
+  bool has_newline = false;
+
+  // Skip any carriage returns
+  while (lexer->lookahead == '\r') {
+    skip(lexer);
+  }
+
+  // Check for newline
+  if (lexer->lookahead == '\n') {
+    has_newline = true;
+    skip(lexer);
+
+    // Skip any additional newlines and carriage returns
+    while (lexer->lookahead == '\n' || lexer->lookahead == '\r') {
+      skip(lexer);
+    }
+
+    // Skip whitespace to measure indentation
+    skip_whitespace(lexer);
+  }
+
+  const uint16_t column = lexer->get_column(lexer);
+  const uint16_t current_indent = VEC_SIZE(scanner->indents) > 0 ? VEC_BACK(scanner->indents) : 0;
+  const bool eof = lexer->eof(lexer);
+
+  printf(
+      "scanner.scan: column: %u, current_indent: %u, num_indents: %u, has_newline: %i, eof: %i\n",
+      column,
+      current_indent,
+      scanner->indents.len,
+      has_newline,
+      eof);
+
+  // Mark the end after checking for dedents
+  lexer->mark_end(lexer);
+
+  // Handle indent
+  if (valid_symbols[INDENT] && has_newline && column > current_indent) {
+    printf(">>>> indent: %u\n", column);
     VEC_PUSH(scanner->indents, column);
-    scanner->block_level_just_changed = true;
-    lexer->result_symbol = MAP_BLOCK_START;
+    lexer->result_symbol = INDENT;
     return true;
   }
-  // Block start?
-  else if (valid_symbols[BLOCK_START] && newline && column > block_indent) {
-    printf(">>>> block start: %u\n", column);
-    VEC_PUSH(scanner->indents, column);
-    scanner->block_level_just_changed = true;
-    lexer->result_symbol = BLOCK_START;
+
+  // Handle dedents
+  if (valid_symbols[DEDENT] && !eof && column < current_indent) {
+    printf(">>>> dedent: %u\n", column);
+    VEC_POP(scanner->indents);
+    lexer->result_symbol = DEDENT;
     return true;
   }
-  // Block continue?
-  else if (
-      valid_symbols[BLOCK_CONTINUE] && !eof && (newline || block_just_changed)
-      && column == block_indent) {
-    printf(">>>> block continue: %u\n", column);
-    lexer->result_symbol = BLOCK_CONTINUE;
+
+  // Handle EOF dedents
+  if (valid_symbols[DEDENT] && eof && VEC_SIZE(scanner->indents) > 0) {
+    printf(">>>> dedent (eof): %u\n", column);
+    VEC_POP(scanner->indents);
+    lexer->result_symbol = DEDENT;
     return true;
   }
-  // Indented line?
-  else if (valid_symbols[INDENTED_LINE] && newline && column > block_indent) {
-    printf(">>>> indented line\n");
-    lexer->result_symbol = INDENTED_LINE;
-    return true;
-  }
-  // Newline?
-  else if (valid_symbols[NEWLINE] && newline) {
+
+  // Handle newline
+  if (valid_symbols[NEWLINE] && has_newline) {
     printf(">>>> newline\n");
     lexer->result_symbol = NEWLINE;
-    return true;
-  }
-  // EOF?
-  else if (valid_symbols[END_OF_FILE] && eof) {
-    printf(">>>> eof\n");
-    lexer->result_symbol = END_OF_FILE;
     return true;
   }
 
@@ -460,7 +365,6 @@ unsigned tree_sitter_koto_external_scanner_serialize(void* payload, char* buffer
   memcpy(write_ptr, scanner->quotes.data, num_quotes);
   write_ptr += num_quotes;
 
-  *write_ptr++ = scanner->block_level_just_changed;
   *write_ptr++ = scanner->in_string;
   *write_ptr++ = scanner->raw_string_hash_count;
 
@@ -498,7 +402,6 @@ void tree_sitter_koto_external_scanner_deserialize(
       VEC_PUSH(scanner->quotes, *read_ptr++);
     }
 
-    scanner->block_level_just_changed = *read_ptr++;
     scanner->in_string = *read_ptr++;
     scanner->raw_string_hash_count = *read_ptr++;
 

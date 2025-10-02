@@ -16,19 +16,19 @@ finally
     (block
       (throw (chain start: (identifier) (call_args)))
     )
-  )
-  (catch
-    (identifier)
-    (block
-      (throw (identifier))
+    (catch
+      (identifier)
+      (block
+        (throw (identifier))
+      )
     )
+    (finally (block
+      (assign
+        lhs: (identifier)
+        rhs: (number)
+      )
+    ))
   )
-  (finally (block
-    (assign
-      lhs: (identifier)
-      rhs: (number)
-    )
-  ))
 )
 
 ===========================================================================================
@@ -51,12 +51,13 @@ x = ||
     rhs: (function
       (args)
       body: (block
-        (try (block (number)))
-        (catch
-          (identifier)
-          (block (number))
+        (try (block (number))
+          (catch
+            (identifier)
+            (block (number))
+          )
+          (finally (block (number)))
         )
-        (finally (block (number)))
       )
     )
   )
@@ -74,11 +75,12 @@ catch e
 ---
 
 (module
-  (try (block (chain start: (identifier) (call_args))))
-  (catch
-    (identifier)
-    (block
-      (chain start: (identifier) (call_args))
+  (try (block (chain start: (identifier) (call_args)))
+    (catch
+      (identifier)
+      (block
+        (chain start: (identifier) (call_args))
+      )
     )
   )
 )
@@ -96,8 +98,9 @@ catch error
 ---
 
 (module
-  (try (block (number)))
-  (catch (identifier) (block (number)))
+  (try (block (number))
+    (catch (identifier) (block (number)))
+  )
   (string (string_content))
 )
 

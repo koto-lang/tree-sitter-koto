@@ -57,7 +57,7 @@ string_interpolated
   (string
     (string_content
       (interpolation
-        (expressions
+        (comma_separated
           (identifier)
           (identifier)
         )
@@ -67,7 +67,7 @@ string_interpolated
   (string
     (string_content
       (interpolation
-        (expressions
+        (comma_separated
           (identifier)
           (comment)
           (identifier)
@@ -208,7 +208,7 @@ incomplete_string_interpolation
 
 ---
 
-(ERROR
+(module
   (string (string_content (interpolation)))
-  (ERROR)
+  (ERROR (ERROR))
 )

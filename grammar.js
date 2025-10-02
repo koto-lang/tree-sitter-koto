@@ -31,11 +31,8 @@ module.exports = grammar({
 
   externals: $ => [
     $._newline,
-    $._block_start,
-    $._block_continue,
-    $._block_end,
-    $._map_block_start,
-    $._indented_line,
+    $._indent,
+    $._dedent,
     $.comment,
     $._string_start,
     $._string_end,
@@ -43,56 +40,71 @@ module.exports = grammar({
     $._raw_string_end,
     $._interpolation_start,
     $._interpolation_end,
-    $._eof,
     $.error_sentinel,
   ],
 
   conflicts: $ => [
-    [$.binary_op, $.comparison_op, $.boolean_op],
-    [$._term, $._assign_target],
+    [$.module],
     [$._term, $.assign_targets],
-    [$.args],
-    [$._assign_rhs],
-    [$.assign_expressions],
     [$._flexi_comma],
+    [$.assign_expressions],
+    [$._term_ext, $._block_expression],
+    [$._inline_expressions],
+    [$._expressions, $.comma_separated],
+    [$.comma_separated, $._inline_expression],
+    [$.comma_separated],
   ],
 
   word: $ => $.identifier,
 
   rules: {
     module: $ => seq(
-      $._block_start,
-      repeat(
-        seq(
-          $._block_continue,
-          $._block_expressions,
-        )
+      repeat($._newline),
+      repeat($._line_start),
+      repeat($._newline),
+    ),
+
+    _line_start: $ => seq(
+      choice(
+        $._inline_expressions,
+        $._block_expression,
       ),
-      $._block_end,
-      $._eof,
     ),
 
-    _expressions: $ => choice(
+    _inline_expressions: $ => seq(
+      $._inline_expression,
+      repeat(seq(';', $._inline_expression)),
+      optional(';'),
+      optional($._newline),
+    ),
+
+    _inline_expression: $ => choice(
       $._expression,
-      $.expressions,
-      $.multi_assign,
+      $._control_flow,
+      $.comma_separated,
     ),
 
-    _block_expressions: $ => choice(
-      seq($._expressions, repeat(seq(';', optional($._expressions)))),
-      $._cascade_arm,
+    _expression: $ => choice(
+      $._term_ext,
+      $._assignment,
+      $.call,
+      $.yield,
+      $.import,
+      $.export,
+      $.debug,
     ),
 
-    expressions: $ => prec.right(PREC.comma, seq(
-      $._expression,
-      repeat1(seq(
-        ',',
-        repeat($._indented_line),
-        $._expression,
-      )),
-      // Optional trailing comma
-      optional(','),
-    )),
+    _term_ext: $ => choice(
+      $._term,
+      $.range,
+      $.range_inclusive,
+      $.binary_op,
+      $.comparison_op,
+      $.boolean_op,
+      $.function,
+      $.chain,
+      $.not,
+    ),
 
     _term: $ => choice(
       $._constants,
@@ -105,69 +117,62 @@ module.exports = grammar({
       $.list,
       $.map,
       $.negate,
-      $.not,
     ),
 
-    _term_ext: $ => prec.right(seq(
-      choice(
-        $._term,
-        $.range,
-        $.range_inclusive,
-        $.if,
-        $.debug,
-        $.binary_op,
-        $.comparison_op,
-        $.boolean_op,
-        $.switch,
-        $.match,
-        $.function,
-        $.chain,
-      ),
-      optional($.ellipsis)
-    )),
+    _assignment: $ => choice(
+      $.assign,
+      $.multi_assign,
+      $.let_assign,
+      $.modify_assign,
+    ),
 
-    _expression: $ => choice(
-      $._term_ext,
-      $.call,
+    _control_flow: $ => choice(
+      $.return,
+      $.throw,
+      $.break,
+      $.continue,
+    ),
+
+    _block_expression: $ => choice(
+      $.if,
+      $.switch,
+      $.match,
       $.for,
       $.while,
       $.until,
       $.loop,
-      $.return,
-      $.throw,
-      $.yield,
-      $.break,
-      $.continue,
-      $.import,
-      $.export,
       $.try,
-      $.assign,
-      $.let_assign,
-      $.modify_assign,
-      $.map_block,
+      $.function,
+      $.call_indented,
     ),
 
-    // Arms used in if/`else if`/else or try/catch/finally cascades.
-    // Ideally these would be included in $.if and $.try, but they interfere with block continuation.
-    // Parsing them separately will do for now.
-    _cascade_arm: $ => choice(
-      $.else_if,
-      $.else,
-      $.catch,
-      $.finally,
+    _expressions: $ => choice(
+      $._expression,
+      $.comma_separated,
     ),
 
-    block: $ => prec.left(seq(
-      $._block_start,
-      $._expressions,
-      repeat(
-        seq(
-          repeat1($._block_continue),
-          $._block_expressions,
-        )
-      ),
-      $._block_end,
-    )),
+    comma_separated: $ => seq(
+      $._expression,
+      repeat1(seq(
+        ',',
+        optional($._newline),
+        $._expression,
+      )),
+      optional(','),
+    ),
+
+    block: $ => seq(
+      $._indent,
+      repeat1($._line_start),
+      $._dedent,
+    ),
+
+    _line_or_block: $ => choice(
+      $._inline_expressions,
+      $.block,
+      // Allow the expression to be left incomplete
+      $._newline,
+    ),
 
     _constants: $ => choice(
       $.self,
@@ -176,7 +181,7 @@ module.exports = grammar({
       $.null,
     ),
 
-    // Chained lookup/index/call expressions
+    // Chained lookup/index/call comma_separated
     // e.g. `x[0]?.foo(123)`
     chain: $ => prec(PREC.chain, seq(
       // The start of the chain
@@ -199,7 +204,23 @@ module.exports = grammar({
         $.identifier,
         $.chain,
       )),
-      $._call_args
+      $._call_args,
+    )),
+
+    // Paren-free calls that can have indented arguments
+    // e.g.:
+    //   my_fn
+    //     1, 2
+    call_indented: $ => prec.right(PREC.call, seq(
+      field('function', choice(
+        $.identifier,
+        $.chain,
+      )),
+      seq(
+        $._indent,
+        $._call_args,
+        $._dedent,
+      ),
     )),
 
     // Parenthesized call args, captured in a chain
@@ -213,20 +234,21 @@ module.exports = grammar({
     ),
 
     _call_args: $ => prec.right(seq(
-      repeat($._indented_line),
       $.call_arg,
       repeat(
         seq(
-          repeat($._indented_line),
           ',',
-          repeat($._indented_line),
+          optional($._newline),
           $.call_arg,
         ),
       ),
     )),
 
     call_arg: $ => choice(
-      $._term_ext,
+      prec.right(seq(
+        $._term_ext,
+        optional($.ellipsis),
+      )),
       $.call,
       // Allow nested function calls in arguments with higher precedence
       prec.right(PREC.chain, $.chain),
@@ -253,7 +275,6 @@ module.exports = grammar({
     //        ^^ lookup
     //       ^ chain start
     lookup: $ => prec.right(PREC.chain, seq(
-      repeat($._indented_line),
       seq(
         token.immediate('.'),
         choice($.identifier, $.string),
@@ -273,12 +294,21 @@ module.exports = grammar({
     )),
 
     _assign_rhs: $ => prec.right(PREC.assign, seq(
-      repeat($._indented_line),
       '=',
-      repeat($._indented_line),
       field('rhs', choice(
-        $._expression,
-        $.assign_expressions,
+        seq(
+          $._indent,
+          choice(
+            $._expression,
+            $.assign_expressions,
+          ),
+          $._dedent,
+        ),
+        choice(
+          $._expression,
+          $.assign_expressions,
+          $.map_block,
+        ),
       ))
     )),
 
@@ -297,11 +327,10 @@ module.exports = grammar({
     ),
 
     assign_expressions: $ => prec(PREC.assign, seq(
-      repeat($._indented_line),
       $._expression,
       repeat1(seq(
         token.immediate(','),
-        repeat($._indented_line),
+        optional($._newline),
         $._expression,
       )),
       // Optional trailing comma
@@ -311,13 +340,11 @@ module.exports = grammar({
     let_assign: $ => choice(
       seq(
         'let',
-        repeat($._indented_line),
         $.variable,
         repeat(seq(
           token.immediate(','),
           $.variable,
         )),
-        repeat($._indented_line),
         $._assign_rhs,
       ),
     ),
@@ -442,7 +469,10 @@ module.exports = grammar({
 
     export: $ => prec.right(seq(
       'export',
-      $._expressions,
+      choice(
+        $._expressions,
+        $.map_block,
+      ),
     )),
 
     number: _ => token(
@@ -464,12 +494,12 @@ module.exports = grammar({
 
     tuple: $ => prec(PREC.parenthesized, seq(
       '(',
+      optional($._newline),
       optional(choice(
         // Just a comma
         $._flexi_comma,
         // At least one element, with at least one comma, e.g. `(x,)`, `(x, y)`
         seq(
-          repeat($._newline),
           $.element,
           $._flexi_comma,
           optional(seq(
@@ -480,23 +510,22 @@ module.exports = grammar({
                 $.element,
               )
             ),
-            repeat($._newline),
-            optional(','),
+            optional($._flexi_comma),
           )),
-          repeat($._newline),
         ),
       )),
+      optional($._newline),
       ')',
     )),
 
     list: $ => prec(PREC.parenthesized, seq(
       '[',
+      optional($._newline),
       optional(choice(
         // just a comma
         $._flexi_comma,
         // At least one element, with optional trailing comma
         seq(
-          repeat($._newline),
           $.element,
           repeat(
             seq(
@@ -504,13 +533,10 @@ module.exports = grammar({
               $.element,
             )
           ),
-          repeat($._newline),
-          optional(
-            ','
-          ),
-          repeat($._newline),
+          optional($._flexi_comma),
         ),
       )),
+      optional($._newline),
       ']',
     )),
 
@@ -543,22 +569,19 @@ module.exports = grammar({
       )),
     ),
 
-    map_block: $ => prec.right(seq(
-      $._map_block_start,
-      $.entry_block,
-      repeat(
-        seq(
-          repeat1($._block_continue),
-          $.entry_block,
-        )
-      ),
-      $._block_end,
-    )),
+    map_block: $ => seq(
+      $._indent,
+      repeat1($.entry_block),
+      $._dedent,
+    ),
 
     entry_block: $ => seq(
       field('key', $._map_key),
       ':',
-      field('value', $._expression),
+      field('value', choice(
+        $._line_or_block,
+        $.map_block,
+      )),
     ),
 
     _map_key: $ => choice(
@@ -616,82 +639,73 @@ module.exports = grammar({
     fill_char: $ => /./,
     alignment: $ => choice('<', '^', '>'),
 
-    if: $ => choice(
-      // Inline if
-      prec.right(seq(
-        'if',
-        field('condition', $._expression),
-        optional(seq('then',
+    if: $ => prec.right(seq(
+      'if',
+      field('condition', $._expression),
+      choice(
+        seq(
+          'then',
           field('then', $._expression),
           optional(
             seq(
               'else',
               field('else', $._expression),
             )
-          )
-        )),
-      )),
-      // Multiline if
-      prec.right(seq(
-        'if',
-        field('condition', $._expression),
-        optional(field('then', $.block)),
-      )),
-    ),
+          ),
+          $._newline,
+        ),
+        seq(
+          field('then', $.block),
+          repeat($.else_if),
+          optional($.else),
+        ),
+        $._newline,
+      ),
+    )),
 
     else_if: $ => seq(
       'else if',
       field('condition', $._expression),
-      optional(field('then', $.block)),
+      field('then', $.block),
     ),
 
     else: $ => seq(
       'else',
-      optional($.block),
+      $.block,
     ),
 
-    switch: $ => prec.right(seq(
+    switch: $ => seq(
       'switch',
-      optional(seq($._block_start,
-        choice(
-          seq(
-            repeat1($.switch_arm),
-            optional(
-              $._else_arm,
-            ),
-          ),
-          $._else_arm,
-        ),
-        $._block_end,
-      ))
-    )),
+      $._indent,
+      repeat1($.switch_arm),
+      optional($.switch_else),
+      $._dedent,
+    ),
 
     switch_arm: $ => seq(
-      $._block_continue,
       field('condition', $._expression),
       'then',
-      field('then',
-        choice(
-          $._expressions,
-          $.block,
-        ),
-      )
+      field('then', $._line_or_block),
     ),
 
-    match: $ => prec.right(seq(
+    switch_else: $ => seq(
+      'else',
+      $._line_or_block,
+    ),
+
+    match: $ => seq(
       'match',
-      $.match_conditions,
-      optional(seq(
-        $._block_start,
-        seq(
-          repeat1($.match_arm),
-          optional(
-            $._else_arm,
+      seq($.match_conditions,
+        choice(
+          seq($._indent,
+            repeat1($.match_arm),
+            optional($.match_else),
+            $._dedent,
           ),
+          $._newline,
         ),
-        $._block_end
-      )),
-    )),
+      ),
+    ),
 
     match_conditions: $ => prec.right(seq(
       $._term_ext,
@@ -702,19 +716,18 @@ module.exports = grammar({
     )),
 
     match_arm: $ => seq(
-      $._block_continue,
       $.match_patterns,
       optional(field('condition', seq(
         'if',
         $._term_ext,
       ))),
       'then',
-      optional(field('then',
-        choice(
-          $._expressions,
-          $.block,
-        ),
-      ))
+      field('then', $._line_or_block),
+    ),
+
+    match_else: $ => seq(
+      'else',
+      $._line_or_block,
     ),
 
     match_patterns: $ => seq(
@@ -739,24 +752,13 @@ module.exports = grammar({
       repeat1(seq(',', $._match_term))
     ),
 
-    _else_arm: $ => seq(
-      $._block_continue,
-      'else',
-      field('else',
-        choice(
-          $._expressions,
-          $.block,
-        )
-      )
-    ),
-
-    for: $ => prec.right(seq(
+    for: $ => seq(
       'for',
       field('args', $.for_args),
       'in',
       field('range', $._expression),
-      optional(field('body', $.block)),
-    )),
+      field('body', $._line_or_block),
+    ),
 
     for_args: $ => seq(
       $.variable,
@@ -768,46 +770,41 @@ module.exports = grammar({
       ),
     ),
 
-    until: $ => prec.right(seq(
+    until: $ => seq(
       'until',
       field('condition', $._expression),
-      optional(field('body', $.block)),
-    )),
+      field('body', $._line_or_block),
+    ),
 
-    while: $ => prec.right(seq(
+    while: $ => seq(
       'while',
       field('condition', $._expression),
-      optional(field('body', $.block)),
-    )),
+      field('body', $._line_or_block),
+    ),
 
     loop: $ => prec.right(seq(
       'loop',
-      optional($.block),
+      field('body', $._line_or_block),
     )),
 
-    function: $ => prec.right(seq(
+    function: $ => seq(
       $.args,
       optional(seq(
         '->',
         $.type
       )),
-      optional(field('body', choice($._expressions, $.block))),
-    )),
+      field('body', $._line_or_block),
+    ),
 
     args: $ => seq(
       "|",
-      repeat($._newline),
       optional(seq(
         $.arg,
         repeat(
-          seq(
-            $._flexi_comma,
-            $.arg,
-          ),
+          seq(',', $.arg),
         ),
         optional(','),
       )),
-      repeat($._newline),
       // Use token.immediate to avoid confusing the closing | as the start of a new function
       token.immediate("|"),
     ),
@@ -863,20 +860,22 @@ module.exports = grammar({
       optional(seq('as', $.identifier)),
     ),
 
-    try: $ => prec.right(seq(
+    try: $ => seq(
       'try',
-      $.block,
-    )),
+      $._line_or_block,
+      repeat1($.catch),
+      optional($.finally),
+    ),
 
     catch: $ => seq(
       'catch',
       $.identifier,
-      $.block,
+      $._line_or_block,
     ),
 
     finally: $ => seq(
       'finally',
-      $.block,
+      $._line_or_block,
     ),
 
     escape: $ => seq(
@@ -899,9 +898,7 @@ module.exports = grammar({
 function assign_op($, operator, precedence_fn) {
   return precedence_fn(PREC.assign, seq(
     $._assign_target,
-    repeat($._indented_line),
     operator,
-    repeat($._indented_line),
     $._expression
   ));
 }
@@ -909,17 +906,25 @@ function assign_op($, operator, precedence_fn) {
 function binary_op($, operator, precedence_fn, precedence) {
   return precedence_fn(precedence, seq(
     $._term_ext,
-    repeat($._indented_line),
-    operator,
-    repeat($._indented_line),
-    $._term_ext
+    choice(
+      seq(
+        operator,
+        $._term_ext,
+      ),
+      seq(
+        operator,
+        $._indent,
+        $._term_ext,
+        $._dedent,
+      )
+    ),
   ));
 }
 
 function keyword_expression_single($, keyword) {
   return prec.right(seq(
     keyword,
-    optional(seq(repeat($._indented_line), $._expression)),
+    optional($._expression),
   ));
 }
 
@@ -928,21 +933,13 @@ function keyword_expression_multi($, keyword, precedence) {
     keyword,
     optional(
       choice(
+        $._expressions,
         seq(
-          repeat($._indented_line),
-          $._expression,
+          $._indent,
+          $._expressions,
+          $._dedent,
         ),
-        seq(
-          repeat($._indented_line),
-          $._expression,
-          repeat1(seq(
-            ',',
-            repeat($._indented_line),
-            $._expression,
-          )),
-          // Optional trailing comma
-          optional(','),
-        ),
+        $.map_block,
       ))
   ));
 }
