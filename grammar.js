@@ -582,6 +582,7 @@ module.exports = grammar({
       ':',
       field('value', choice(
         $._line_or_block,
+        $.call_indented,
         $.map_block,
       )),
     ),

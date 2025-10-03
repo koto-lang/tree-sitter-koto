@@ -2924,6 +2924,10 @@
               },
               {
                 "type": "SYMBOL",
+                "name": "call_indented"
+              },
+              {
+                "type": "SYMBOL",
                 "name": "map_block"
               }
             ]

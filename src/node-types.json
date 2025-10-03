@@ -1921,6 +1921,10 @@
             "named": true
           },
           {
+            "type": "call_indented",
+            "named": true
+          },
+          {
             "type": "chain",
             "named": true
           },
