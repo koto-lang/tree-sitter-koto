@@ -550,14 +550,16 @@ module.exports = grammar({
 
     map: $ => seq(
       '{',
+      optional($._newline),
       optional(seq(
         $.entry_inline,
         repeat(seq(
-          ',',
+          $._flexi_comma,
           $.entry_inline,
         )),
-        optional(','),
+        optional($._flexi_comma),
       )),
+      optional($._newline),
       '}'
     ),
 
