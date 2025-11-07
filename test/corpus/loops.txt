@@ -1,14 +1,10 @@
 ===========================================================================================
-for_single_arg
+for_with_single_arg
 ===========================================================================================
 
 for i in foo
 
 for i in foo
-  i
-
-for i: String in foo
-  i
   i
 
 ---
@@ -23,11 +19,52 @@ for i: String in foo
     range: (identifier)
     body: (block (identifier))
   )
+)
+
+===========================================================================================
+for_single_arg_with_type_hint
+===========================================================================================
+
+for i: String in foo
+  i
+  i
+
+---
+
+(module
   (for
-    args: (for_args (variable (identifier) (type (identifier))))
+    args: (for_args
+      (variable
+        (identifier)
+        (type (identifier))
+      )
+    )
     range: (identifier)
     body: (block
       (identifier)
+      (identifier)
+    )
+  )
+)
+
+===========================================================================================
+for_single_arg_unpacked_map
+===========================================================================================
+
+for {x} in f
+  x
+
+---
+
+(module
+  (for
+    args: (for_args
+      (unpacked_map
+        binding: (variable (identifier))
+      )
+    )
+    range: (identifier)
+    body: (block
       (identifier)
     )
   )

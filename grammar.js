@@ -53,6 +53,7 @@ module.exports = grammar({
     [$._expressions, $.comma_separated],
     [$.comma_separated, $._inline_expression],
     [$.comma_separated],
+    [$.variable, $._map_key],
   ],
 
   word: $ => $.identifier,
@@ -181,12 +182,11 @@ module.exports = grammar({
       $.null,
     ),
 
-    // Chained lookup/index/call comma_separated
-    // e.g. `x[0]?.foo(123)`
+    // Chained expressions, e.g. `x[0]?.foo(123)`
     chain: $ => prec(PREC.chain, seq(
       // The start of the chain
       field('start', $._term),
-      // All following chain nodes
+      // The chain's subsequent expressions
       repeat1(
         choice(
           $.null_check, // ?
@@ -284,7 +284,10 @@ module.exports = grammar({
     null_check: _ => '?',
 
     assign: $ => prec.right(PREC.assign, seq(
-      field('lhs', $._assign_target),
+      field('lhs', choice(
+        $._assign_target,
+        $.unpacked_map,
+      )),
       $._assign_rhs,
     )),
 
@@ -593,6 +596,33 @@ module.exports = grammar({
       $.string,
     ),
 
+    unpacked_map: $ => seq(
+      '{',
+      optional($._newline),
+      optional(seq(
+        $._unpacked_field,
+        repeat(seq(
+          $._flexi_comma,
+          $._unpacked_field,
+        )),
+        optional($._flexi_comma),
+      )),
+      optional($._newline),
+      '}'
+    ),
+
+    _unpacked_field: $ => choice(
+      field('binding', $.variable),
+      seq(
+        field('source', choice(
+          $.identifier,
+          $.string,
+        )),
+        'as',
+        field('binding', $.variable),
+      ),
+    ),
+
     string: $ => choice(
       seq(
         $._string_start,
@@ -748,6 +778,7 @@ module.exports = grammar({
       $.string,
       $.variable,
       $.tuple,
+      $.unpacked_map,
     ),
 
     match_terms: $ => seq(
@@ -764,13 +795,18 @@ module.exports = grammar({
     ),
 
     for_args: $ => seq(
-      $.variable,
+      $._for_arg,
       repeat(
         seq(
           ',',
-          $.variable,
+          $._for_arg,
         )
       ),
+    ),
+
+    _for_arg: $ => choice(
+      $.variable,
+      $.unpacked_map,
     ),
 
     until: $ => seq(
@@ -819,6 +855,7 @@ module.exports = grammar({
       seq($.identifier, $.ellipsis),
       seq(alias($._tuple_args, $.tuple), optional($.default)),
       seq(alias($._list_args, $.list), optional($.default)),
+      seq(alias($._map_args, $.map), optional($.default)),
     ),
 
     default: $ => seq(
@@ -828,6 +865,21 @@ module.exports = grammar({
 
     _tuple_args: $ => seq('(', $._contained_args, ')'),
     _list_args: $ => seq('[', $._contained_args, ']'),
+
+    // The same as unpacked_map, but without newlines
+    _map_args: $ => seq(
+      '{',
+      optional(seq(
+        $._unpacked_field,
+        repeat(seq(
+          token.immediate(','),
+          $._unpacked_field,
+        )),
+        optional(','),
+      )),
+      '}'
+    ),
+
     _contained_args: $ => seq(
       $.arg,
       repeat(seq(
@@ -872,8 +924,13 @@ module.exports = grammar({
 
     catch: $ => seq(
       'catch',
-      $.identifier,
+      $._catch_arg,
       $._line_or_block,
+    ),
+
+    _catch_arg: $ => choice(
+      $.identifier,
+      $.unpacked_map,
     ),
 
     finally: $ => seq(

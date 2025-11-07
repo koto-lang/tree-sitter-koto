@@ -264,7 +264,7 @@ match foo
   'hello' then 0
   other if other > 1 then 1
   1 or -1 then 2
-  x, y: String then x + y
+  {x}, y: String then x + y
   else 2
 
 ---
@@ -286,10 +286,14 @@ match foo
       then: (number)
     )
     (match_arm
-      (match_patterns (match_terms
-        (variable (identifier))
-        (variable (identifier) (type (identifier)))
-      ))
+      (match_patterns
+        (match_terms
+          (unpacked_map
+            binding: (variable (identifier))
+          )
+          (variable (identifier) (type (identifier)))
+        )
+      )
       then: (binary_op (identifier) (identifier))
     )
     (match_else (number))

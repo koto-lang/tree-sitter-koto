@@ -68,6 +68,52 @@ foo = 1,
   )
 )
 
+===========================================================================================
+assign_to_unpacked_map
+===========================================================================================
+
+{x} = m
+{x: String} = m
+{x as y} = m
+{x as y: String} = m
+
+---
+
+(module
+  (assign
+    lhs: (unpacked_map
+      binding: (variable (identifier))
+    )
+    rhs: (identifier)
+  )
+  (assign
+    lhs: (unpacked_map
+      binding: (variable
+        (identifier)
+        (type (identifier))
+      )
+    )
+    rhs: (identifier)
+  )
+  (assign
+    lhs: (unpacked_map
+      source: (identifier)
+      binding: (variable (identifier))
+    )
+    rhs: (identifier)
+  )
+  (assign
+    lhs: (unpacked_map
+      source: (identifier)
+      binding: (variable
+        (identifier)
+        (type (identifier))
+      )
+    )
+    rhs: (identifier)
+  )
+)
+
 
 ===========================================================================================
 let_assignment

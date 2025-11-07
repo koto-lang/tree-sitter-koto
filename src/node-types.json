@@ -29,6 +29,10 @@
           "named": true
         },
         {
+          "type": "map",
+          "named": true
+        },
+        {
           "type": "tuple",
           "named": true
         },
@@ -72,6 +76,10 @@
           },
           {
             "type": "meta",
+            "named": true
+          },
+          {
+            "type": "unpacked_map",
             "named": true
           }
         ]
@@ -1059,6 +1067,10 @@
         },
         {
           "type": "tuple",
+          "named": true
+        },
+        {
+          "type": "unpacked_map",
           "named": true
         },
         {
@@ -2811,6 +2823,10 @@
       "required": true,
       "types": [
         {
+          "type": "unpacked_map",
+          "named": true
+        },
+        {
           "type": "variable",
           "named": true
         }
@@ -4074,7 +4090,32 @@
   {
     "type": "map",
     "named": true,
-    "fields": {},
+    "fields": {
+      "binding": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "variable",
+            "named": true
+          }
+        ]
+      },
+      "source": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "string",
+            "named": true
+          }
+        ]
+      }
+    },
     "children": {
       "multiple": true,
       "required": false,
@@ -4683,6 +4724,10 @@
           "named": true
         },
         {
+          "type": "unpacked_map",
+          "named": true
+        },
+        {
           "type": "variable",
           "named": true
         }
@@ -4727,6 +4772,10 @@
         },
         {
           "type": "tuple",
+          "named": true
+        },
+        {
+          "type": "unpacked_map",
           "named": true
         },
         {
@@ -7031,6 +7080,36 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "unpacked_map",
+    "named": true,
+    "fields": {
+      "binding": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "variable",
+            "named": true
+          }
+        ]
+      },
+      "source": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "string",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
