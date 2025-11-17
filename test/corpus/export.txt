@@ -60,6 +60,10 @@ export
   foo: 42
   'bar': 99
 
+export
+  @pre_test: || true
+  @test foo: || true
+
 ---
 
 (module
@@ -72,6 +76,24 @@ export
       (entry_block
         key: (string (string_content))
         value: (number)
+      )
+    )
+  )
+  (export
+    (map_block
+      (entry_block
+        key: (meta id: (meta_id))
+        value: (function
+          (args)
+          body: (true)
+        )
+      )
+      (entry_block
+        key: (meta (test) name: (identifier))
+        value: (function
+          (args)
+          body: (true)
+        )
       )
     )
   )
