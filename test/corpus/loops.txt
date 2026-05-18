@@ -11,15 +11,17 @@ for i in foo
 
 (module
   (for
-    args: (for_args (variable (identifier)))
-    range: (identifier)
-  )
+    args: (for_args
+      (variable
+        (identifier)))
+    range: (identifier))
   (for
-    args: (for_args (variable (identifier)))
+    args: (for_args
+      (variable
+        (identifier)))
     range: (identifier)
-    body: (block (identifier))
-  )
-)
+    body: (block
+      (identifier))))
 
 ===========================================================================================
 for_single_arg_with_type_hint
@@ -36,16 +38,12 @@ for i: String in foo
     args: (for_args
       (variable
         (identifier)
-        (type (identifier))
-      )
-    )
+        (type
+          (identifier))))
     range: (identifier)
     body: (block
       (identifier)
-      (identifier)
-    )
-  )
-)
+      (identifier))))
 
 ===========================================================================================
 for_single_arg_unpacked_map
@@ -60,15 +58,11 @@ for {x} in f
   (for
     args: (for_args
       (unpacked_map
-        binding: (variable (identifier))
-      )
-    )
+        binding: (variable
+          (identifier))))
     range: (identifier)
     body: (block
-      (identifier)
-    )
-  )
-)
+      (identifier))))
 
 ===========================================================================================
 for_multi_arg
@@ -85,22 +79,29 @@ for a: String, _: Number in foo
 (module
   (for
     args: (for_args
-      (variable (identifier))
-      (variable (identifier))
-      (variable (identifier))
-    )
+      (variable
+        (identifier))
+      (variable
+        (identifier))
+      (variable
+        (identifier)))
     range: (identifier)
-    body: (block (identifier) (identifier))
-  )
+    body: (block
+      (identifier)
+      (identifier)))
   (for
     args: (for_args
-      (variable (identifier) (type (identifier)))
-      (variable (identifier) (type (identifier)))
-    )
+      (variable
+        (identifier)
+        (type
+          (identifier)))
+      (variable
+        (identifier)
+        (type
+          (identifier))))
     range: (identifier)
-    body: (block (identifier))
-  )
-)
+    body: (block
+      (identifier))))
 
 ===========================================================================================
 until
@@ -115,15 +116,15 @@ until foo()
 
 (module
   (until
-    condition: (identifier)
-  )
+    condition: (identifier))
   (until
-    condition: (chain start: (identifier) (call_args))
+    condition: (chain
+      start: (identifier)
+      (call_args))
     body: (block
-      (modify_assign (identifier) (number))
-    )
-  )
-)
+      (modify_assign
+        (identifier)
+        (number)))))
 
 ===========================================================================================
 while
@@ -139,19 +140,19 @@ while i > 0
 
 (module
   (while
-    condition: (identifier)
-  )
+    condition: (identifier))
   (while
-    condition: (comparison_op (identifier) (number))
+    condition: (comparison_op
+      (identifier)
+      (number))
     body: (block
       (call
         function: (identifier)
-        (call_arg (identifier))
-      )
-      (modify_assign (identifier) (number))
-    )
-  )
-)
+        (call_arg
+          (identifier)))
+      (modify_assign
+        (identifier)
+        (number)))))
 
 ===========================================================================================
 loop
@@ -175,14 +176,12 @@ loop
       (if
         condition: (comparison_op
           (identifier)
-          (number)
-        )
-        then: (block (break))
-        (else (block
-          (modify_assign (identifier) (number))
-          (continue)
-        ))
-      )
-    )
-  )
-)
+          (number))
+        then: (block
+          (break))
+        (else
+          (block
+            (modify_assign
+              (identifier)
+              (number))
+            (continue)))))))

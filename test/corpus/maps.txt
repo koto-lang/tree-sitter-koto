@@ -11,20 +11,20 @@ map_inline
 (module
   (map)
   (map
-    (entry_inline key: (identifier))
-    (entry_inline key: (identifier))
-  )
+    (entry_inline
+      key: (identifier))
+    (entry_inline
+      key: (identifier)))
   (map
     (entry_inline
       key: (identifier)
-      value: (number)
-    )
+      value: (number))
     (entry_inline
-      key: (string (string_content))
-      value: (binary_op (number) (number))
-    )
-  )
-)
+      key: (string
+        (string_content))
+      value: (binary_op
+        (number)
+        (number)))))
 
 ===========================================================================================
 map_inline_assigned
@@ -41,11 +41,7 @@ foo =
     rhs: (map
       (entry_inline
         key: (identifier)
-        value: (number)
-      )
-    )
-  )
-)
+        value: (number)))))
 
 ===========================================================================================
 map_inline_multiline
@@ -62,18 +58,17 @@ map_inline_multiline
   (map
     (entry_inline
       key: (identifier)
-      value: (number)
-    )
+      value: (number))
     (entry_inline
-      key: (string (string_content))
-      value: (binary_op (number) (number))
-    )
+      key: (string
+        (string_content))
+      value: (binary_op
+        (number)
+        (number)))
     (entry_inline
       key: (identifier)
-      value: (string (string_content))
-    )
-  )
-)
+      value: (string
+        (string_content)))))
 
 ===========================================================================================
 map_block
@@ -90,15 +85,11 @@ return
     (map_block
       (entry_block
         key: (identifier)
-        value: (number)
-      )
+        value: (number))
       (entry_block
-        key: (string (string_content))
-        value: (number)
-      )
-    )
-  )
-)
+        key: (string
+          (string_content))
+        value: (number)))))
 
 ===========================================================================================
 map_block_nested
@@ -116,25 +107,19 @@ return
   (return
     (map_block
       (entry_block
-        key: (string (string_content))
-        value: (number)
-      )
+        key: (string
+          (string_content))
+        value: (number))
       (entry_block
         key: (identifier)
         value: (map_block
           (entry_block
             key: (identifier)
-            value: (number)
-          )
-        )
-      )
+            value: (number))))
       (entry_block
         key: (identifier)
-        value: (string (string_content))
-      )
-    )
-  )
-)
+        value: (string
+          (string_content))))))
 
 ===========================================================================================
 map_block_meta
@@ -152,19 +137,19 @@ return
     (map_block
       (entry_block
         key: (meta)
-        value: (null)
-      )
+        value: (null))
       (entry_block
-        key: (meta (test) name: (identifier))
-        value: (function (args) body: (true))
-      )
+        key: (meta
+          (test)
+          name: (identifier))
+        value: (function
+          (args)
+          body: (true)))
       (entry_block
-        key: (meta id: (meta_id) name: (identifier))
-        value: (number)
-      )
-    )
-  )
-)
+        key: (meta
+          id: (meta_id)
+          name: (identifier))
+        value: (number)))))
 
 ===========================================================================================
 map_block_call_as_value
@@ -184,9 +169,9 @@ return
         key: (identifier)
         value: (call_indented
           function: (identifier)
-          (call_arg (number)) (call_arg (number)) (call_arg (number))
-        )
-      )
-    )
-  )
-)
+          (call_arg
+            (number))
+          (call_arg
+            (number))
+          (call_arg
+            (number)))))))

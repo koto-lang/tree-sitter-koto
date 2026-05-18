@@ -12,21 +12,24 @@ a = 1, 2, 3, 4
 (module
   (assign
     lhs: (identifier)
-    rhs: (number)
-  )
+    rhs: (number))
   (multi_assign
-    lhs: (assign_targets (identifier) (identifier))
-    rhs: (identifier)
-  )
+    lhs: (assign_targets
+      (identifier)
+      (identifier))
+    rhs: (identifier))
   (assign
     lhs: (identifier)
-    rhs: (assign_expressions (identifier) (identifier))
-  )
+    rhs: (assign_expressions
+      (identifier)
+      (identifier)))
   (assign
     lhs: (identifier)
-    rhs: (assign_expressions (number) (number) (number) (number))
-  )
-)
+    rhs: (assign_expressions
+      (number)
+      (number)
+      (number)
+      (number))))
 
 ===========================================================================================
 modify_assign_of_assign
@@ -41,10 +44,7 @@ b += c = d
     (identifier)
     (assign
       lhs: (identifier)
-      rhs: (identifier)
-    )
-  )
-)
+      rhs: (identifier))))
 
 ===========================================================================================
 assignment_multi_line
@@ -60,13 +60,14 @@ foo = 1,
 (module
   (assign
     lhs: (identifier)
-    rhs: (assign_expressions (number) (number))
-  )
+    rhs: (assign_expressions
+      (number)
+      (number)))
   (assign
     lhs: (identifier)
-    rhs: (assign_expressions (number) (number))
-  )
-)
+    rhs: (assign_expressions
+      (number)
+      (number))))
 
 ===========================================================================================
 assign_to_unpacked_map
@@ -82,38 +83,30 @@ assign_to_unpacked_map
 (module
   (assign
     lhs: (unpacked_map
-      binding: (variable (identifier))
-    )
-    rhs: (identifier)
-  )
+      binding: (variable
+        (identifier)))
+    rhs: (identifier))
   (assign
     lhs: (unpacked_map
       binding: (variable
         (identifier)
-        (type (identifier))
-      )
-    )
-    rhs: (identifier)
-  )
+        (type
+          (identifier))))
+    rhs: (identifier))
   (assign
     lhs: (unpacked_map
       source: (identifier)
-      binding: (variable (identifier))
-    )
-    rhs: (identifier)
-  )
+      binding: (variable
+        (identifier)))
+    rhs: (identifier))
   (assign
     lhs: (unpacked_map
       source: (identifier)
       binding: (variable
         (identifier)
-        (type (identifier))
-      )
-    )
-    rhs: (identifier)
-  )
-)
-
+        (type
+          (identifier))))
+    rhs: (identifier)))
 
 ===========================================================================================
 let_assignment
@@ -128,19 +121,17 @@ let y: String? = 'goodbye'
   (let_assign
     (variable
       (identifier)
-      (type (identifier))
-    )
-    (string (string_content))
-  )
+      (type
+        (identifier)))
+    (string
+      (string_content)))
   (let_assign
     (variable
       (identifier)
-      (type (identifier))
-    )
-    (string (string_content))
-  )
-)
-
+      (type
+        (identifier)))
+    (string
+      (string_content))))
 
 ===========================================================================================
 test_assignment
@@ -153,12 +144,8 @@ test_assignment
 (module
   (assign
     lhs: (meta
-      (test) name: (identifier)
-    )
+      (test)
+      name: (identifier))
     rhs: (function
       (args)
-      body: (true)
-    )
-  )
-)
-
+      body: (true))))

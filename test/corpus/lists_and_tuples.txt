@@ -8,9 +8,12 @@ parenthesized
 ---
 
 (module
-  (parenthesized (number))
-  (parenthesized (tuple (element (identifier))))
-)
+  (parenthesized
+    (number))
+  (parenthesized
+    (tuple
+      (element
+        (identifier)))))
 
 ===========================================================================================
 tuple_empty
@@ -23,8 +26,7 @@ tuple_empty
 
 (module
   (tuple)
-  (tuple)
-)
+  (tuple))
 
 ===========================================================================================
 tuple_nested
@@ -36,9 +38,14 @@ tuple_nested
 
 (module
   (tuple
-    (element (identifier))
-    (element (identifier))
-    (element (tuple (element (identifier))))))
+    (element
+      (identifier))
+    (element
+      (identifier))
+    (element
+      (tuple
+        (element
+          (identifier))))))
 
 ===========================================================================================
 tuple_nested_multi_line
@@ -54,10 +61,13 @@ tuple_nested_multi_line
 
 (module
   (tuple
-    (element (identifier))
-    (element (identifier))
-    (element (parenthesized (identifier)))))
-
+    (element
+      (identifier))
+    (element
+      (identifier))
+    (element
+      (parenthesized
+        (identifier)))))
 
 ===========================================================================================
 list_multi_line
@@ -73,7 +83,10 @@ list_multi_line
 
 (module
   (list
-    (element (identifier))
-    (element (identifier))
-    (element (parenthesized (identifier)))))
-
+    (element
+      (identifier))
+    (element
+      (identifier))
+    (element
+      (parenthesized
+        (identifier)))))

@@ -378,8 +378,8 @@ static const char * const ts_symbol_names[] = {
   [sym__indent] = "_indent",
   [sym__dedent] = "_dedent",
   [sym_comment] = "comment",
-  [sym__string_start] = "_string_start",
-  [sym__string_end] = "_string_end",
+  [sym__string_start] = "string_quote",
+  [sym__string_end] = "string_quote",
   [sym__raw_string_start] = "_raw_string_start",
   [sym__raw_string_end] = "_raw_string_end",
   [sym__interpolation_start] = "_interpolation_start",
@@ -630,7 +630,7 @@ static const TSSymbol ts_symbol_map[] = {
   [sym__dedent] = sym__dedent,
   [sym_comment] = sym_comment,
   [sym__string_start] = sym__string_start,
-  [sym__string_end] = sym__string_end,
+  [sym__string_end] = sym__string_start,
   [sym__raw_string_start] = sym__raw_string_start,
   [sym__raw_string_end] = sym__raw_string_end,
   [sym__interpolation_start] = sym__interpolation_start,
@@ -1205,11 +1205,11 @@ static const TSSymbolMetadata ts_symbol_metadata[] = {
     .named = true,
   },
   [sym__string_start] = {
-    .visible = false,
+    .visible = true,
     .named = true,
   },
   [sym__string_end] = {
-    .visible = false,
+    .visible = true,
     .named = true,
   },
   [sym__raw_string_start] = {

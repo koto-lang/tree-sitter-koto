@@ -13,8 +13,7 @@ self
   (true)
   (false)
   (null)
-  (self)
-)
+  (self))
 
 ===========================================================================================
 integers
@@ -30,9 +29,9 @@ integers
 (module
   (number)
   (number)
-  (negate (number))
-  (number)
-)
+  (negate
+    (number))
+  (number))
 
 ===========================================================================================
 floats
@@ -54,9 +53,10 @@ floats
   (number)
   (number)
   (number)
-  (negate (number))
-  (negate (number))
-)
+  (negate
+    (number))
+  (negate
+    (number)))
 
 ===========================================================================================
 numbers_prefixed
@@ -75,10 +75,12 @@ numbers_prefixed
   (number)
   (number)
   (number)
-  (negate (number))
-  (negate (number))
-  (negate (number))
-)
+  (negate
+    (number))
+  (negate
+    (number))
+  (negate
+    (number)))
 
 ===========================================================================================
 ranges
@@ -92,12 +94,20 @@ ranges
 ---
 
 (module
-  (range (number) (number))
   (range
-    (binary_op (number) (number))
-    (binary_op (number) (number))
-  )
-  (range_inclusive (number) (number))
-  (range (negate (number)) (number))
-)
-
+    (number)
+    (number))
+  (range
+    (binary_op
+      (number)
+      (number))
+    (binary_op
+      (number)
+      (number)))
+  (range_inclusive
+    (number)
+    (number))
+  (range
+    (negate
+      (number))
+    (number)))

@@ -12,8 +12,7 @@ false
   (comment)
   (true)
   (comment)
-  (false)
-)
+  (false))
 
 ===========================================================================================
 comments_block
@@ -27,7 +26,8 @@ foo
 
 ---
 
-(module (comment))
+(module
+  (comment))
 
 ===========================================================================================
 comments_arent_nested
@@ -47,8 +47,7 @@ false
 
 (module
   (comment)
-  (false)
-)
+  (false))
 
 ===========================================================================================
 comments_toggle_on
@@ -60,7 +59,8 @@ assert false
 
 ---
 
-(module (comment))
+(module
+  (comment))
 
 ===========================================================================================
 comments_toggle_off
@@ -75,5 +75,4 @@ false
 (module
   (comment)
   (false)
-  (comment)
-)
+  (comment))

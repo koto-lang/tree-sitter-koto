@@ -21,8 +21,8 @@ _héllø
   (identifier)
   (identifier)
   (identifier)
-  (meta (meta_id))
-)
+  (meta
+    (meta_id)))
 
 ===========================================================================================
 comma_separated_single_line_2
@@ -35,9 +35,7 @@ true, false
 (module
   (comma_separated
     (true)
-    (false)
-  )
-)
+    (false)))
 
 ===========================================================================================
 comma_separated_single_line_3
@@ -50,10 +48,9 @@ foo, 'bar', 123
 (module
   (comma_separated
     (identifier)
-    (string (string_content))
-    (number)
-  )
-)
+    (string
+      (string_content))
+    (number)))
 
 ===========================================================================================
 comma_separated_single_line_4
@@ -65,12 +62,11 @@ comma_separated_single_line_4
 
 (module
   (comma_separated
-    (string (string_content))
+    (string
+      (string_content))
     (identifier)
     (number)
-    (identifier)
-  )
-)
+    (identifier)))
 
 ===========================================================================================
 semicolon_separated
@@ -87,14 +83,11 @@ a, b, c; 1, 2, 3
   (comma_separated
     (identifier)
     (identifier)
-    (identifier)
-  )
+    (identifier))
   (comma_separated
     (number)
     (number)
-    (number)
-  )
-)
+    (number)))
 
 ===========================================================================================
 binary_ops
@@ -112,29 +105,20 @@ w + x * y - z
       (number)
       (binary_op
         (number)
-        (number)
-      )
-    )
-    (number)
-  )
+        (number)))
+    (number))
   (binary_op
     (binary_op
       (identifier)
       (binary_op
         (identifier)
-        (identifier)
-      )
-    )
-    (identifier)
-  )
+        (identifier)))
+    (identifier))
   (binary_op
     (number)
     (binary_op
       (number)
-      (number)
-    )
-  )
-)
+      (number))))
 
 ===========================================================================================
 binary_op_multi_line_post
@@ -154,11 +138,7 @@ binary_op_multi_line_post
       (number)
       (binary_op
         (number)
-        (number)
-      )
-    )
-  )
-)
+        (number)))))
 
 ===========================================================================================
 boolean_chain
@@ -172,11 +152,8 @@ true and foo and false
   (boolean_op
     (boolean_op
       (true)
-      (identifier)
-    )
-    (false)
-  )
-)
+      (identifier))
+    (false)))
 
 ===========================================================================================
 return_indented
@@ -188,8 +165,8 @@ return
 ---
 
 (module
-  (return (identifier))
-)
+  (return
+    (identifier)))
 
 ===========================================================================================
 yield_indented
@@ -201,8 +178,8 @@ yield
 ---
 
 (module
-  (yield (identifier))
-)
+  (yield
+    (identifier)))
 
 ===========================================================================================
 debug
@@ -215,7 +192,13 @@ debug x, y
 ---
 
 (module
-  (debug (identifier))
-  (debug (binary_op (number) (number)))
-  (debug (comma_separated (identifier) (identifier)))
-)
+  (debug
+    (identifier))
+  (debug
+    (binary_op
+      (number)
+      (number)))
+  (debug
+    (comma_separated
+      (identifier)
+      (identifier))))

@@ -14,33 +14,45 @@ from foo import bar as x, baz as y
 
 (module
   (import
-    (import_item (identifier))
-  )
+    (import_item
+      (identifier)))
   (import
-    (import_item (identifier) (identifier))
-  )
+    (import_item
+      (identifier)
+      (identifier)))
   (import
-    (import_module (identifier))
-    (import_item (string (string_content)))
-  )
+    (import_module
+      (identifier))
+    (import_item
+      (string
+        (string_content))))
   (import
-    (import_module (identifier))
-  )
+    (import_module
+      (identifier)))
   (import
-    (import_module (identifier) (identifier))
-    (import_item (identifier))
-    (import_item (string (string_content)))
-  )
+    (import_module
+      (identifier)
+      (identifier))
+    (import_item
+      (identifier))
+    (import_item
+      (string
+        (string_content))))
   (import
-    (import_module (string (string_content)))
-    (import_item (identifier))
-  )
+    (import_module
+      (string
+        (string_content)))
+    (import_item
+      (identifier)))
   (import
-    (import_module (identifier))
-    (import_item (identifier) (identifier))
-    (import_item (identifier) (identifier))
-  )
-)
+    (import_module
+      (identifier))
+    (import_item
+      (identifier)
+      (identifier))
+    (import_item
+      (identifier)
+      (identifier))))
 
 ===========================================================================================
 import_with_three_items
@@ -52,10 +64,11 @@ from foo import a, b, c
 
 (module
   (import
-    (import_module (identifier))
-    (import_item (identifier))
-    (import_item (identifier))
-    (import_item (identifier))
-  )
-)
-
+    (import_module
+      (identifier))
+    (import_item
+      (identifier))
+    (import_item
+      (identifier))
+    (import_item
+      (identifier))))

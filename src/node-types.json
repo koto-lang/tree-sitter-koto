@@ -6253,7 +6253,7 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": false,
       "types": [
         {
@@ -6262,6 +6262,10 @@
         },
         {
           "type": "string_content",
+          "named": true
+        },
+        {
+          "type": "string_quote",
           "named": true
         }
       ]
@@ -8165,6 +8169,10 @@
   },
   {
     "type": "self",
+    "named": true
+  },
+  {
+    "type": "string_quote",
     "named": true
   },
   {

@@ -10,17 +10,20 @@ a.b.c.d.e.f
 (module
   (chain
     start: (identifier)
-    (lookup (identifier))
-  )
+    (lookup
+      (identifier)))
   (chain
     start: (identifier)
-    (lookup (identifier))
-    (lookup (identifier))
-    (lookup (identifier))
-    (lookup (identifier))
-    (lookup (identifier))
-  )
-)
+    (lookup
+      (identifier))
+    (lookup
+      (identifier))
+    (lookup
+      (identifier))
+    (lookup
+      (identifier))
+    (lookup
+      (identifier))))
 
 ===========================================================================================
 index_chain_1
@@ -34,14 +37,13 @@ a[1..]
 (module
   (chain
     start: (identifier)
-    (index (number))
-  )
+    (index
+      (number)))
   (chain
     start: (identifier)
-    (index (range_from (number)))
-  )
-)
-
+    (index
+      (range_from
+        (number)))))
 
 ===========================================================================================
 index_chain_3
@@ -54,11 +56,12 @@ a[1][2][3]
 (module
   (chain
     start: (identifier)
-    (index (number))
-    (index (number))
-    (index (number))
-  )
-)
+    (index
+      (number))
+    (index
+      (number))
+    (index
+      (number))))
 
 ===========================================================================================
 call_without_parens_1_single_line
@@ -74,26 +77,24 @@ f || 99
 (module
   (call
     function: (identifier)
-    (call_arg (identifier))
-  )
+    (call_arg
+      (identifier)))
   (call
     function: (identifier)
-    (call_arg (identifier) (ellipsis))
-  )
+    (call_arg
+      (identifier)
+      (ellipsis)))
   (call
     function: (identifier)
-    (call_arg (negate (number)))
-  )
+    (call_arg
+      (negate
+        (number))))
   (call
     function: (identifier)
     (call_arg
       (function
         (args)
-        body: (number)
-      )
-    )
-  )
-)
+        body: (number)))))
 
 ===========================================================================================
 call_without_parens_2_single_line
@@ -106,9 +107,10 @@ f x, y
 (module
   (call
     function: (identifier)
-    (call_arg (identifier)) (call_arg (identifier))
-  )
-)
+    (call_arg
+      (identifier))
+    (call_arg
+      (identifier))))
 
 ===========================================================================================
 call_without_parens_3_single_line
@@ -121,9 +123,12 @@ f 1, 2, 3
 (module
   (call
     function: (identifier)
-    (call_arg (number)) (call_arg (number)) (call_arg (number))
-  )
-)
+    (call_arg
+      (number))
+    (call_arg
+      (number))
+    (call_arg
+      (number))))
 
 ===========================================================================================
 call_without_parens_1_indented
@@ -137,9 +142,8 @@ f
 (module
   (call_indented
     function: (identifier)
-    (call_arg (identifier))
-  )
-)
+    (call_arg
+      (identifier))))
 
 ===========================================================================================
 call_without_parens_3_indented
@@ -155,10 +159,12 @@ f
 (module
   (call_indented
     function: (identifier)
-    (call_arg (number)) (call_arg (number)) (call_arg (number))
-  )
-)
-
+    (call_arg
+      (number))
+    (call_arg
+      (number))
+    (call_arg
+      (number))))
 
 ===========================================================================================
 call_without_parens_nested
@@ -174,11 +180,10 @@ f g 1, 2
     (call_arg
       (call
         function: (identifier)
-        (call_arg (number)) (call_arg (number))
-      )
-    )
-  )
-)
+        (call_arg
+          (number))
+        (call_arg
+          (number))))))
 
 ===========================================================================================
 call_with_parenthesized_call_as_arg
@@ -196,23 +201,17 @@ f (g -1)
       (parenthesized
         (call
           function: (identifier)
-          (call_arg (number))
-        )
-      )
-    )
-  )
+          (call_arg
+            (number))))))
   (call
     function: (identifier)
     (call_arg
       (parenthesized
         (call
           function: (identifier)
-          (call_arg (negate (number)))
-        )
-      )
-    )
-  )
-)
+          (call_arg
+            (negate
+              (number))))))))
 
 ===========================================================================================
 call_with_parens
@@ -227,12 +226,12 @@ f(g(1, 2)...)
 (module
   (chain
     start: (identifier)
-    (call_args)
-  )
+    (call_args))
   (chain
     start: (identifier)
-    (call_args (call_arg (identifier)))
-  )
+    (call_args
+      (call_arg
+        (identifier))))
   (chain
     start: (identifier)
     (call_args
@@ -240,15 +239,11 @@ f(g(1, 2)...)
         (chain
           start: (identifier)
           (call_args
-            (call_arg (number))
-            (call_arg (number))
-          )
-        )
-        (ellipsis)
-      )
-    )
-  )
-)
+            (call_arg
+              (number))
+            (call_arg
+              (number))))
+        (ellipsis)))))
 
 ===========================================================================================
 call_after_lookup_without_parens
@@ -263,19 +258,23 @@ f.g.h x, y, z
   (call
     function: (chain
       start: (identifier)
-      (lookup (identifier))
-    )
-    (call_arg (identifier))
-  )
+      (lookup
+        (identifier)))
+    (call_arg
+      (identifier)))
   (call
     function: (chain
       start: (identifier)
-      (lookup (identifier))
-      (lookup (identifier))
-    )
-    (call_arg (identifier)) (call_arg (identifier)) (call_arg (identifier))
-  )
-)
+      (lookup
+        (identifier))
+      (lookup
+        (identifier)))
+    (call_arg
+      (identifier))
+    (call_arg
+      (identifier))
+    (call_arg
+      (identifier))))
 
 ===========================================================================================
 call_after_lookup_with_parens
@@ -289,16 +288,24 @@ f.g.h(x, y, z)
 (module
   (chain
     start: (identifier)
-    (lookup (identifier))
-    (call_args (call_arg (identifier)))
-  )
+    (lookup
+      (identifier))
+    (call_args
+      (call_arg
+        (identifier))))
   (chain
     start: (identifier)
-    (lookup (identifier))
-    (lookup (identifier))
-    (call_args (call_arg (identifier)) (call_arg (identifier)) (call_arg (identifier)))
-  )
-)
+    (lookup
+      (identifier))
+    (lookup
+      (identifier))
+    (call_args
+      (call_arg
+        (identifier))
+      (call_arg
+        (identifier))
+      (call_arg
+        (identifier)))))
 
 ===========================================================================================
 paren_free_call_inside_parenthesized_call
@@ -311,17 +318,18 @@ f.g(a 0, 1, 2)
 (module
   (chain
     start: (identifier)
-    (lookup (identifier))
+    (lookup
+      (identifier))
     (call_args
       (call_arg
         (call
           function: (identifier)
-          (call_arg (number)) (call_arg (number)) (call_arg (number))
-        )
-      )
-    )
-  )
-)
+          (call_arg
+            (number))
+          (call_arg
+            (number))
+          (call_arg
+            (number)))))))
 
 ===========================================================================================
 dots_and_calls_single_line
@@ -336,23 +344,24 @@ a.b().c()
 (module
   (chain
     start: (identifier)
-    (lookup (identifier))
-    (call_args)
-  )
+    (lookup
+      (identifier))
+    (call_args))
   (chain
     start: (identifier)
-    (lookup (identifier))
+    (lookup
+      (identifier))
     (call_args)
-    (lookup (identifier))
-  )
+    (lookup
+      (identifier)))
   (chain
     start: (identifier)
-    (lookup (identifier))
+    (lookup
+      (identifier))
     (call_args)
-    (lookup (identifier))
-    (call_args)
-  )
-)
+    (lookup
+      (identifier))
+    (call_args)))
 
 ===========================================================================================
 dots_and_calls_multi_line
@@ -367,10 +376,9 @@ foo
   (chain
     start: (identifier)
     (ERROR)
-    (lookup (identifier))
-    (call_args)
-  )
-)
+    (lookup
+      (identifier))
+    (call_args)))
 
 ===========================================================================================
 null_check
@@ -384,6 +392,5 @@ foo?.bar
   (chain
     start: (identifier)
     (null_check)
-    (lookup (identifier))
-  )
-)
+    (lookup
+      (identifier))))

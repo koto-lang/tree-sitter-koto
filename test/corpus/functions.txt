@@ -9,18 +9,20 @@ function_without_body
 ---
 
 (module
-  (function (args))
+  (function
+    (args))
   (function
     (args
-      (arg (variable (identifier)))
-      (arg (variable (identifier)))
-    )
-  )
+      (arg
+        (variable
+          (identifier)))
+      (arg
+        (variable
+          (identifier)))))
   (function
     (args)
-    (type (identifier))
-  )
-)
+    (type
+      (identifier))))
 
 ===========================================================================================
 function_inline
@@ -34,17 +36,21 @@ function_inline
 (module
   (function
     (args)
-    body: (null)
-  )
+    body: (null))
   (function
     (args
-      (arg (variable (identifier)))
-      (arg (variable (identifier)))
-      (arg (variable (identifier)))
-    )
-    body: (binary_op (number) (number))
-  )
-)
+      (arg
+        (variable
+          (identifier)))
+      (arg
+        (variable
+          (identifier)))
+      (arg
+        (variable
+          (identifier))))
+    body: (binary_op
+      (number)
+      (number))))
 
 ===========================================================================================
 function_with_default_arg
@@ -58,20 +64,38 @@ function_with_default_arg
 (module
   (function
     (args
-      (arg (variable (identifier)) (default (number)))
-    )
-    body: (null)
-  )
+      (arg
+        (variable
+          (identifier))
+        (default
+          (number))))
+    body: (null))
   (function
     (args
-      (arg (variable (identifier)) (default (list)))
-      (arg (variable (identifier)) (default (string (string_content))))
-      (arg (variable (identifier)) (default (true)))
-      (arg (variable (identifier)) (default (range (number) (number))))
-    )
-    body: (null)
-  )
-)
+      (arg
+        (variable
+          (identifier))
+        (default
+          (list)))
+      (arg
+        (variable
+          (identifier))
+        (default
+          (string
+            (string_content))))
+      (arg
+        (variable
+          (identifier))
+        (default
+          (true)))
+      (arg
+        (variable
+          (identifier))
+        (default
+          (range
+            (number)
+            (number)))))
+    body: (null)))
 
 ===========================================================================================
 function_block
@@ -89,24 +113,33 @@ function_block
 (module
   (function
     (args)
-    body: (block (true))
-  )
+    body: (block
+      (true)))
   (function
     (args
-      (arg (variable (identifier)))
-      (arg (variable (identifier)))
-    )
-    (type (identifier))
-    body: (block (binary_op (identifier) (identifier)))
-  )
+      (arg
+        (variable
+          (identifier)))
+      (arg
+        (variable
+          (identifier))))
+    (type
+      (identifier))
+    body: (block
+      (binary_op
+        (identifier)
+        (identifier))))
   (function
     (args
-      (arg (variable (identifier)))
-    )
-    (type (identifier))
-    body: (block (binary_op (identifier) (identifier)))
-  )
-)
+      (arg
+        (variable
+          (identifier))))
+    (type
+      (identifier))
+    body: (block
+      (binary_op
+        (identifier)
+        (identifier)))))
 
 ===========================================================================================
 variadic_function
@@ -119,13 +152,15 @@ variadic_function
 (module
   (function
     (args
-      (arg (variable (identifier)))
-      (arg (variable (identifier)))
-      (arg (ellipsis))
-    )
-    body: (true)
-  )
-)
+      (arg
+        (variable
+          (identifier)))
+      (arg
+        (variable
+          (identifier)))
+      (arg
+        (ellipsis)))
+    body: (true)))
 
 ===========================================================================================
 unpacked_tuple_with_default
@@ -138,23 +173,24 @@ unpacked_tuple_with_default
 (module
   (function
     (args
-      (arg (variable (identifier)))
+      (arg
+        (variable
+          (identifier)))
       (arg
         (tuple
-          (arg (variable (identifier)))
-          (arg (identifier) (ellipsis))
-        )
+          (arg
+            (variable
+              (identifier)))
+          (arg
+            (identifier)
+            (ellipsis)))
         (default
           (tuple
-            (element (number))
-            (element (number))
-          )
-        )
-      )
-    )
-    body: (true)
-  )
-)
+            (element
+              (number))
+            (element
+              (number))))))
+    body: (true)))
 
 ===========================================================================================
 unpacked_list_with_unpacked_tuple
@@ -167,17 +203,17 @@ unpacked_list_with_unpacked_tuple
 (module
   (function
     (args
-      (arg (list
-        (arg (ellipsis) (identifier))
-        (arg (tuple
-          (arg (ellipsis) (identifier))
-        ))
-      ))
-    )
-    body: (true)
-  )
-)
-
+      (arg
+        (list
+          (arg
+            (ellipsis)
+            (identifier))
+          (arg
+            (tuple
+              (arg
+                (ellipsis)
+                (identifier)))))))
+    body: (true)))
 
 ===========================================================================================
 unpacked_map
@@ -190,11 +226,8 @@ unpacked_map
 (module
   (function
     (args
-      (arg (map
-        binding: (variable (identifier))
-      ))
-    )
-    body: (true)
-  )
-)
-
+      (arg
+        (map
+          binding: (variable
+            (identifier)))))
+    body: (true)))

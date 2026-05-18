@@ -625,9 +625,9 @@ module.exports = grammar({
 
     string: $ => choice(
       seq(
-        $._string_start,
+        alias($._string_start, $.string_quote),
         optional($.string_content),
-        $._string_end,
+        alias($._string_end, $.string_quote),
       ),
       seq(
         $._raw_string_start,

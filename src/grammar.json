@@ -3097,8 +3097,13 @@
           "type": "SEQ",
           "members": [
             {
-              "type": "SYMBOL",
-              "name": "_string_start"
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_string_start"
+              },
+              "named": true,
+              "value": "string_quote"
             },
             {
               "type": "CHOICE",
@@ -3113,8 +3118,13 @@
               ]
             },
             {
-              "type": "SYMBOL",
-              "name": "_string_end"
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_string_end"
+              },
+              "named": true,
+              "value": "string_quote"
             }
           ]
         },

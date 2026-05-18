@@ -10,10 +10,7 @@ export foo = 99
   (export
     (assign
       (identifier)
-      (number)
-    )
-  )
-)
+      (number))))
 
 ===========================================================================================
 export_let
@@ -28,12 +25,9 @@ export let foo: Number = 99
     (let_assign
       (variable
         (identifier)
-        (type (identifier))
-      )
-      (number)
-    )
-  )
-)
+        (type
+          (identifier)))
+      (number))))
 
 ===========================================================================================
 export_map_inline
@@ -46,11 +40,10 @@ export { foo, bar }
 (module
   (export
     (map
-      (entry_inline key: (identifier))
-      (entry_inline key: (identifier))
-    )
-  )
-)
+      (entry_inline
+        key: (identifier))
+      (entry_inline
+        key: (identifier)))))
 
 ===========================================================================================
 export_map_block
@@ -71,30 +64,23 @@ export
     (map_block
       (entry_block
         key: (identifier)
-        value: (number)
-      )
+        value: (number))
       (entry_block
-        key: (string (string_content))
-        value: (number)
-      )
-    )
-  )
+        key: (string
+          (string_content))
+        value: (number))))
   (export
     (map_block
       (entry_block
-        key: (meta id: (meta_id))
+        key: (meta
+          id: (meta_id))
         value: (function
           (args)
-          body: (true)
-        )
-      )
+          body: (true)))
       (entry_block
-        key: (meta (test) name: (identifier))
+        key: (meta
+          (test)
+          name: (identifier))
         value: (function
           (args)
-          body: (true)
-        )
-      )
-    )
-  )
-)
+          body: (true))))))
