@@ -22,6 +22,10 @@ enum TokenType {
   RAW_STRING_END,
   INTERPOLATION_START,
   INTERPOLATION_END,
+  OPERATOR_CONTINUATION_ADD,
+  OPERATOR_CONTINUATION_MULTIPLY,
+  OPERATOR_CONTINUATION_POWER,
+  OPERATOR_CONTINUATION_COMPARISON,
   ERROR_SENTINEL,
 };
 
@@ -147,6 +151,45 @@ static void consume_comment(TSLexer* lexer) {
       advance(lexer);
     }
   }
+}
+
+static bool accept_operator_continuation(TSLexer* lexer, enum TokenType symbol) {
+  lexer->result_symbol = symbol;
+  lexer->mark_end(lexer);
+  return true;
+}
+
+static bool scan_operator_continuation(TSLexer* lexer, const bool* valid_symbols) {
+  switch (lexer->lookahead) {
+  case '-':
+  case '+':
+    if (valid_symbols[OPERATOR_CONTINUATION_ADD]) {
+      return accept_operator_continuation(lexer, OPERATOR_CONTINUATION_ADD);
+    }
+    break;
+  case '*':
+  case '/':
+  case '%':
+    if (valid_symbols[OPERATOR_CONTINUATION_MULTIPLY]) {
+      return accept_operator_continuation(lexer, OPERATOR_CONTINUATION_MULTIPLY);
+    }
+    break;
+  case '^':
+    if (valid_symbols[OPERATOR_CONTINUATION_POWER]) {
+      return accept_operator_continuation(lexer, OPERATOR_CONTINUATION_POWER);
+    }
+    break;
+  case '!':
+  case '=':
+  case '>':
+  case '<':
+    if (valid_symbols[OPERATOR_CONTINUATION_COMPARISON]) {
+      return accept_operator_continuation(lexer, OPERATOR_CONTINUATION_COMPARISON);
+    }
+    break;
+  }
+
+  return false;
 }
 
 bool tree_sitter_koto_external_scanner_scan(
@@ -307,6 +350,21 @@ bool tree_sitter_koto_external_scanner_scan(
 
   // Mark the end after checking for dedents
   lexer->mark_end(lexer);
+
+  // Allow expressions to continue across lines when the following line starts
+  // with an operator, e.g.:
+  //
+  //   1
+  //     + 2
+  //
+  // The continuation token identifies the operator precedence group, which lets
+  // the grammar keep using its normal operator tokens.
+  if (
+      has_newline && column > current_indent
+      && scan_operator_continuation(lexer, valid_symbols)) {
+    printf(">>>> operator continuation\n");
+    return true;
+  }
 
   // Handle indent
   if (valid_symbols[INDENT] && has_newline && column > current_indent) {

@@ -40,6 +40,10 @@ module.exports = grammar({
     $._raw_string_end,
     $._interpolation_start,
     $._interpolation_end,
+    $._operator_continuation_add,
+    $._operator_continuation_multiply,
+    $._operator_continuation_power,
+    $._operator_continuation_comparison,
     $.error_sentinel,
   ],
 
@@ -380,26 +384,22 @@ module.exports = grammar({
     ),
 
     binary_op: $ => choice(
-      binary_op($, '-', prec.left, PREC.add),
-      binary_op($, '+', prec.left, PREC.add),
-      binary_op($, '*', prec.left, PREC.multiply),
-      binary_op($, '/', prec.left, PREC.multiply),
-      binary_op($, '%', prec.left, PREC.multiply),
-      binary_op($, '^', prec.right, PREC.power),
+      binary_op($, choice('-', '+'), $._operator_continuation_add, prec.left, PREC.add),
+      binary_op($, choice('*', '/', '%'), $._operator_continuation_multiply, prec.left, PREC.multiply),
+      binary_op($, '^', $._operator_continuation_power, prec.right, PREC.power),
     ),
 
-    comparison_op: $ => choice(
-      binary_op($, '!=', prec.left, PREC.comparison),
-      binary_op($, '==', prec.left, PREC.comparison),
-      binary_op($, '>', prec.left, PREC.comparison),
-      binary_op($, '>=', prec.left, PREC.comparison),
-      binary_op($, '<', prec.left, PREC.comparison),
-      binary_op($, '<=', prec.left, PREC.comparison),
+    comparison_op: $ => binary_op(
+      $,
+      choice('!=', '==', '>=', '>', '<=', '<'),
+      $._operator_continuation_comparison,
+      prec.left,
+      PREC.comparison,
     ),
 
     boolean_op: $ => choice(
-      binary_op($, 'and', prec.left, PREC.and),
-      binary_op($, 'or', prec.left, PREC.or),
+      binary_op($, 'and', null, prec.left, PREC.and),
+      binary_op($, 'or', null, prec.left, PREC.or),
     ),
 
     range: $ => prec.left(PREC.range, seq(
@@ -977,16 +977,20 @@ function assign_op($, operator, precedence_fn) {
   ));
 }
 
-function binary_op($, operator, precedence_fn, precedence) {
+function binary_op($, operator, operator_continuation, precedence_fn, precedence) {
+  const operator_token = operator_continuation == null
+    ? operator
+    : choice(operator, seq(operator_continuation, operator));
+
   return precedence_fn(precedence, seq(
     $._term_ext,
     choice(
       seq(
-        operator,
+        operator_token,
         $._term_ext,
       ),
       seq(
-        operator,
+        operator_token,
         $._indent,
         $._term_ext,
         $._dedent,
