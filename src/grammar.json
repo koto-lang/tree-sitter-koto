@@ -618,6 +618,44 @@
                 }
               ]
             }
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": ","
+                  },
+                  {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "SYMBOL",
+                        "name": "_newline"
+                      },
+                      {
+                        "type": "BLANK"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "_call_map_block_arg"
+                    },
+                    "named": true,
+                    "value": "call_arg"
+                  }
+                ]
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
           }
         ]
       }
@@ -4546,6 +4584,10 @@
           ]
         }
       ]
+    },
+    "_call_map_block_arg": {
+      "type": "SYMBOL",
+      "name": "map_block"
     }
   },
   "extras": [

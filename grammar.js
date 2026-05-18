@@ -242,6 +242,11 @@ module.exports = grammar({
           $.call_arg,
         ),
       ),
+      optional(seq(
+        ',',
+        optional($._newline),
+        alias($._call_map_block_arg, $.call_arg),
+      )),
     )),
 
     call_arg: $ => choice(
@@ -952,6 +957,8 @@ module.exports = grammar({
         /u\{[0-9a-fA-F]{1,6}\}/,
       )
     ),
+
+    _call_map_block_arg: $ => $.map_block,
   }
 });
 

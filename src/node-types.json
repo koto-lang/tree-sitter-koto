@@ -826,6 +826,10 @@
           "named": true
         },
         {
+          "type": "map_block",
+          "named": true
+        },
+        {
           "type": "meta",
           "named": true
         },
