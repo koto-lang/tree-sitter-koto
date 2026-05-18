@@ -187,3 +187,56 @@ return
             (number))
           (call_arg
             (number)))))))
+
+===========================================================================================
+map_block_single_entry_tuple_without_parentheses
+===========================================================================================
+
+return
+  foo: 1,
+  bar: 99
+---
+
+(module
+  (return
+    (map_block
+      (entry_block
+        key: (identifier)
+        value: (comma_separated
+          (number)
+        )
+      )
+      (entry_block
+        key: (identifier)
+        value: (number)
+      )
+    )
+  )
+)
+
+===========================================================================================
+map_block_tuple_without_parentheses
+===========================================================================================
+
+return
+  foo: 1, 2,
+  bar: baz
+---
+
+(module
+  (return
+    (map_block
+      (entry_block
+        key: (identifier)
+        value: (comma_separated
+          (number)
+          (number)
+        )
+      )
+      (entry_block
+        key: (identifier)
+        value: (identifier)
+      )
+    )
+  )
+)

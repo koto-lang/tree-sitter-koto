@@ -2966,6 +2966,15 @@
             "type": "CHOICE",
             "members": [
               {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_map_block_tuple_value"
+                },
+                "named": true,
+                "value": "comma_separated"
+              },
+              {
                 "type": "SYMBOL",
                 "name": "_line_or_block"
               },
@@ -4588,6 +4597,27 @@
     "_call_map_block_arg": {
       "type": "SYMBOL",
       "name": "map_block"
+    },
+    "_map_block_tuple_value": {
+      "type": "PREC",
+      "value": 1,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "_expression"
+          },
+          {
+            "type": "STRING",
+            "value": ","
+          },
+          {
+            "type": "SYMBOL",
+            "name": "_newline"
+          }
+        ]
+      }
     }
   },
   "extras": [

@@ -589,6 +589,7 @@ module.exports = grammar({
       field('key', $._map_key),
       ':',
       field('value', choice(
+        alias($._map_block_tuple_value, $.comma_separated),
         $._line_or_block,
         $.call_indented,
         $.map_block,
@@ -959,6 +960,12 @@ module.exports = grammar({
     ),
 
     _call_map_block_arg: $ => $.map_block,
+
+    _map_block_tuple_value: $ => prec(PREC.comma, seq(
+      $._expression,
+      ',',
+      $._newline,
+    )),
   }
 });
 
