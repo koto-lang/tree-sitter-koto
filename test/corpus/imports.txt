@@ -25,7 +25,9 @@ from foo import bar as x, baz as y
       (identifier))
     (import_item
       (string
-        (string_content))))
+        (string_quote)
+        (string_content)
+        (string_quote))))
   (import
     (import_module
       (identifier)))
@@ -37,11 +39,15 @@ from foo import bar as x, baz as y
       (identifier))
     (import_item
       (string
-        (string_content))))
+        (string_quote)
+        (string_content)
+        (string_quote))))
   (import
     (import_module
       (string
-        (string_content)))
+        (string_quote)
+        (string_content)
+        (string_quote)))
     (import_item
       (identifier)))
   (import

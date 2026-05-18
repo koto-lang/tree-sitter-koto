@@ -21,7 +21,9 @@ map_inline
       value: (number))
     (entry_inline
       key: (string
-        (string_content))
+        (string_quote)
+        (string_content)
+        (string_quote))
       value: (binary_op
         (number)
         (number)))))
@@ -61,14 +63,18 @@ map_inline_multiline
       value: (number))
     (entry_inline
       key: (string
-        (string_content))
+        (string_quote)
+        (string_content)
+        (string_quote))
       value: (binary_op
         (number)
         (number)))
     (entry_inline
       key: (identifier)
       value: (string
-        (string_content)))))
+        (string_quote)
+        (string_content)
+        (string_quote)))))
 
 ===========================================================================================
 map_block
@@ -88,7 +94,9 @@ return
         value: (number))
       (entry_block
         key: (string
-          (string_content))
+          (string_quote)
+          (string_content)
+          (string_quote))
         value: (number)))))
 
 ===========================================================================================
@@ -108,7 +116,9 @@ return
     (map_block
       (entry_block
         key: (string
-          (string_content))
+          (string_quote)
+          (string_content)
+          (string_quote))
         value: (number))
       (entry_block
         key: (identifier)
@@ -119,7 +129,9 @@ return
       (entry_block
         key: (identifier)
         value: (string
-          (string_content))))))
+          (string_quote)
+          (string_content)
+          (string_quote))))))
 
 ===========================================================================================
 map_block_meta

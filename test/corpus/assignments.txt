@@ -124,14 +124,18 @@ let y: String? = 'goodbye'
       (type
         (identifier)))
     (string
-      (string_content)))
+      (string_quote)
+      (string_content)
+      (string_quote)))
   (let_assign
     (variable
       (identifier)
       (type
         (identifier)))
     (string
-      (string_content))))
+      (string_quote)
+      (string_content)
+      (string_quote))))
 
 ===========================================================================================
 test_assignment

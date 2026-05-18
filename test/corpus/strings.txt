@@ -12,17 +12,29 @@ string_single_line
 ---
 
 (module
-  (string)
   (string
-    (string_content))
+    (string_quote)
+    (string_quote))
   (string
-    (string_content))
+    (string_quote)
+    (string_content)
+    (string_quote))
   (string
-    (string_content))
+    (string_quote)
+    (string_content)
+    (string_quote))
   (string
-    (string_content))
+    (string_quote)
+    (string_content)
+    (string_quote))
   (string
-    (string_content)))
+    (string_quote)
+    (string_content)
+    (string_quote))
+  (string
+    (string_quote)
+    (string_content)
+    (string_quote)))
 
 ===========================================================================================
 string_multi_line
@@ -39,9 +51,13 @@ string"
 
 (module
   (string
-    (string_content))
+    (string_quote)
+    (string_content)
+    (string_quote))
   (string
-    (string_content)))
+    (string_quote)
+    (string_content)
+    (string_quote)))
 
 ===========================================================================================
 string_interpolated
@@ -55,22 +71,28 @@ string_interpolated
 
 (module
   (string
+    (string_quote)
     (string_content
       (interpolation
-        (identifier))))
+        (identifier)))
+    (string_quote))
   (string
+    (string_quote)
     (string_content
       (interpolation
         (comma_separated
           (identifier)
-          (identifier)))))
+          (identifier))))
+    (string_quote))
   (string
+    (string_quote)
     (string_content
       (interpolation
         (comma_separated
           (identifier)
           (comment)
-          (identifier))))))
+          (identifier))))
+    (string_quote)))
 
 ===========================================================================================
 format_string_in_interpolated_expression
@@ -84,26 +106,32 @@ format_string_in_interpolated_expression
 
 (module
   (string
+    (string_quote)
     (string_content
       (interpolation
         (identifier)
         (format
-          (number)))))
+          (number))))
+    (string_quote))
   (string
+    (string_quote)
     (string_content
       (interpolation
         (identifier)
         (format
           (alignment)
-          (number)))))
+          (number))))
+    (string_quote))
   (string
+    (string_quote)
     (string_content
       (interpolation
         (identifier)
         (format
           (fill_char)
           (alignment)
-          (number))))))
+          (number))))
+    (string_quote)))
 
 ===========================================================================================
 escapes
@@ -122,32 +150,44 @@ escapes
 
 (module
   (string
+    (string_quote)
     (string_content
       (escape)
       (escape)
       (escape)
       (escape)
-      (escape)))
+      (escape))
+    (string_quote))
   (string
+    (string_quote)
     (string_content
       (escape)
       (escape)
-      (escape)))
+      (escape))
+    (string_quote))
   (string
+    (string_quote)
     (string_content
       (escape)
-      (escape)))
+      (escape))
+    (string_quote))
   (string
+    (string_quote)
     (string_content
       (escape)
-      (escape)))
+      (escape))
+    (string_quote))
   (string
+    (string_quote)
     (string_content
       (escape)
-      (escape)))
+      (escape))
+    (string_quote))
   (string
+    (string_quote)
     (string_content
-      (escape))))
+      (escape))
+    (string_quote)))
 
 ===========================================================================================
 raw_strings
@@ -181,7 +221,11 @@ incomplete_string_interpolation
 
 (module
   (string
+    (string_quote)
     (string_content
-      (interpolation)))
+      (interpolation))
+    (string_quote))
   (ERROR
-    (ERROR)))
+    (string_quote)
+    (ERROR
+      (string_quote))))

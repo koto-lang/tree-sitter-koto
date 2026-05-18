@@ -107,4 +107,6 @@ catch error
       (block
         (number))))
   (string
-    (string_content)))
+    (string_quote)
+    (string_content)
+    (string_quote)))

@@ -82,7 +82,9 @@ function_with_default_arg
           (identifier))
         (default
           (string
-            (string_content))))
+            (string_quote)
+            (string_content)
+            (string_quote))))
       (arg
         (variable
           (identifier))

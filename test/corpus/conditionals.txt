@@ -19,9 +19,13 @@ if a == b then 'hello' else 'bye'
       (identifier)
       (identifier))
     then: (string
-      (string_content))
+      (string_quote)
+      (string_content)
+      (string_quote))
     else: (string
-      (string_content))))
+      (string_quote)
+      (string_content)
+      (string_quote))))
 
 ===========================================================================================
 if_multi_line
@@ -58,7 +62,9 @@ else
     (else
       (block
         (string
-          (string_content))))))
+          (string_quote)
+          (string_content)
+          (string_quote))))))
 
 ===========================================================================================
 if_nested
@@ -104,7 +110,9 @@ else
       condition: (true)
       then: (block
         (string
-          (string_content))))
+          (string_quote)
+          (string_content)
+          (string_quote))))
     (else
       (block
         (identifier)))))
@@ -142,7 +150,9 @@ switch
         (identifier)
         (number))
       then: (string
-        (string_content)))))
+        (string_quote)
+        (string_content)
+        (string_quote)))))
 
 ===========================================================================================
 switch_simple_arms
@@ -201,7 +211,9 @@ switch
         (number))
       then: (block
         (string
-          (string_content))
+          (string_quote)
+          (string_content)
+          (string_quote))
         (number)))
     (switch_else
       (block
@@ -285,7 +297,9 @@ match foo
     (match_arm
       (match_patterns
         (string
-          (string_content)))
+          (string_quote)
+          (string_content)
+          (string_quote)))
       then: (number))
     (match_arm
       (match_patterns
@@ -360,7 +374,9 @@ match foo, bar
     (match_arm
       (match_patterns
         (string
-          (string_content)))
+          (string_quote)
+          (string_content)
+          (string_quote)))
       then: (block
         (identifier)))
     (match_arm
@@ -372,4 +388,6 @@ match foo, bar
     (match_else
       (block
         (string
-          (string_content))))))
+          (string_quote)
+          (string_content)
+          (string_quote))))))

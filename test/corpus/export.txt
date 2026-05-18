@@ -67,7 +67,9 @@ export
         value: (number))
       (entry_block
         key: (string
-          (string_content))
+          (string_quote)
+          (string_content)
+          (string_quote))
         value: (number))))
   (export
     (map_block
