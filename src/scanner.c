@@ -15,7 +15,7 @@ enum TokenType {
   NEWLINE,
   INDENT,
   DEDENT,
-  COMMENT,
+  PLAIN_COMMENT,
   STRING_START,
   STRING_END,
   RAW_STRING_START,
@@ -26,6 +26,11 @@ enum TokenType {
   OPERATOR_CONTINUATION_MULTIPLY,
   OPERATOR_CONTINUATION_POWER,
   OPERATOR_CONTINUATION_COMPARISON,
+  TAGGED_LINE_COMMENT_START,
+  TAGGED_LINE_COMMENT_CONTENT,
+  TAGGED_COMMENT_START,
+  TAGGED_COMMENT_INLINE_CONTENT,
+  TAGGED_COMMENT_MULTILINE_CONTENT,
   ERROR_SENTINEL,
 };
 
@@ -135,22 +140,135 @@ static void consume_multiline_comment(TSLexer* lexer) {
   }
 }
 
-static void consume_comment(TSLexer* lexer) {
-  assert(lexer->lookahead == '#');
+static bool scan_comment(
+    TSLexer* lexer,
+    const bool* valid_symbols,
+    bool at_line_start) {
+  if (lexer->lookahead != '#') {
+    return false;
+  }
+
   advance(lexer);
 
-  if (lexer->lookahead == '-') {
+  if (lexer->lookahead == '[') {
+    if (valid_symbols[TAGGED_LINE_COMMENT_START]) {
+      advance(lexer);
+      lexer->mark_end(lexer);
+      lexer->result_symbol = TAGGED_LINE_COMMENT_START;
+      return true;
+    }
+
+    // `#[` is reserved for structured tagged line comments. In positions
+    // where one isn't valid, don't discard its tag semantics as a plain
+    // comment.
+    return false;
+  } else if (lexer->lookahead == '-') {
     advance(lexer);
-    consume_multiline_comment(lexer);
-  } else {
-    while (!lexer->eof(lexer)) {
-      switch (lexer->lookahead) {
-      case '\n':
-        return;
+
+    if (lexer->lookahead == '[') {
+      if (valid_symbols[TAGGED_COMMENT_START] && at_line_start) {
+        advance(lexer);
+        lexer->mark_end(lexer);
+        lexer->result_symbol = TAGGED_COMMENT_START;
+        return true;
       }
+
+      // `#-[` is reserved for structured tagged comments. In positions where
+      // a tagged comment isn't valid, don't silently accept it as a plain
+      // block comment and discard its tag semantics.
+      return false;
+    }
+
+    if (valid_symbols[PLAIN_COMMENT]) {
+      consume_multiline_comment(lexer);
+      lexer->mark_end(lexer);
+      lexer->result_symbol = PLAIN_COMMENT;
+      return true;
+    }
+  } else if (valid_symbols[PLAIN_COMMENT]) {
+    while (!lexer->eof(lexer) && lexer->lookahead != '\n') {
       advance(lexer);
     }
+    lexer->mark_end(lexer);
+    lexer->result_symbol = PLAIN_COMMENT;
+    return true;
   }
+
+  return false;
+}
+
+static bool scan_tagged_line_comment_content(TSLexer* lexer) {
+  if (lexer->eof(lexer) || lexer->lookahead == '\r' || lexer->lookahead == '\n') {
+    return false;
+  }
+
+  bool has_content = false;
+
+  while (!lexer->eof(lexer)) {
+    if (lexer->lookahead == '\r' || lexer->lookahead == '\n') {
+      break;
+    }
+
+    advance(lexer);
+    lexer->mark_end(lexer);
+    has_content = true;
+  }
+
+  lexer->result_symbol = TAGGED_LINE_COMMENT_CONTENT;
+  return has_content;
+}
+
+static bool scan_tagged_comment_content(TSLexer* lexer, bool multiline) {
+  bool has_content = false;
+
+  if (multiline) {
+    if (lexer->lookahead == '\r') {
+      advance(lexer);
+      if (lexer->lookahead != '\n') {
+        return false;
+      }
+    } else if (lexer->lookahead != '\n') {
+      return false;
+    }
+
+    advance(lexer);
+    lexer->mark_end(lexer);
+    has_content = true;
+  } else if (lexer->lookahead == '\r' || lexer->lookahead == '\n') {
+    return false;
+  }
+
+  while (!lexer->eof(lexer)) {
+    if (!multiline && (lexer->lookahead == '\r' || lexer->lookahead == '\n')) {
+      return false;
+    }
+
+    if (lexer->lookahead == '-') {
+      advance(lexer);
+      if (lexer->lookahead == '#') {
+        if (!has_content) {
+          return false;
+        }
+        lexer->result_symbol = multiline ? TAGGED_COMMENT_MULTILINE_CONTENT
+                                         : TAGGED_COMMENT_INLINE_CONTENT;
+        return true;
+      }
+      has_content = true;
+      lexer->mark_end(lexer);
+    } else {
+      advance(lexer);
+      has_content = true;
+      lexer->mark_end(lexer);
+    }
+  }
+
+  if (has_content) {
+    lexer->result_symbol = multiline ? TAGGED_COMMENT_MULTILINE_CONTENT
+                                     : TAGGED_COMMENT_INLINE_CONTENT;
+    return true;
+  }
+
+  return false;
 }
 
 static bool accept_operator_continuation(TSLexer* lexer, enum TokenType symbol) {
@@ -210,9 +328,31 @@ bool tree_sitter_koto_external_scanner_scan(
   printf("\n");
 
   const bool error_recovery = valid_symbols[ERROR_SENTINEL];
+  const uint16_t current_indent =
+      VEC_SIZE(scanner->indents) > 0 ? VEC_BACK(scanner->indents) : 0;
+  const bool at_line_start = lexer->get_column(lexer) == current_indent;
 
   // Mark the end before doing anything else to allow lookahead to work correctly
   lexer->mark_end(lexer);
+
+  // Tagged comment content is consumed verbatim, including leading whitespace.
+  // Handle it before the scanner's normal whitespace skipping and before any
+  // other external tokens can interpret its contents.
+  if (!error_recovery) {
+    if (valid_symbols[TAGGED_LINE_COMMENT_CONTENT]
+        && scan_tagged_line_comment_content(lexer)) {
+      return true;
+    }
+
+    if (valid_symbols[TAGGED_COMMENT_MULTILINE_CONTENT]
+        && (lexer->lookahead == '\r' || lexer->lookahead == '\n')) {
+      return scan_tagged_comment_content(lexer, true);
+    }
+
+    if (valid_symbols[TAGGED_COMMENT_INLINE_CONTENT]) {
+      return scan_tagged_comment_content(lexer, false);
+    }
+  }
 
   // Skip any initial whitespace
   skip_whitespace(lexer);
@@ -307,11 +447,12 @@ bool tree_sitter_koto_external_scanner_scan(
   }
 
   // Comment?
-  if (valid_symbols[COMMENT] && !scanner->in_string && next == '#') {
-    consume_comment(lexer);
-    lexer->mark_end(lexer);
-    lexer->result_symbol = COMMENT;
-    return true;
+  if (
+      !scanner->in_string && next == '#'
+      && (valid_symbols[TAGGED_LINE_COMMENT_START]
+          || valid_symbols[TAGGED_COMMENT_START]
+          || valid_symbols[PLAIN_COMMENT])) {
+    return scan_comment(lexer, valid_symbols, at_line_start);
   }
 
   // Newline and indentation handling
@@ -337,7 +478,6 @@ bool tree_sitter_koto_external_scanner_scan(
   }
 
   const uint16_t column = lexer->get_column(lexer);
-  const uint16_t current_indent = VEC_SIZE(scanner->indents) > 0 ? VEC_BACK(scanner->indents) : 0;
   const bool eof = lexer->eof(lexer);
 
   printf(

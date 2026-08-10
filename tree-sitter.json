@@ -9,6 +9,7 @@
         "koto"
       ],
       "highlights": "queries/highlights.scm",
+      "injections": "queries/injections.scm",
       "injection-regex": "koto"
     }
   ],

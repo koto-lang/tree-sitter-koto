@@ -25,15 +25,22 @@ module.exports = grammar({
   name: 'koto',
 
   extras: $ => [
-    $.comment,
+    // Tagged comments are explicit rules so that their tag and content remain
+    // queryable. Tagged line comments are accepted as a full line or after a
+    // complete inline expression below, rather than as arbitrary extras.
+    $.plain_comment,
     /[ \t]/,
+  ],
+
+  supertypes: $ => [
+    $.comment,
   ],
 
   externals: $ => [
     $._newline,
     $._indent,
     $._dedent,
-    $.comment,
+    $.plain_comment,
     $._string_start,
     $._string_end,
     $._raw_string_start,
@@ -44,6 +51,11 @@ module.exports = grammar({
     $._operator_continuation_multiply,
     $._operator_continuation_power,
     $._operator_continuation_comparison,
+    $._tagged_line_comment_start,
+    $._tagged_line_comment_content,
+    $._tagged_comment_start,
+    $._tagged_comment_inline_content,
+    $._tagged_comment_multiline_content,
     $.error_sentinel,
   ],
 
@@ -69,10 +81,53 @@ module.exports = grammar({
       repeat($._newline),
     ),
 
+    comment: $ => choice(
+      $.plain_comment,
+      $.tagged_line_comment,
+      $.tagged_block_comment,
+    ),
+
+    _comment_line: $ => prec.right(seq(
+      $.comment,
+      optional($._newline),
+    )),
+
+    tagged_line_comment: $ => seq(
+      $._tagged_line_comment_start,
+      field('tag', $.comment_tag),
+      token.immediate(']'),
+      optional(field(
+        'content',
+        alias($._tagged_line_comment_content, $.comment_content),
+      )),
+    ),
+
+    tagged_block_comment: $ => seq(
+      $._tagged_comment_start,
+      field('tag', $.comment_tag),
+      token.immediate(']'),
+      // Inline content must close before the next newline. Multiline content
+      // starts with a newline, which is included in the content node.
+      choice(
+        token.immediate('-#'),
+        seq(
+          field('content', alias($._tagged_comment_inline_content, $.comment_content)),
+          token.immediate('-#'),
+        ),
+        seq(
+          field('content', alias($._tagged_comment_multiline_content, $.comment_content)),
+          token.immediate('-#'),
+        ),
+      ),
+    ),
+
+    comment_tag: _ => token.immediate(/[^\]\r\n]+/),
+
     _line_start: $ => seq(
       choice(
         $._inline_expressions,
         $._block_expression,
+        $._comment_line,
       ),
     ),
 
@@ -80,6 +135,7 @@ module.exports = grammar({
       $._inline_expression,
       repeat(seq(';', $._inline_expression)),
       optional(';'),
+      optional($.tagged_line_comment),
       optional($._newline),
     ),
 

@@ -90,7 +90,7 @@ string_interpolated
       (interpolation
         (comma_separated
           (identifier)
-          (comment)
+          (plain_comment)
           (identifier))))
     (string_quote)))
 

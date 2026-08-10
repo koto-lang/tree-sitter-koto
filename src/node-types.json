@@ -1,5 +1,23 @@
 [
   {
+    "type": "comment",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "plain_comment",
+        "named": true
+      },
+      {
+        "type": "tagged_block_comment",
+        "named": true
+      },
+      {
+        "type": "tagged_line_comment",
+        "named": true
+      }
+    ]
+  },
+  {
     "type": "alignment",
     "named": true,
     "fields": {}
@@ -467,7 +485,7 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": false,
+      "required": true,
       "types": [
         {
           "type": "assign",
@@ -499,6 +517,10 @@
         },
         {
           "type": "comma_separated",
+          "named": true
+        },
+        {
+          "type": "comment",
           "named": true
         },
         {
@@ -1059,6 +1081,10 @@
         },
         {
           "type": "string",
+          "named": true
+        },
+        {
+          "type": "tagged_line_comment",
           "named": true
         },
         {
@@ -2049,6 +2075,10 @@
             "named": true
           },
           {
+            "type": "tagged_line_comment",
+            "named": true
+          },
+          {
             "type": "throw",
             "named": true
           },
@@ -2504,6 +2534,10 @@
           "named": true
         },
         {
+          "type": "tagged_line_comment",
+          "named": true
+        },
+        {
           "type": "throw",
           "named": true
         },
@@ -2670,6 +2704,10 @@
           },
           {
             "type": "string",
+            "named": true
+          },
+          {
+            "type": "tagged_line_comment",
             "named": true
           },
           {
@@ -2998,6 +3036,10 @@
           },
           {
             "type": "string",
+            "named": true
+          },
+          {
+            "type": "tagged_line_comment",
             "named": true
           },
           {
@@ -4072,6 +4114,10 @@
             "named": true
           },
           {
+            "type": "tagged_line_comment",
+            "named": true
+          },
+          {
             "type": "throw",
             "named": true
           },
@@ -4404,6 +4450,10 @@
             "named": true
           },
           {
+            "type": "tagged_line_comment",
+            "named": true
+          },
+          {
             "type": "throw",
             "named": true
           },
@@ -4662,6 +4712,10 @@
         },
         {
           "type": "string",
+          "named": true
+        },
+        {
+          "type": "tagged_line_comment",
           "named": true
         },
         {
@@ -4995,6 +5049,10 @@
         },
         {
           "type": "comma_separated",
+          "named": true
+        },
+        {
+          "type": "comment",
           "named": true
         },
         {
@@ -6580,6 +6638,10 @@
             "named": true
           },
           {
+            "type": "tagged_line_comment",
+            "named": true
+          },
+          {
             "type": "throw",
             "named": true
           },
@@ -6736,6 +6798,10 @@
           "named": true
         },
         {
+          "type": "tagged_line_comment",
+          "named": true
+        },
+        {
           "type": "throw",
           "named": true
         },
@@ -6752,6 +6818,58 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "tagged_block_comment",
+    "named": true,
+    "fields": {
+      "content": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "comment_content",
+            "named": true
+          }
+        ]
+      },
+      "tag": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "comment_tag",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "tagged_line_comment",
+    "named": true,
+    "fields": {
+      "content": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "comment_content",
+            "named": true
+          }
+        ]
+      },
+      "tag": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "comment_tag",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -7038,6 +7156,10 @@
           "named": true
         },
         {
+          "type": "tagged_line_comment",
+          "named": true
+        },
+        {
           "type": "throw",
           "named": true
         },
@@ -7258,6 +7380,10 @@
           },
           {
             "type": "string",
+            "named": true
+          },
+          {
+            "type": "tagged_line_comment",
             "named": true
           },
           {
@@ -7563,6 +7689,10 @@
           },
           {
             "type": "string",
+            "named": true
+          },
+          {
+            "type": "tagged_line_comment",
             "named": true
           },
           {
@@ -7895,6 +8025,10 @@
     "named": false
   },
   {
+    "type": "-#",
+    "named": false
+  },
+  {
     "type": "-=",
     "named": false
   },
@@ -8075,9 +8209,12 @@
     "named": false
   },
   {
-    "type": "comment",
-    "named": true,
-    "extra": true
+    "type": "comment_content",
+    "named": true
+  },
+  {
+    "type": "comment_tag",
+    "named": true
   },
   {
     "type": "continue",
@@ -8166,6 +8303,11 @@
   {
     "type": "or",
     "named": false
+  },
+  {
+    "type": "plain_comment",
+    "named": true,
+    "extra": true
   },
   {
     "type": "return",

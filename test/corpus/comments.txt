@@ -9,10 +9,82 @@ false
 ---
 
 (module
-  (comment)
+  (plain_comment)
   (true)
-  (comment)
+  (plain_comment)
   (false))
+
+===========================================================================================
+comments_line_tagged_metadata
+===========================================================================================
+
+#[fmt:skip]
+x =
+  1
+     +
+         2
+
+---
+
+(module
+  (tagged_line_comment
+    tag: (comment_tag))
+  (assign
+    lhs: (identifier)
+    rhs: (binary_op
+      (number)
+      (number))))
+
+===========================================================================================
+comments_line_tagged_content
+===========================================================================================
+
+#[markdown] _hello_
+
+---
+
+(module
+  (tagged_line_comment
+    tag: (comment_tag)
+    content: (comment_content)))
+
+===========================================================================================
+comments_line_tagged_trailing
+===========================================================================================
+
+x = 1 #[markdown] _hello_
+y = 2
+
+---
+
+(module
+  (assign
+    lhs: (identifier)
+    rhs: (number))
+  (tagged_line_comment
+    tag: (comment_tag)
+    content: (comment_content))
+  (assign
+    lhs: (identifier)
+    rhs: (number)))
+
+===========================================================================================
+comments_line_tagged_in_block
+===========================================================================================
+
+||
+  #[fmt: skip]
+  true
+
+---
+
+(module
+  (function
+    (args)
+    body: (block
+      (tagged_line_comment
+        tag: (comment_tag))
+      (true))))
 
 ===========================================================================================
 comments_block
@@ -27,7 +99,139 @@ foo
 ---
 
 (module
-  (comment))
+  (plain_comment))
+
+===========================================================================================
+comments_block_tagged
+===========================================================================================
+
+x = 1
+
+#-[md]
+Here's a *markdown* formatted _comment block_.
+-#
+
+y = x
+
+---
+
+(module
+  (assign
+    lhs: (identifier)
+    rhs: (number))
+  (tagged_block_comment
+    tag: (comment_tag)
+    content: (comment_content))
+  (assign
+    lhs: (identifier)
+    rhs: (identifier)))
+
+===========================================================================================
+comments_block_tagged_empty
+===========================================================================================
+
+#-[md]-#
+
+---
+
+(module
+  (tagged_block_comment
+    tag: (comment_tag)))
+
+===========================================================================================
+comments_block_tagged_inline_content
+===========================================================================================
+
+#-[md] `hello` -#
+
+---
+
+(module
+  (tagged_block_comment
+    tag: (comment_tag)
+    content: (comment_content)))
+
+===========================================================================================
+comments_block_tagged_empty_multiline
+===========================================================================================
+
+#-[md]
+-#
+
+---
+
+(module
+  (tagged_block_comment
+    tag: (comment_tag)
+    content: (comment_content)))
+
+===========================================================================================
+comments_block_tagged_in_block
+===========================================================================================
+
+||
+  #-[fmt:skip]
+  # Markdown heading
+  #- nested starts remain content
+  -#
+  true
+
+---
+
+(module
+  (function
+    (args)
+    body: (block
+      (tagged_block_comment
+        tag: (comment_tag)
+        content: (comment_content))
+      (true))))
+
+===========================================================================================
+comments_block_tagged_rejects_hybrid_content
+===========================================================================================
+
+#-[md] first line
+second line
+-#
+
+---
+
+(module
+  (tagged_block_comment
+    tag: (comment_tag)
+    (MISSING "-#"))
+  (call
+    function: (identifier)
+    (call_arg
+      (identifier)))
+  (call
+    function: (identifier)
+    (call_arg
+      (identifier)))
+  (ERROR
+    (plain_comment)))
+
+===========================================================================================
+comments_block_tagged_rejects_trailing_position
+===========================================================================================
+
+x = 1 #-[md] trailing -#
+
+---
+
+(module
+  (assign
+    lhs: (identifier)
+    rhs: (binary_op
+      (number)
+      (ERROR)
+      (list
+        (element
+          (identifier)))))
+  (identifier)
+  (ERROR
+    (plain_comment)))
 
 ===========================================================================================
 comments_arent_nested
@@ -46,7 +250,7 @@ false
 ---
 
 (module
-  (comment)
+  (plain_comment)
   (false))
 
 ===========================================================================================
@@ -60,7 +264,7 @@ assert false
 ---
 
 (module
-  (comment))
+  (plain_comment))
 
 ===========================================================================================
 comments_toggle_off
@@ -73,6 +277,6 @@ false
 ---
 
 (module
-  (comment)
+  (plain_comment)
   (false)
-  (comment))
+  (plain_comment))

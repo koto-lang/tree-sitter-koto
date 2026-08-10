@@ -29,6 +29,186 @@
         }
       ]
     },
+    "comment": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "plain_comment"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "tagged_line_comment"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "tagged_block_comment"
+        }
+      ]
+    },
+    "_comment_line": {
+      "type": "PREC_RIGHT",
+      "value": 0,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "comment"
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_newline"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "tagged_line_comment": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_tagged_line_comment_start"
+        },
+        {
+          "type": "FIELD",
+          "name": "tag",
+          "content": {
+            "type": "SYMBOL",
+            "name": "comment_tag"
+          }
+        },
+        {
+          "type": "IMMEDIATE_TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "]"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "content",
+              "content": {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_tagged_line_comment_content"
+                },
+                "named": true,
+                "value": "comment_content"
+              }
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "tagged_block_comment": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_tagged_comment_start"
+        },
+        {
+          "type": "FIELD",
+          "name": "tag",
+          "content": {
+            "type": "SYMBOL",
+            "name": "comment_tag"
+          }
+        },
+        {
+          "type": "IMMEDIATE_TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "]"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "IMMEDIATE_TOKEN",
+              "content": {
+                "type": "STRING",
+                "value": "-#"
+              }
+            },
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "FIELD",
+                  "name": "content",
+                  "content": {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "_tagged_comment_inline_content"
+                    },
+                    "named": true,
+                    "value": "comment_content"
+                  }
+                },
+                {
+                  "type": "IMMEDIATE_TOKEN",
+                  "content": {
+                    "type": "STRING",
+                    "value": "-#"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "FIELD",
+                  "name": "content",
+                  "content": {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "_tagged_comment_multiline_content"
+                    },
+                    "named": true,
+                    "value": "comment_content"
+                  }
+                },
+                {
+                  "type": "IMMEDIATE_TOKEN",
+                  "content": {
+                    "type": "STRING",
+                    "value": "-#"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "comment_tag": {
+      "type": "IMMEDIATE_TOKEN",
+      "content": {
+        "type": "PATTERN",
+        "value": "[^\\]\\r\\n]+"
+      }
+    },
     "_line_start": {
       "type": "SEQ",
       "members": [
@@ -42,6 +222,10 @@
             {
               "type": "SYMBOL",
               "name": "_block_expression"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_comment_line"
             }
           ]
         }
@@ -76,6 +260,18 @@
             {
               "type": "STRING",
               "value": ";"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "tagged_line_comment"
             },
             {
               "type": "BLANK"
@@ -4534,7 +4730,7 @@
   "extras": [
     {
       "type": "SYMBOL",
-      "name": "comment"
+      "name": "plain_comment"
     },
     {
       "type": "PATTERN",
@@ -4594,7 +4790,7 @@
     },
     {
       "type": "SYMBOL",
-      "name": "comment"
+      "name": "plain_comment"
     },
     {
       "type": "SYMBOL",
@@ -4638,10 +4834,32 @@
     },
     {
       "type": "SYMBOL",
+      "name": "_tagged_line_comment_start"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_tagged_line_comment_content"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_tagged_comment_start"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_tagged_comment_inline_content"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_tagged_comment_multiline_content"
+    },
+    {
+      "type": "SYMBOL",
       "name": "error_sentinel"
     }
   ],
   "inline": [],
-  "supertypes": [],
+  "supertypes": [
+    "comment"
+  ],
   "reserved": {}
 }
